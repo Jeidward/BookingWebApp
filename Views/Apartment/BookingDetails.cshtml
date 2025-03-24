@@ -1,0 +1,82 @@
+﻿
+
+<div class="container">
+    <h2>Booking Details</h2>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h5>@Model.Apartment.Name</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p>
+                                <strong>Check-in:</strong> @Model.CheckInDate.ToString("MMM dd, yyyy")
+                                <button type="button" class="btn btn-sm btn-outline-dark">Change</button>
+                            </p>
+                            <p>
+                                <strong>Check-out:</strong> @Model.CheckOutDate.ToString("MMM dd, yyyy")
+                                <button type="button" class="btn btn-sm btn-outline-dark">Change</button>
+                            </p>
+                            <p><strong>Guests:</strong> @ViewData["numberOfGuests"]</p>
+                        </div>
+                        <div class="col-md-6">
+                            <img src="@Url.Content("~/" + Model.Apartment.ImageUrl)" class="img-fluid" alt="@Model.Apartment.Name" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h5>Price Details</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>@Model.Apartment.PricePerNight.ToString("C") × @ViewData["numberOfNights"] nights</span>
+                    </div>
+                    <hr />
+                    <div class="d-flex justify-content-between">
+                        <strong>Total</strong>
+                        <strong>@Model.TotalPrice.ToString("C")</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <h3>Additional Services</h3>
+        <div class="row mb-4">
+            <div class="col">
+                <div class="text-center p-3 border rounded">
+                    <i class="bi bi-water"></i>
+                    <p>Swimming Pool</p>
+                </div>
+            </div>
+            <div class="col">
+                <div class="text-center p-3 border rounded">
+                    <i class="bi bi-water"></i>
+                    <p>Laundry</p>
+                </div>
+            </div>
+            <div class="col">
+                <div class="text-center p-3 border rounded">
+                    <i class="bi bi-car-front"></i>
+                    <p>Car rental</p>
+                </div>
+            </div>
+        </div>
+
+        @if (ViewContext.RouteData.Values["action"].ToString() == "PaymentDetails")
+        {
+            <partial name="PaymentDetailsForm" model="Model" />
+        }
+        else
+        {
+            <partial name="GuestProfileForm" model="Model" />
+        }
+    </div>
+</div>

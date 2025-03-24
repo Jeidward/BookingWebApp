@@ -1,8 +1,8 @@
 using System.Diagnostics;
-using BookingWebApp.Models;
+using IndividualProject_BookingWebApplication.Data.Models;
 using Microsoft.AspNetCore.Mvc;
 
-namespace BookingWebApp.Controllers
+namespace IndividualProject_BookingWebApplication.Controllers
 {
     public class HomeController : Controller
     {

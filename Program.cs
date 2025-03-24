@@ -1,4 +1,5 @@
-namespace BookingWebApp
+
+namespace IndividualProject_BookingWebApplication
 {
     public class Program
     {
@@ -8,6 +9,21 @@ namespace BookingWebApp
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+
+            
+            builder.Services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(5);
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+            });
+
+            builder.Services.AddHttpContextAccessor();
+            builder.Services.AddScoped<BookingService>();
+            builder.Services.AddScoped<PaymentService>();
+            builder.Services.AddScoped<AccountHolderService>();
+            builder.Services.AddScoped<UserService>();
+
 
             var app = builder.Build();
 
@@ -25,6 +41,7 @@ namespace BookingWebApp
             app.UseRouting();
 
             app.UseAuthorization();
+            app.UseSession();
 
             app.MapControllerRoute(
                 name: "default",

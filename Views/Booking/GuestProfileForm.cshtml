@@ -1,0 +1,51 @@
+﻿
+@{
+    int currentGuestIndex = (int)ViewData["currentGuestIndex"]!;
+    int totalGuests = (int)ViewData["numberOfGuests"]!;
+}
+
+<div class="container">
+    <h2>Enter guest details (@currentGuestIndex of @totalGuests)</h2>
+
+    <form asp-controller="Booking" asp-action="AddGuestProfile" method="post">
+        <input type="hidden" name="currentGuestIndex" value="@currentGuestIndex" />
+
+        <div class="row mb-3">
+            <div class="col">
+                <label>First name</label>
+                <input type="text" class="form-control" name="FirstName" required />
+            </div>
+            <div class="col">
+                <label>Last name</label>
+                <input type="text" class="form-control" name="LastName" required />
+            </div>
+        </div>
+        <div class="col">
+            <label>Age</label>
+            <input type="text" class="form-control" name="Age" required />
+        </div>
+        <div class="mb-3">
+            <label>Email</label>
+            <input type="email" class="form-control" name="Email" required />
+        </div>
+        <div class="mb-3">
+            <label>Phone number</label>
+            <input type="tel" class="form-control" name="PhoneNumber" required />
+        </div>
+
+        <div class="mb-3">
+            <label>Country</label>
+            <select class="form-control" name="Country" id="countrySelect">
+                <!-- Country options will be populated here -->
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label>Address</label>
+            <input type="text" class="form-control" name="Address" required />
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100">@(currentGuestIndex == totalGuests ? "Proceed to Payment" : "Next")</button>
+    </form>
+</div>
+<script type="text/javascript" src="~/js/site.js"></script>

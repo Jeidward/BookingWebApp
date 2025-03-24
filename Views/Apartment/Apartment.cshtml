@@ -1,0 +1,71 @@
+﻿@model Apartment
+
+@{
+    ViewData["Title"] = "Apartment Details";
+}
+
+<h2>@Model.Name</h2>
+
+<div class="container">
+    <!-- Row for the main content -->
+    <div class="row">
+        <!-- Main Image + Info -->
+        <div class="col-md-8">
+            <div class="mb-3">
+                <img src="@Url.Content("~/" + Model.ImageUrl)" alt="@Model.Name" class="img-fluid w-100" style="object-fit: cover; max-height: 400px;" />
+            </div>
+            <p>@Model.Description</p>
+            <p>Price per Night: @Model.PricePerNight.ToString("C")</p>
+            <p>Rating: @Model.Rating</p>
+            <p>Reviews: @Model.ReviewsCount</p>
+        </div>
+
+        <!-- Gallery Images -->
+        <div class="col-md-4">
+            <div class="row g-2">
+                @foreach (var image in Model.Gallery)
+                {
+                    <div class="col-6">
+                        <img src="@Url.Content("~/" + image)" alt="Apartment extra image"
+                             class="img-fluid w-100" style="object-fit: cover; max-height: 150px;" />
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Add this to your Apartment.cshtml -->
+<div class="col-md-4">
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">@Model.PricePerNight.ToString("C") / night</h5>
+
+            <form asp-controller="Booking" asp-action="CreateBooking" method="post">
+                <input type="hidden" name="apartmentId" value="@Model.Id" />
+
+                <div class="row mb-3">
+                    <div class="col">
+                        <label>CHECK-IN</label>
+                        <input  type="date" class="form-control" name="CheckIn" required />
+                    </div>
+                    <div class="col">
+                        <label>CHECKOUT</label>
+                        <input  type="date" class="form-control" name="CheckOut" required />
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label>GUESTS</label>
+                    <select class="form-control" name="numberOfGuests">
+                        <option value="1" selected>1 guest</option>
+                        <option value="2">2 guests</option>
+                        <option value="3">3 guests</option>
+                        <option value="4">4 guests</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100">Book now</button>
+            </form>
+        </div>
+    </div>
+</div>

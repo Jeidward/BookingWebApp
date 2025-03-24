@@ -1,0 +1,44 @@
+﻿    @model IndividualProject_BookingWebApplication.Data.Models.Booking
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Booking Confirmation</title>
+        <style>
+
+        </style>
+    </head>
+    <body>
+        <div class="success-container">
+            <div class="checkmark-circle"></div>
+
+            <div class="confirmation-heading">Payment Successful!</div>
+            <div class="confirmation-subtitle">
+                We’ve received your booking and payment.
+            </div>
+
+            <div class="booking-details">
+                <p><strong>Booking ID:</strong> @Model.Id</p>
+                <p><strong>Apartment:</strong> @Model.Apartment?.Name</p>
+                <p><strong>Check-in Date:</strong> @Model.CheckInDate.ToString("MMM dd, yyyy")</p>
+                <p><strong>Check-out Date:</strong> @Model.CheckOutDate.ToString("MMM dd, yyyy")</p>
+                <p><strong>Total Paid:</strong> @Model.TotalPrice.ToString("C")</p>
+                <div class="row g-2">
+                    @if (Model?.GuestProfiles == null || !Model.GuestProfiles.Any())
+                    {
+                        <p>No guests found.</p>
+                    }
+                    else
+                    {
+                        @foreach (var guest in Model.GuestProfiles)
+                        {
+                            <div class="col-6">
+                                <p><strong>Guest:</strong> @guest.FirstName</p> 
+                            </div>
+                        }
+                    }
+                <a class="btn btn-primary w-100" asp-controller="Home" asp-action="Index">Home</a>
+                </div>
+            </div>
+        </div>
+    </body>
+    </html>
