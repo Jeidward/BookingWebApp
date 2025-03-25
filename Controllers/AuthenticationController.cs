@@ -31,6 +31,26 @@ namespace BookingWebApp.Controllers
             {
                 if (_userService.Register(email, password))
                 {
+
+                    int userId = _userService.GetExistedLogIn(email, password);
+
+
+                    if (userId == 0)
+                    {
+                        ModelState.AddModelError("", "Invalid email or password");
+                        return View();
+                    }
+
+                    HttpContext.Session.SetInt32("UserId", userId);
+                    bool hasAnyBooking = _accountHolderService.HasAccountHolderAnyBooking(userId);
+                    HttpContext.Session.SetInt32("HasBooking", hasAnyBooking ? 1 : 0);
+
+                    AccountHolder? accountHolder = _accountHolderService.GetAccountHolderByUserId(userId);
+
+                    if (accountHolder != null)
+                    {
+                        HttpContext.Session.SetInt32("UserId", accountHolder.Id); //accountHolder, is a user
+                    }
                     return RedirectToAction("Index", "Home");
                 }
                 return View();
