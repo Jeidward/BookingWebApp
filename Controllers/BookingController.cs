@@ -18,8 +18,10 @@ namespace BookingWebApp.Controllers
             _accountHolderService = accountHolderService;
         }
 
-        public IActionResult CreateBooking(int numberOfGuests, DateTime checkIn, DateTime checkOut, int apartmentId)
+        public IActionResult CreateBooking(int numberOfGuests, DateTime checkInDate, DateTime checkOutDate, DateTime checkInTime,DateTime checkOutTime, int apartmentId)
         {
+            DateTime CheckIn = checkInDate.Date.Add(checkInTime.TimeOfDay);
+            DateTime CheckOut = checkOutDate.Date.Add(checkOutTime.TimeOfDay);
 
             int? userId = HttpContext.Session.GetInt32("UserId");
             {
@@ -29,13 +31,13 @@ namespace BookingWebApp.Controllers
                 }
             }
 
-            Booking booking = _bookingService.CreateBooking(checkIn, checkOut, apartmentId);
+            Booking booking = _bookingService.CreateBooking(CheckIn, CheckOut, apartmentId);
 
             ViewData["numberOfGuests"] = numberOfGuests;
             HttpContext.Session.SetInt32("numberOfGuests", numberOfGuests);
             ViewData["currentGuestIndex"] = 1; // Starting with the first guest
 
-            ViewData["numberOfNights"] = _bookingService.ComputeNights(checkIn, checkOut);
+            ViewData["numberOfNights"] = _bookingService.ComputeNights(checkInDate, checkOutDate);
             HttpContext.Session.SetString("newBooking", _bookingService.GenerateBookingString(booking));
 
             return View("~/Views/Apartment/BookingDetails.cshtml", booking);
@@ -169,12 +171,10 @@ namespace BookingWebApp.Controllers
                 HttpContext.Session.Remove($"GuestProfile_{i + 1}");
             }
 
-            // Finalize the booking with all guest profiles
+
             Booking finalizedBooking = _bookingService.FinalizeBooking(guestProfiles, booking, booking.TotalPrice, PaymentMethod.MASTERCARD);
 
-            //int newBookingId = _bookingService.SaveBooking(booking);
-
-
+            HttpContext.Session.SetInt32("HasBooking", 1);
             HttpContext.Session.Remove("numberOfGuests");
             HttpContext.Session.Remove("newBooking");
 
@@ -200,6 +200,10 @@ namespace BookingWebApp.Controllers
 
             List<Booking> bookings = _bookingService.GetAllBookingsForUser(userId.Value);
 
+            if(bookings == null || bookings.Count == 0)
+            {
+                HttpContext.Session.Remove("HasBooking");
+            }
             return View("MyBookings",bookings);
         }
 
