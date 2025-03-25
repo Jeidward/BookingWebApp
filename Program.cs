@@ -1,5 +1,8 @@
+using MSSQL;
+using Services;
+using Interfaces;
 
-namespace IndividualProject_BookingWebApplication
+namespace BookingWebApp
 {
     public class Program
     {
@@ -10,7 +13,7 @@ namespace IndividualProject_BookingWebApplication
             // Add services to the container.
             builder.Services.AddControllersWithViews();
 
-            
+
             builder.Services.AddSession(options =>
             {
                 options.IdleTimeout = TimeSpan.FromMinutes(5);
@@ -19,10 +22,21 @@ namespace IndividualProject_BookingWebApplication
             });
 
             builder.Services.AddHttpContextAccessor();
+      
+            builder.Services.AddScoped<IBookingRepository, BookingRepository>();
+            builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
+            builder.Services.AddScoped<IAccountHolderRepository, AccountHolderRepository>();
+            builder.Services.AddScoped<IUserRepository, UserRepository>();
+            builder.Services.AddScoped<IApartmentRepository, ApartmentRepository>();
+
+         
             builder.Services.AddScoped<BookingService>();
             builder.Services.AddScoped<PaymentService>();
             builder.Services.AddScoped<AccountHolderService>();
             builder.Services.AddScoped<UserService>();
+            builder.Services.AddScoped<ApartmentService>();
+
+
 
 
             var app = builder.Build();

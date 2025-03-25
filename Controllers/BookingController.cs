@@ -1,22 +1,20 @@
 ﻿using Azure.Core;
-using IndividualProject_BookingWebApplication.Data.Enums;
-using IndividualProject_BookingWebApplication.Data.Models;
-using IndividualProject_BookingWebApplication.Logic.Services;
+using Models.Entities;
+using Enums;
 using Microsoft.AspNetCore.Mvc;
+using Services;
 
-namespace IndividualProject_BookingWebApplication.Controllers
+namespace BookingWebApp.Controllers
 {
     public class BookingController : Controller
     {
         private readonly BookingService _bookingService;
-        private readonly PaymentService _paymentService;
         private readonly AccountHolderService _accountHolderService;
 
 
-        public BookingController(BookingService bookingService, PaymentService paymentService, AccountHolderService accountHolderService)
+        public BookingController(BookingService bookingService, AccountHolderService accountHolderService)
         {
             _bookingService = bookingService;
-            _paymentService = paymentService;
             _accountHolderService = accountHolderService;
         }
 
@@ -30,15 +28,15 @@ namespace IndividualProject_BookingWebApplication.Controllers
                     return RedirectToAction("Login", "Authentication");
                 }
             }
-            BookingService bookingService = new(WebApplication.CreateBuilder().Configuration);
-            Booking booking = bookingService.CreateBooking(checkIn, checkOut, apartmentId);
+
+            Booking booking = _bookingService.CreateBooking(checkIn, checkOut, apartmentId);
 
             ViewData["numberOfGuests"] = numberOfGuests;
             HttpContext.Session.SetInt32("numberOfGuests", numberOfGuests);
             ViewData["currentGuestIndex"] = 1; // Starting with the first guest
 
-            ViewData["numberOfNights"] = bookingService.ComputeNights(checkIn, checkOut);
-            HttpContext.Session.SetString("newBooking", bookingService.GenerateBookingString(booking));
+            ViewData["numberOfNights"] = _bookingService.ComputeNights(checkIn, checkOut);
+            HttpContext.Session.SetString("newBooking", _bookingService.GenerateBookingString(booking));
 
             return View("~/Views/Apartment/BookingDetails.cshtml", booking);
         }
@@ -68,7 +66,7 @@ namespace IndividualProject_BookingWebApplication.Controllers
             }
 
             int currentGuestIndex = int.Parse(Request.Form["currentGuestIndex"]!);
-            int accountHolderId = HttpContext.Session.GetInt32("AccountHolderId") ?? 0;
+            int accountHolderId = HttpContext.Session.GetInt32("UserId") ?? 0;
             AccountHolder accountHolder;
             if (accountHolderId > 0)
             {
@@ -77,8 +75,8 @@ namespace IndividualProject_BookingWebApplication.Controllers
             else
             {
                 return RedirectToAction("Login", "Authentication");
-            } 
-                
+            }
+
 
             GuestProfile profile = _accountHolderService.CreateGuestProfile(
                 accountHolder,
@@ -96,9 +94,9 @@ namespace IndividualProject_BookingWebApplication.Controllers
             if (currentGuestIndex < totalGuests)
             {
                 string? bookingString = HttpContext.Session.GetString("newBooking");
-                if(bookingString == null)
+                if (bookingString == null)
                 {
-                    return RedirectToAction("ApartmentList","Apartment");
+                    return RedirectToAction("ApartmentList", "Apartment");
                 }
                 Booking booking = _bookingService.ReadBookingString(bookingString);
 
@@ -118,11 +116,11 @@ namespace IndividualProject_BookingWebApplication.Controllers
         public IActionResult PaymentDetails()
         {
             string? bookingString = HttpContext.Session.GetString("newBooking");
-                if(bookingString == null)
-                {
-                    return RedirectToAction("ApartmentList","Apartment");
-                }
-                Booking booking = _bookingService.ReadBookingString(bookingString);
+            if (bookingString == null)
+            {
+                return RedirectToAction("ApartmentList", "Apartment");
+            }
+            Booking booking = _bookingService.ReadBookingString(bookingString);
 
             ViewData["numberOfGuests"] = HttpContext.Session.GetInt32("numberOfGuests");
             ViewData["numberOfNights"] = _bookingService.ComputeNights(booking.CheckInDate, booking.CheckOutDate);
@@ -152,7 +150,7 @@ namespace IndividualProject_BookingWebApplication.Controllers
 
 
             // Get account holder info if available
-            int accountHolderId = HttpContext.Session.GetInt32("AccountHolderId") ?? 0;
+            int accountHolderId = HttpContext.Session.GetInt32("UserId") ?? 0;
             AccountHolder accountHolder;
             if (accountHolderId > 0)
             {
@@ -165,7 +163,7 @@ namespace IndividualProject_BookingWebApplication.Controllers
 
             List<GuestProfile> guestProfiles = new List<GuestProfile>();
             int numberOfGuests = HttpContext.Session.GetInt32("numberOfGuests") ?? 1;
-            for(int i = 0; i < numberOfGuests; i++)
+            for (int i = 0; i < numberOfGuests; i++)
             {
                 guestProfiles.Add(_accountHolderService.ReadGuestProfileString(HttpContext.Session.GetString($"GuestProfile_{i + 1}")!));
                 HttpContext.Session.Remove($"GuestProfile_{i + 1}");
@@ -175,20 +173,36 @@ namespace IndividualProject_BookingWebApplication.Controllers
             Booking finalizedBooking = _bookingService.FinalizeBooking(guestProfiles, booking, booking.TotalPrice, PaymentMethod.MASTERCARD);
 
             //int newBookingId = _bookingService.SaveBooking(booking);
- 
+
 
             HttpContext.Session.Remove("numberOfGuests");
             HttpContext.Session.Remove("newBooking");
 
-            return RedirectToAction("BookingSuccessful", "Booking", new{ bookingId = finalizedBooking.Id });
+            return RedirectToAction("BookingSuccessful", "Booking", new { bookingId = finalizedBooking.Id });
         }
 
         public IActionResult BookingSuccessful(int bookingId)
         {
-             Booking booking = _bookingService.GetBookingWithApartment(bookingId);
+            Booking booking = _bookingService.GetBookingWithApartment(bookingId);
 
-            return View("~/Views/Booking/BookingConfirmation.cshtml",booking);
+            return View("~/Views/Booking/BookingConfirmation.cshtml", booking);
         }
-        
+
+
+        public IActionResult MyBookings()
+        {
+            int? userId = HttpContext.Session.GetInt32("UserId");
+
+            if (userId == null)
+            {
+                return RedirectToAction("Login", "Authentication");
+            }
+
+            List<Booking> bookings = _bookingService.GetAllBookingsForUser(userId.Value);
+
+            return View("MyBookings",bookings);
+        }
+
+
     }
 }

@@ -1,16 +1,19 @@
 using System.Diagnostics;
-using IndividualProject_BookingWebApplication.Data.Models;
+using Models.Entities;
 using Microsoft.AspNetCore.Mvc;
+using Services;
 
-namespace IndividualProject_BookingWebApplication.Controllers
+namespace BookingWebApp.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly BookingService _bookingService;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger,BookingService bookingService)
         {
             _logger = logger;
+            _bookingService = bookingService;
         }
 
         public IActionResult Index()
@@ -23,6 +26,8 @@ namespace IndividualProject_BookingWebApplication.Controllers
             return View();
         }
 
+ 
+        
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

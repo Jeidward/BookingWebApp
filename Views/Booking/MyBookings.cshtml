@@ -1,0 +1,54 @@
+﻿@using Models.Entities
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <title>My Apartment Bookings</title>
+</head>
+<body>
+    <div class="apartment-bookings-container">
+        <div class="bookings-header">
+            <h2>My Apartment Bookings</h2>
+        </div>
+        @foreach(Booking booking in Model)
+        {
+             <div class="apartment-booking-card">
+                <img class="apartment-image"
+                     src="@Url.Content("~/" + booking.Apartment.ImageUrl)"
+                     alt="@booking.Apartment.Description"
+                     loading="lazy" />
+                <div class="booking-details">
+                    <div class="booking-details-header">
+                        <h3>@booking.Apartment.Description</h3>
+                    </div>
+                    <div>
+                         @foreach (GuestProfile guest in booking.GuestProfiles)
+                        {
+                            <div class="col-6">
+                                <p><strong>Guest:</strong> @guest.FirstName</p> 
+                            </div>
+                        }
+                        <p>@booking.Apartment.Adress</p>
+                        <p><strong>Booking Reference:</strong> APT-2025-0315</p>
+                    </div>
+                    <div class="booking-actions">
+                        <div class="booking-dates">
+                            <p>@booking.CheckInDate</p>
+                            <p>@booking.CheckOutDate</p>
+                        </div>
+                        <button class="cancel-booking-btn">Cancel Booking</button>
+                    </div>
+                </div>
+            </div>
+        }
+
+        <!-- No Bookings Message (Uncomment if no bookings) -->
+        <!--
+        <div class="no-bookings">
+            <p>You have no current apartment bookings.</p>
+        </div>
+        -->
+    </div>
+</body>
+</html>

@@ -1,29 +1,29 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using IndividualProject_BookingWebApplication.Data.Models;
-using IndividualProject_BookingWebApplication.Data.Repositories;
-using IndividualProject_BookingWebApplication.Logic.Services;
+using Models.Entities;
+using Microsoft.Extensions.Configuration;
+using Services;
 
-namespace IndividualProject_BookingWebApplication.Controllers
+namespace BookingWebApp.Controllers
 {
     public class ApartmentController : Controller
     {
-        private readonly ApartmentService _service;
+        private readonly ApartmentService _apartmentService;
 
-        public ApartmentController()
+        public ApartmentController(ApartmentService apartmentService)
         {
-            _service = new(WebApplication.CreateBuilder().Configuration);
+            _apartmentService = apartmentService;
         }
 
 
         public IActionResult ShowApartmentList()
         {
             // this will get  a list of apartments from the  repository/database
-            return View("~/Views/Apartment/ApartmentList.cshtml", _service.GetAllApartments(3));
+            return View("~/Views/Apartment/ApartmentList.cshtml", _apartmentService.GetAllApartments(3));
         }
 
         public IActionResult ShowApartmentPage(int id)
         {
-            Apartment selectedApartment = _service.GetApartment(id);
+            Apartment selectedApartment = _apartmentService.GetApartment(id);
             return View("~/Views/Apartment/Apartment.cshtml", selectedApartment);
         }
     }

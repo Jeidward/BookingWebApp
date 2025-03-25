@@ -1,11 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using IndividualProject_BookingWebApplication.Data.Models;
-using IndividualProject_BookingWebApplication.Logic.Services;
-using IndividualProject_BookingWebApplication.Data.Repositories;
-using Microsoft.AspNetCore.Components.Web;
+using Models.Entities;
+using Services;
 
 
-namespace IndividualProject_BookingWebApplication.Controllers
+namespace BookingWebApp.Controllers
 {
     public class AuthenticationController : Controller
     {
@@ -55,7 +53,7 @@ namespace IndividualProject_BookingWebApplication.Controllers
         [HttpPost]
         public ActionResult LogInUser(string email, string password)
         {
-            int userId = _userService.GetExistedLogIn(email,password);
+            int userId = _userService.GetExistedLogIn(email, password);
 
 
             if (userId == 0)
@@ -64,17 +62,17 @@ namespace IndividualProject_BookingWebApplication.Controllers
                 return View();
             }
 
-                HttpContext.Session.SetInt32("UserId", userId);
-                bool hasAnyBooking = _accountHolderService.HasAccountHolderAnyBooking(userId);  
-                HttpContext.Session.SetInt32("HasBooking",hasAnyBooking ? 1 : 0);
+            HttpContext.Session.SetInt32("UserId", userId);
+            bool hasAnyBooking = _accountHolderService.HasAccountHolderAnyBooking(userId);
+            HttpContext.Session.SetInt32("HasBooking", hasAnyBooking ? 1 : 0);
 
-                AccountHolder? accountHolder = _accountHolderService.GetAccountHolderByUserId(userId);
-            
-                if (accountHolder != null)
-                {
-                    HttpContext.Session.SetInt32("AccountHolderId", accountHolder.Id);
-                }
-                 return RedirectToAction("Index", "Home");
+            AccountHolder? accountHolder = _accountHolderService.GetAccountHolderByUserId(userId);
+
+            if (accountHolder != null)
+            {
+                HttpContext.Session.SetInt32("UserId", accountHolder.Id); //accountHolder, is a user
+            }
+            return RedirectToAction("Index", "Home");
         }
 
         public ActionResult LogOut()
