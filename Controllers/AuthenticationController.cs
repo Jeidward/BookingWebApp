@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using BookingWebApp.ViewModels;
+using Microsoft.AspNetCore.Mvc;
 using Models.Entities;
 using Services;
 
@@ -25,14 +26,14 @@ namespace BookingWebApp.Controllers
 
 
         [HttpPost]
-        public ActionResult Register(string email, string password)
+        public ActionResult Register(UserViewModel userViewModel)
         {
             try
             {
-                if (_userService.Register(email, password))
+                if (_userService.Register(userViewModel.Email,userViewModel.Password))
                 {
 
-                    int userId = _userService.GetExistedLogIn(email, password);
+                    int userId = _userService.GetExistedLogIn(userViewModel.Email, userViewModel.Password);
 
 
                     if (userId == 0)
@@ -45,7 +46,7 @@ namespace BookingWebApp.Controllers
                     bool hasAnyBooking = _accountHolderService.HasAccountHolderAnyBooking(userId);
                     HttpContext.Session.SetInt32("HasBooking", hasAnyBooking ? 1 : 0);
 
-                    AccountHolder? accountHolder = _accountHolderService.GetAccountHolderByUserId(userId);
+                    AccountHolder? accountHolder = _accountHolderService.GetAccountHolderByUserId(userId); // may also be a viewModel
 
                     if (accountHolder != null)
                     {
@@ -53,7 +54,7 @@ namespace BookingWebApp.Controllers
                     }
                     return RedirectToAction("Index", "Home");
                 }
-                return View();
+                return View(userViewModel);
 
 
             }
@@ -71,9 +72,9 @@ namespace BookingWebApp.Controllers
         }
 
         [HttpPost]
-        public ActionResult LogInUser(string email, string password)
+        public ActionResult LogIn(UserViewModel userViewModel)
         {
-            int userId = _userService.GetExistedLogIn(email, password);
+            int userId = _userService.GetExistedLogIn(userViewModel.Email, userViewModel.Password);
 
 
             if (userId == 0)

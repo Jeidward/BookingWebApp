@@ -1,4 +1,4 @@
-﻿@using Models.Entities
+﻿@model ApartmentBookingCompositeViewModel
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,7 +12,7 @@
             <h2>My Apartment Bookings</h2>
         </div>
         
-        @if (Model.Count == 0 )
+        @if (Model.BookingViewModel.Count == 0 )
         {
             <div class="no-bookings">
                 <p>You have no current apartment bookings.</p>
@@ -20,25 +20,25 @@
         }
         else{
 
-            @foreach(Booking booking in Model)
+            @foreach(var booking in Model.BookingViewModel)
             {
                  <div class="apartment-booking-card">
                     <img class="apartment-image"
-                         src="@Url.Content("~/" + booking.Apartment.ImageUrl)"
-                         alt="@booking.Apartment.Description"
+                         src="@Url.Content("~/" + booking.ApartmentViewModel.ImageUrl)"
+                         alt="@booking.ApartmentViewModel.Description"
                          loading="lazy" />
                     <div class="booking-details">
                         <div class="booking-details-header">
-                            <h3>@booking.Apartment.Description</h3>
+                            <h3>@booking.ApartmentViewModel.Description</h3>
                         </div>
                         <div>
-                             @foreach (GuestProfile guest in booking.GuestProfiles)
+                             @foreach (var guest in booking.GuestProfiles)
                             {
                                 <div class="col-6">
                                     <p><strong>Guest:</strong> @guest.FirstName</p> 
                                 </div>
                             }
-                            <p>Address: @booking.Apartment.Adress</p>
+                            <p>Address: @booking.ApartmentViewModel.Adress</p>
                             <p><strong>Booking Reference:</strong> APT-2025-0315</p>
                         </div>
                         <div class="booking-actions">

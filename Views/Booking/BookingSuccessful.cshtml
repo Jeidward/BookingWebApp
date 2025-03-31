@@ -1,4 +1,4 @@
-﻿    @model Booking
+﻿    @model BookingCompositeViewModel
     <!DOCTYPE html>
     <html>
     <head>
@@ -17,19 +17,19 @@
             </div>
 
             <div class="booking-details">
-                <p><strong>Booking ID:</strong> @Model.Id</p>
-                <p><strong>Apartment:</strong> @Model.Apartment?.Name</p>
-                <p><strong>Check-in Date:</strong> @Model.CheckInDate.ToString("MMM dd, yyyy")</p>
-                <p><strong>Check-out Date:</strong> @Model.CheckOutDate.ToString("MMM dd, yyyy")</p>
-                <p><strong>Total Paid:</strong> @Model.TotalPrice.ToString("C")</p>
+                <p><strong>Booking ID:</strong> @Model.BookingViewModel.Id</p>
+                <p><strong>Apartment:</strong> @Model.BookingViewModel.ApartmentViewModel?.Name</p>
+                <p><strong>Check-in Date:</strong> @Model.BookingViewModel.CheckInDate.ToString("MMM dd, yyyy")</p>
+                <p><strong>Check-out Date:</strong> @Model.BookingViewModel.CheckOutDate.ToString("MMM dd, yyyy")</p>
+                <p><strong>Total Paid:</strong> @Model.BookingViewModel.TotalPrice.ToString("C")</p>
                 <div class="row g-2">
-                    @if (Model?.GuestProfiles == null || !Model.GuestProfiles.Any())
+                    @if (Model.BookingViewModel.GuestProfiles == null || !Model.BookingViewModel.GuestProfiles.Any())
                     {
                         <p>No guests found.</p>
                     }
                     else
                     {
-                        @foreach (var guest in Model.GuestProfiles)
+                        @foreach (var guest in Model.BookingViewModel.GuestProfiles)
                         {
                             <div class="col-6">
                                 <p><strong>Guest:</strong> @guest.FirstName</p> 

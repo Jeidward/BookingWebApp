@@ -1,4 +1,4 @@
-﻿@using Models.Entities
+﻿@model List<ApartmentViewModel>
 @{
     ViewData["Title"] = "Apartment List";
 }
@@ -6,7 +6,7 @@
 <h1 class="text-center">Our Apartments</h1>
 
 <div class="apartment-list">
-    @foreach (Apartment apartment in Model)
+    @foreach (var apartment in Model)
     {
         <div class="apartment-card">
             <div class="apartment-card__image">

@@ -1,4 +1,4 @@
-﻿
+﻿@model BookingViewModel
 
 <div class="container">
     <h2>Booking Details</h2>
@@ -7,7 +7,7 @@
         <div class="col-md-8">
             <div class="card mb-3">
                 <div class="card-header">
-                    <h5>@Model.Apartment.Name</h5>
+                    <h5>@Model.ApartmentViewModel.Name</h5>
                 </div>
                 <div class="card-body">
                     <div class="row">
@@ -23,7 +23,7 @@
                             <p><strong>Guests:</strong> @ViewData["numberOfGuests"]</p>
                         </div>
                         <div class="col-md-6">
-                            <img src="@Url.Content("~/" + Model.Apartment.ImageUrl)" class="img-fluid" alt="@Model.Apartment.Name" />
+                            <img src="@Url.Content("~/" + Model.ApartmentViewModel.ImageUrl)" class="img-fluid" alt="@Model.ApartmentViewModel.Name" />
                         </div>
                     </div>
                 </div>
@@ -35,7 +35,7 @@
                 </div>
                 <div class="card-body">
                     <div class="d-flex justify-content-between mb-2">
-                        <span>@Model.Apartment.PricePerNight.ToString("C") × @ViewData["numberOfNights"] nights</span>
+                        <span>@Model.ApartmentViewModel.PricePerNight.ToString("C") × @ViewData["numberOfNights"] nights</span>
                     </div>
                     <hr />
                     <div class="d-flex justify-content-between">

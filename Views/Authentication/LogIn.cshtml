@@ -1,4 +1,4 @@
-﻿@model User;
+﻿@model UserViewModel
 @{
     ViewBag.Title = "Login";
 }
@@ -11,7 +11,7 @@
             <div class="w-75 p-4 p-md-5">
                 <h2 class="text-end">Login</h2>
                 <!-- Parameters for beginform, Method name, controllername, posttype -->
-                @using (Html.BeginForm("LogInUser", "Authentication", FormMethod.Post))
+                @using (Html.BeginForm("LogIn", "Authentication", FormMethod.Post))
                 {
                     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 

@@ -2,6 +2,7 @@
 using Models.Entities;
 using Microsoft.Extensions.Configuration;
 using Services;
+using BookingWebApp.ViewModels;
 
 namespace BookingWebApp.Controllers
 {
@@ -17,14 +18,16 @@ namespace BookingWebApp.Controllers
 
         public IActionResult ShowApartmentList()
         {
-            // this will get  a list of apartments from the  repository/database
-            return View("~/Views/Apartment/ApartmentList.cshtml", _apartmentService.GetAllApartments(3));
+            List<Apartment> apartments = _apartmentService.GetAllApartments(3);
+            List<ApartmentViewModel> apartmentsViewModel = ApartmentViewModel.ConvertToViewModel(apartments);
+            return View(apartmentsViewModel);
         }
 
         public IActionResult ShowApartmentPage(int id)
         {
             Apartment selectedApartment = _apartmentService.GetApartment(id);
-            return View("~/Views/Apartment/Apartment.cshtml", selectedApartment);
+            ApartmentViewModel apartmentViewModel = ApartmentViewModel.ConvertToViewModel(selectedApartment);
+            return View(apartmentViewModel);
         }
     }
 }
