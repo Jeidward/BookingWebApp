@@ -4,18 +4,21 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - BookingWebApp</title>
+    <title>@ViewData["Title"] - Sun & Escape Apartment</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/Booking_Application.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Booking_Application</a>
+        <nav class="navbar navbar-expand-sm navbar-light bg-white border-bottom box-shadow mb-0">
+            <div class="container">
+                <a class="navbar-brand d-flex align-items-center" asp-area="" asp-controller="Home" asp-action="Index">
+                    <div class="bg-dark rounded-circle me-2" style="width: 40px; height: 40px;"></div>
+                    <span class="fs-4">LOGO</span>
+                </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                aria-expanded="false" aria-label="Toggle navigation">
+                        aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
@@ -23,45 +26,39 @@
                         int? userId = HttpContextAccessor.HttpContext?.Session?.GetInt32("UserId");
                         bool hasBooking = HttpContextAccessor.HttpContext?.Session.GetInt32("HasBooking") == 1;
                     }
-                    <ul class="navbar-nav flex-grow-1 justify-content-end gap-3">
+                    <ul class=" navbar-nav flex-grow-1 justify-content-end gap-3">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            <a class="nav-link text-dark px-3" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Apartment" asp-action="ShowApartmentList">Apartment</a>
+                            <a class="nav-link text-dark px-3" asp-controller="Apartment" asp-action="ShowApartmentList">Apartments</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Contact</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                            <a class="nav-link text-dark px-3" asp-controller="Home" asp-action="Contact">Contact</a>
                         </li>
 
                         @if (userId.HasValue && userId.Value > 0)
-                            {
-                            if(hasBooking)
+                        {
+                            if (hasBooking)
                             {
                                 <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-controller="Booking" asp-action="MyBookings">My bookings</a>
+                                    <a class="nav-link text-dark px-3" asp-controller="Booking" asp-action="MyBookings">My Bookings</a>
                                 </li>
                             }
-                        
                             <li class="nav-item">
-                                <span class="navbar-text">
-                                    Welcome, User @userId!
-                                </span>
+                                <a class="btn btn-outline-dark" asp-controller="Account" asp-action="Profile">Profile</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-white btn btn-dark" asp-controller="Authentication" asp-action="LogOut">Logout</a>
+                                <a class="btn btn-dark" asp-controller="Authentication" asp-action="LogOut">Log out</a>
                             </li>
                         }
                         else
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-white btn btn-dark" asp-controller="Authentication" asp-action="LogIn">Login</a>
+                                <a class="nav-link text-dark btn btn-light" asp-controller="Authentication" asp-action="Register">Sign up</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark btn btn-light" asp-controller="Authentication" asp-action="Register">Register</a>
+                                <a class="nav-link text-white btn btn-dark" asp-controller="Authentication" asp-action="LogIn">Log in</a>
                             </li>
                         }
                     </ul>
@@ -69,17 +66,30 @@
             </div>
         </nav>
     </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
+
+    <div>
+        @RenderBody()
     </div>
 
-    <footer class="border-top footer text-muted">
+    <footer class="border-top footer text-muted bg-light py-4 mt-5">
         <div class="container">
-            &copy; 2025 - Booking_Application - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>Sun & Escape Apartment</h5>
+                    <p>Your dream stay in Aruba.</p>
+                    <p>&copy; 2025 - Sun & Escape - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a></p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <div class="d-flex gap-3 justify-content-md-end fs-4">
+                        <a href="#" class="text-muted"><i class="fab fa-facebook"></i></a>
+                        <a href="#" class="text-muted"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-muted"><i class="fab fa-twitter"></i></a>
+                    </div>
+                </div>
+            </div>
         </div>
     </footer>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>

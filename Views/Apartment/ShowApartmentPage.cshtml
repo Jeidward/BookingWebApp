@@ -1,80 +1,213 @@
 ﻿@model ApartmentViewModel
-
 @{
     ViewData["Title"] = Model.Name;
 }
 
-<h2>@Model.Name</h2>
-
-<div class="container">
-    <!-- Row for the main content -->
-    <div class="row">
-        <!-- Main Image + Info -->
-        <div class="col-md-8">
-            <div class="mb-3">
-                <img src="@Url.Content("~/" + Model.ImageUrl)" alt="@Model.Name" class="img-fluid w-100" style="object-fit: cover; max-height: 400px;" />
-            </div>
-            <p>@Model.Description</p>
-            <p>Price per Night: @Model.PricePerNight.ToString("C")</p>
-            <p>Rating: @Model.Rating</p>
-            <p>Reviews: @Model.ReviewsCount</p>
+<div class="container-fluid mt-4">
+    <div class="container">
+        <div class="d-flex align-items-center mb-3">
+            <a class="text-dark me-3" asp-controller="Apartment" asp-action="ShowApartmentList"> 
+                <i class="fas fa-arrow-left fs-4"></i>
+            </a>
+            <h1 class="mb-0">@Model.Name</h1>
         </div>
-
-        <!-- Gallery Images -->
-        <div class="col-md-4">
-            <div class="row g-2">
-                @foreach (var image in Model.Gallery)
-                {
-                    <div class="col-6">
-                        <img src="@Url.Content("~/" + image)" alt="Apartment extra image"
-                             class="img-fluid w-100" style="object-fit: cover; max-height: 150px;" />
-                    </div>
-                }
+    </div>
+    <div class="container mb-5">
+        <div class="row g-2">
+            <div class="col-md-6">
+                <img src="@Url.Content("~/" + Model.ImageUrl)" alt="@Model.Name" class="img-fluid w-100 rounded" 
+                    style="object-fit: cover; height: 400px;" />
+            </div>
+            <div class="col-md-6">
+                <div class="row g-2 h-100">
+                    @foreach (var image in Model.Gallery.Take(4))
+                    {
+                        <div class="col-6">
+                            <img src="@Url.Content("~/" + image)" alt="Apartment view" 
+                                class="img-fluid w-100 rounded" style="object-fit: cover; height: 198px;" />
+                        </div>
+                    }
+                </div>
             </div>
         </div>
     </div>
-</div>
-<!-- Add this to your Apartment.cshtml -->
-<div class="col-md-4">
-    <div class="card">
-        <div class="card-body">
-            <h5 class="card-title">@Model.PricePerNight.ToString("C") / night</h5>
-
-            <form asp-controller="Booking" asp-action="CreateBooking" method="post">
-                <input type="hidden" name="apartmentId" value="@Model.Id" />
-
-                <div class="row mb-3">
-                    <div class="col">
-                        <label>CHECK-IN</label>
-                        <input type="date" class="form-control" name="checkInDate" required />
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-7 mb-4">
+                <h2 class="mb-4">About this apartment</h2>
+                <p class="lead mb-4">@Model.Description</p>
+                
+                <h3 class="mb-3">What this place offers</h3>
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <ul class="list-unstyled">
+                            <li class="d-flex align-items-center mb-3">
+                                <i class="fas fa-leaf me-3 text-secondary"></i>
+                                <span>Garden view</span>
+                            </li>
+                            <li class="d-flex align-items-center mb-3">
+                                <i class="fas fa-wifi me-3 text-secondary"></i>
+                                <span>Wifi</span>
+                            </li>
+                            <li class="d-flex align-items-center mb-3">
+                                <i class="fas fa-washer me-3 text-secondary"></i>
+                                <span>Free washer - in building</span>
+                            </li>
+                            <li class="d-flex align-items-center mb-3">
+                                <i class="fas fa-snowflake me-3 text-secondary"></i>
+                                <span>Central air conditioning</span>
+                            </li>
+                            <li class="d-flex align-items-center mb-3">
+                                <i class="fas fa-refrigerator me-3 text-secondary"></i>
+                                <span>Refrigerator</span>
+                            </li>
+                        </ul>
                     </div>
-                    <div class="col">
-                        <label>CHECK-IN TIME</label>
-                        <input type="time" class="form-control" name="CheckInTime" required />
-                    </div>
-
-                    <div class="col">
-                        <label>CHECKOUT</label>
-                        <input type="date" class="form-control" name="checkOutDate" required />
-                    </div>
-                    <div class="col">
-                        <label>CHECKOUT TIME</label>
-                        <input type="time" class="form-control" name="CheckOutTime" required />
+                    <div class="col-md-6">
+                        <ul class="list-unstyled">
+                            <li class="d-flex align-items-center mb-3">
+                                <i class="fas fa-utensils me-3 text-secondary"></i>
+                                <span>Kitchen</span>
+                            </li>
+                            <li class="d-flex align-items-center mb-3">
+                                <i class="fas fa-paw me-3 text-secondary"></i>
+                                <span>Pets allowed</span>
+                            </li>
+                            <li class="d-flex align-items-center mb-3">
+                                <i class="fas fa-dryer me-3 text-secondary"></i>
+                                <span>Dryer</span>
+                            </li>
+                            <li class="d-flex align-items-center mb-3">
+                                <i class="fas fa-video me-3 text-secondary"></i>
+                                <span>Security cameras on property</span>
+                            </li>
+                        </ul>
                     </div>
                 </div>
-
-                <div class="mb-3">
-                    <label>GUESTS</label>
-                    <select class="form-control" name="numberOfGuests">
-                        <option value="1" selected>1 guest</option>
-                        <option value="2">2 guests</option>
-                        <option value="3">3 guests</option>
-                        <option value="4">4 guests</option>
-                    </select>
+                @* <button class="btn btn-outline-dark px-4 mb-5">Show all @Model.Amenities.Count amenities</button> *@
+                
+                <!-- Reviews Section -->
+                <div class="mt-5">
+                    <div class="d-flex align-items-center mb-4">
+                        <i class="fas fa-star me-2"></i>
+                        <span class="h4 mb-0">@Model.Rating</span>
+                        <span class="mx-2">·</span>
+                        <span class="h4 mb-0">@Model.ReviewsCount reviews</span>
+                    </div>
+                    
+                    <!-- Rating Bars -->
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span>Cleanliness</span>
+                                <div class="d-flex align-items-center">
+                                    <div class="progress me-2" style="width: 150px; height: 6px;">
+                                        <div class="progress-bar bg-dark" role="progressbar" style="width: 100%"></div>
+                                    </div>
+                                    <span>5.0</span>
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span>Communication</span>
+                                <div class="d-flex align-items-center">
+                                    <div class="progress me-2" style="width: 150px; height: 6px;">
+                                        <div class="progress-bar bg-dark" role="progressbar" style="width: 100%"></div>
+                                    </div>
+                                    <span>5.0</span>
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span>Check-in</span>
+                                <div class="d-flex align-items-center">
+                                    <div class="progress me-2" style="width: 150px; height: 6px;">
+                                        <div class="progress-bar bg-dark" role="progressbar" style="width: 100%"></div>
+                                    </div>
+                                    <span>5.0</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span>Location</span>
+                                <div class="d-flex align-items-center">
+                                    <div class="progress me-2" style="width: 150px; height: 6px;">
+                                        <div class="progress-bar bg-dark" role="progressbar" style="width: 98%"></div>
+                                    </div>
+                                    <span>4.9</span>
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span>Value</span>
+                                <div class="d-flex align-items-center">
+                                    <div class="progress me-2" style="width: 150px; height: 6px;">
+                                        <div class="progress-bar bg-dark" role="progressbar" style="width: 94%"></div>
+                                    </div>
+                                    <span>4.7</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Individual Reviews -->
+                    <div class="border-top pt-4">
+                        <div class="d-flex mb-4">
+                            <img src="~/IMG/profile.jpg" alt="User" class="rounded-circle me-3" style="width: 50px; height: 50px;">
+                            <div>
+                                <h5 class="mb-1">Jose</h5>
+                                <p class="text-muted mb-0">December 2021</p>
+                            </div>
+                            <div class="ms-auto">
+                                <i class="fas fa-star"></i> 5.0
+                            </div>
+                        </div>
+                        <p>Host was very attentive.</p>
+                    </div>
                 </div>
-
-                <button type="submit" class="btn btn-primary w-100">Book now</button>
-            </form>
+            </div>
+            
+            <!--Booking Widget -->
+            <div class="col-lg-5">
+                <div class="card shadow-sm" style="top: 20px; z-index: 100;">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h3 class="mb-0">$@Model.PricePerNight.ToString("0") <span class="fs-5 text-muted">/ night</span></h3>
+                        </div>
+                        <form asp-controller="Booking" asp-action="CreateBooking" method="post">
+                            <input type="hidden" name="apartmentId" value="@Model.Id" />
+                            
+                            <div class="row g-0 border rounded mb-3">
+                                <div class="col-6 border-end">
+                                    <div class="p-3">
+                                        <label class="form-label fw-bold mb-1">CHECK-IN</label>
+                                        <input type="date" class="form-control border-0 p-0" name="checkInDate" required />
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="p-3">
+                                        <label class="form-label fw-bold mb-1">CHECKOUT</label>
+                                        <input type="date" class="form-control border-0 p-0" name="checkOutDate" required />
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="border rounded p-3 mb-4">
+                                <label class="form-label fw-bold mb-1">GUESTS</label>
+                                <select class="form-select border-0 p-0" name="numberOfGuests">
+                                    <option value="1"selected>1 guest</option>
+                                    <option value="2">2 guests</option>
+                                    <option value="3">3 guests</option>
+                                    <option value="4">4 guests</option>
+                                </select>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-dark w-100 py-3 mb-3">Book now</button>
+                            <button type="button" class="btn btn-secondary w-100 py-3 mb-4">Reserve</button>
+                            
+                            <p class="text-center mb-4">You won't be charged yet</p>
+                        </form>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>

@@ -37,7 +37,7 @@ namespace BookingWebApp.Controllers
                 }
             }
 
-            if(_bookingService.CheckBookingDate(ViewModel.CheckInDate, ViewModel.CheckOutDate)) // may use viewModel for this insead of doing it here.
+            if(_bookingService.CheckBookingDate(ViewModel.CheckInDate, ViewModel.CheckOutDate)) 
             {
                 throw new Exception("check in date cannot be bigger than checkout date");
             }
@@ -190,7 +190,6 @@ namespace BookingWebApp.Controllers
             BookingCompositeViewModel BookingCompositeViewModel = new BookingCompositeViewModel
             {
                 BookingViewModel = BookingViewModelHelper.ConvertToViewModel(booking)
-
             };
 
             return View(BookingCompositeViewModel);

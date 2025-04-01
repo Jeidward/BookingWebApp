@@ -312,5 +312,200 @@ body {
 
 
 
+/*Home style*/
+
+/* Base styles */
+:root {
+    --primary-color: #12123e; /* Dark blue from the design */
+    --secondary-color: #f5f5f5; /* Light gray background */
+    --accent-color: #f7f2eb; /* Light beige for testimonials section */
+    --text-color: #333;
+}
+
+html {
+    position: relative;
+    min-height: 100%;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: var(--text-color);
+    margin: 0;
+    padding: 0;
+}
+
+/* Header */
+.navbar {
+    padding: 15px 0;
+}
+
+.logo-circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #000;
+}
+
+/* Wave container for the hero section */
+.wave-container {
+    position: relative;
+    height: 150px;
+    width: 100%;
+    overflow: hidden;
+    margin-bottom: -10px; /* Remove any gap between wave and blue section */
+}
+
+    .wave-container svg {
+        display: block;
+        width: 100%;
+        height: 100%;
+    }
+
+/* Blue background section */
+.bg-primary-custom {
+    background-color: var(--primary-color);
+}
+
+/* Carousel rounded corners */
+.carousel-rounded {
+    overflow: hidden;
+    border-radius: 0.5rem;
+    box-shadow: 0 .5rem 1rem rgba(0,0,0,.15);
+}
+
+    .carousel-rounded .carousel-item img {
+        height: 700px;
+        object-fit: cover;
+    }
+
+/* Rounded corners for carousel controls to match design */
+.carousel-control-prev,
+.carousel-control-next {
+    width: 10%;
+}
 
 
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .display-4 {
+        font-size: 2.5rem;
+    }
+
+    .display-5 {
+        font-size: 2rem;
+    }
+
+    .carousel-rounded .carousel-item img {
+        height: 300px;
+    }
+
+    .wave-container {
+        height: 100px;
+    }
+}
+
+/* Fix for Font Awesome washer icon */
+.fa-washer:before {
+    content: "\f898"; /* Use the washer icon code */
+}
+
+/* Star ratings */
+.text-warning .fas,
+.text-warning .far,
+.text-warning .fa-star-half-alt {
+    color: #ffc107;
+}
+
+/* Shadow effects */
+.shadow-sm {
+    box-shadow: 0 .125rem .25rem rgba(0,0,0,.075);
+}
+
+.shadow {
+    box-shadow: 0 .5rem 1rem rgba(0,0,0,.15);
+}
+
+
+
+
+
+
+/*Apartment page*/
+/* Apartment Details Page Styling */
+
+/* Fix for Font Awesome icons */
+.fa-refrigerator:before {
+    content: "\f26e"; /* Using box icon as refrigerator */
+}
+
+.fa-dryer:before {
+    content: "\f1de"; /* Using circular icon as dryer */
+}
+
+/* Progress bars for reviews */
+.progress {
+    background-color: #e9ecef;
+    border-radius: 3px;
+}
+
+.progress-bar {
+    background-color: #222;
+}
+
+
+
+/* Icon styling for amenities */
+.amenity-icon {
+    width: 24px;
+    color: #555;
+}
+
+/* Image gallery hover effect */
+.gallery-image {
+    transition: opacity 0.2s ease;
+}
+
+    .gallery-image:hover {
+        opacity: 0.9;
+    }
+
+
+/* Button styling */
+.btn-dark {
+    background-color: #222;
+    border-color: #222;
+}
+
+    .btn-dark:hover {
+        background-color: #000;
+        border-color: #000;
+    }
+
+.btn-secondary {
+    background-color: #ccc;
+    border-color: #ccc;
+    color: #222;
+}
+
+    .btn-secondary:hover {
+        background-color: #bbb;
+        border-color: #bbb;
+        color: #000;
+    }
+
+/* Reviews section styling */
+.review-avatar {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+}
+
+
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .gallery-image {
+        height: 150px !important;
+    }
+}
