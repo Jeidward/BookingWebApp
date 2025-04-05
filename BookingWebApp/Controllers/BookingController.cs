@@ -31,11 +31,15 @@ namespace BookingWebApp.Controllers
             
             if (!ModelState.IsValid)
             {
-               
                 return View("~/Views/Apartment/ShowApartmentPage.cshtml",apartmentViewModel);
             }
             DateTime CheckIn = viewModel.CheckInDate.Date.Add(viewModel.CheckInTime.TimeOfDay);
             DateTime CheckOut = viewModel.CheckOutDate.Date.Add(viewModel.CheckOutTime.TimeOfDay);
+            
+            if (_bookingService.IsOverlappingBookingExist(viewModel.ApartmentId, CheckIn, CheckOut))
+            {
+                return View("~/Views/Apartment/ShowApartmentPage.cshtml", apartmentViewModel);
+            }
 
             int? userId = HttpContext.Session.GetInt32("UserId");
             {
