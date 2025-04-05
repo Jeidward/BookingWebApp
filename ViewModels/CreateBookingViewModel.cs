@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Runtime.InteropServices.JavaScript;
 
 namespace BookingWebApp.ViewModels
 {
@@ -8,8 +9,8 @@ namespace BookingWebApp.ViewModels
 
         [DataType(DataType.Date)]
         public DateTime CheckInDate { get; set; }
-
-        [DataType(DataType.Date)]
+       
+        [DateRange]
         public DateTime CheckOutDate { get; set; }
 
         [DataType(DataType.Time)]
@@ -19,5 +20,18 @@ namespace BookingWebApp.ViewModels
         public DateTime CheckOutTime { get; set; }
 
         public int ApartmentId { get; set; }
+
+        public CreateBookingViewModel()
+        {
+            CheckInDate = DateTime.Today;
+            CheckOutDate = DateTime.Today.AddDays(1);
+
+            CheckInTime = DateTime.Today.AddHours(15); 
+            CheckOutTime = DateTime.Today.AddHours(11); 
+
+     
+            NumberOfGuests = 1;
+        }
+      
     }
 }

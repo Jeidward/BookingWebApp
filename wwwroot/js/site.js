@@ -21,4 +21,33 @@
       }
     }
 
-    document.addEventListener('DOMContentLoaded', populateCountries);
+document.addEventListener('DOMContentLoaded', populateCountries);
+
+
+
+
+    function typeWriter3D(element, text, speed = 200) {
+      const originalText = text;
+    element.innerHTML = '';
+    let i = 0;
+
+    function type() {
+        if (i < originalText.length) {
+          const char = document.createElement('span');
+    char.className = 'char';
+    char.innerHTML = originalText.charAt(i);
+    char.style.animationDelay = `${i * 0.1}s`;
+    element.appendChild(char);
+    i++;
+    setTimeout(type, speed);
+        }
+      }
+
+    type();
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      const nameElement = document.getElementById('userName');
+    const originalText = nameElement.innerText;
+    typeWriter3D(nameElement, originalText, 200);
+    });

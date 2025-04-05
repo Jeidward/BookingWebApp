@@ -88,7 +88,7 @@
                 
                 <!-- Reviews Section -->
                 <div class="mt-5">
-                    <div class="d-flex align-items-center mb-4">
+                    <div class="d align-items-center mb-4">
                         <i class="fas fa-star me-2"></i>
                         <span class="h4 mb-0">@Model.Rating</span>
                         <span class="mx-2">·</span>
@@ -175,19 +175,26 @@
                         <form asp-controller="Booking" asp-action="CreateBooking" method="post">
                             <input type="hidden" name="apartmentId" value="@Model.Id" />
                             
+                            @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+                            <!-- Date and Time Selection -->
                             <div class="row g-0 border rounded mb-3">
-                                <div class="col-6 border-end">
-                                    <div class="p-3">
-                                        <label class="form-label fw-bold mb-1">CHECK-IN</label>
-                                        <input type="date" class="form-control border-0 p-0" name="checkInDate" required />
-                                    </div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="p-3">
-                                        <label class="form-label fw-bold mb-1">CHECKOUT</label>
-                                        <input type="date" class="form-control border-0 p-0" name="checkOutDate" required />
-                                    </div>
-                                </div>
+	                            <div class="col-6 border-end">
+		                            <div class="p-3">
+			                            <label class="form-label fw-bold mb-1">CHECK-IN</label>
+			                            <input asp-for="Booking.CheckInDate" type="date" class="form-control border-0 p-0" name="checkInDate" required />
+			                            <label class="form-label fw-bold mb-1 mt-2">TIME</label>
+			                            <input asp-for="Booking.CheckInTime" type="time" class="form-control border-0 p-0" name="checkInTime" required />
+		                            </div>
+	                            </div>
+	                            <div class="col-6">
+		                            <div class="p-3">
+			                            <label class="form-label fw-bold mb-1">CHECKOUT</label>
+			                            <input asp-for="Booking.CheckOutDate" type="date" class="form-control border-0 p-0" name="checkOutDate" required />
+			                            @Html.ValidationMessageFor(m => m.Booking.CheckOutDate, null, new { @class = "text-danger" })
+			                            <label class="form-label fw-bold mb-1 mt-2">TIME</label>
+			                            <input asp-for="Booking.CheckOutTime" type="time" class="form-control border-0 p-0" name="checkOutTime" required />
+		                            </div>
+	                            </div>
                             </div>
                             
                             <div class="border rounded p-3 mb-4">
@@ -211,3 +218,37 @@
         </div>
     </div>
 </div>
+
+
+<button type="button" id="showLoginModalButton" class="d-none" data-bs-toggle="modal" data-bs-target="#loginModal">
+	Show Login
+</button>
+
+<div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="loginModalLabel">Login Required</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<p>You need to be logged in to make a booking.</p>
+			</div>
+			<div class="modal-footer">
+				<a href="@Url.Action("Login", "Authentication")" class="btn btn-primary">Go to Login</a>
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        @if (ViewBag.ShowLoginModal == true)
+        {
+            <text>
+            document.getElementById('showLoginModalButton').click();
+            </text>
+        }
+    });
+</script>

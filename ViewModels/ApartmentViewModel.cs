@@ -13,6 +13,7 @@ namespace BookingWebApp.ViewModels
         public decimal PricePerNight { get; set; }
         public decimal Rating { get; set; }
         public int ReviewsCount { get; set; }
+        public CreateBookingViewModel Booking { get; set; }
 
         public ApartmentViewModel()
         {
@@ -28,7 +29,7 @@ namespace BookingWebApp.ViewModels
 
         public static ApartmentViewModel ConvertToViewModel(Apartment apartment)
         {
-            return new ApartmentViewModel() { Id = apartment.Id, Name = apartment.Name, Description = apartment.Description, ImageUrl = apartment.ImageUrl, Adress = apartment.Adress, Gallery = apartment.Gallery, PricePerNight = apartment.PricePerNight, Rating = apartment.Rating, ReviewsCount = apartment.ReviewsCount };
+            return new ApartmentViewModel() { Id = apartment.Id, Name = apartment.Name, Description = apartment.Description, ImageUrl = apartment.ImageUrl, Adress = apartment.Adress, Gallery = apartment.Gallery, PricePerNight = apartment.PricePerNight, Rating = apartment.Rating, ReviewsCount = apartment.ReviewsCount, Booking = new CreateBookingViewModel(){ApartmentId = apartment.Id} };
         }
         public static List<ApartmentViewModel> ConvertToViewModel(List<Apartment> apartments) // apartment list page.
         {

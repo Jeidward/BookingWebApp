@@ -1,5 +1,6 @@
 ﻿using Enums;
 using Models.Entities;
+using System.ComponentModel.DataAnnotations;
 
 namespace BookingWebApp.ViewModels
 {

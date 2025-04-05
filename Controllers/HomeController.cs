@@ -2,6 +2,7 @@ using System.Diagnostics;
 using Models.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Services;
+using BookingWebApp.ViewModels;
 
 namespace BookingWebApp.Controllers
 {
@@ -9,16 +10,32 @@ namespace BookingWebApp.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly BookingService _bookingService;
-
-        public HomeController(ILogger<HomeController> logger,BookingService bookingService)
+        private readonly UserService _userService;
+        public HomeController(ILogger<HomeController> logger,BookingService bookingService, UserService userService)
         {
             _logger = logger;
             _bookingService = bookingService;
+            _userService = userService; 
         }
 
         public IActionResult Index()
         {
-            return View();
+            int? userId = HttpContext.Session.GetInt32("UserId");
+
+            if (userId == null)
+            {
+                UserViewModel user = new UserViewModel();
+                return View(user);
+            }
+            else
+            {
+                User userName = _userService.GetUser(userId.Value);
+
+                UserViewModel viewModel = UserViewModel.ConvertToViewModel(userName);
+
+                return View(viewModel);
+
+            }
         }
 
         public IActionResult Privacy()
