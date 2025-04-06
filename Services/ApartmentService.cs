@@ -22,7 +22,6 @@ namespace Services
         public Apartment GetApartment(int id)
         {
             Apartment selectedApartment = _IapartmentRepository.GetApartment(id);
-
             selectedApartment.SetGallery(_IapartmentRepository.GetGallery(id));
             return selectedApartment;
         }

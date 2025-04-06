@@ -39,21 +39,17 @@ namespace MSSQL
                     cmd.Parameters.AddWithValue("Id", id);
                     using (SqlDataReader reader = cmd.ExecuteReader())
                     {
-                        while (reader.Read())
+                        reader.Read();
                         {
-                            AccountHolder accountHolder = new AccountHolder(
+                            return new AccountHolder(
 
                                 Convert.ToInt32(reader["AccountHolderId"])
 
                             );
-
-
-                            return accountHolder;
                         }
                     }
                 }
             }
-            return new AccountHolder(-1);
         }
 
         /// <summary>
@@ -73,22 +69,17 @@ namespace MSSQL
                     cmd.Parameters.AddWithValue("Id", id);
                     using (SqlDataReader reader = cmd.ExecuteReader())
                     {
-                        while (reader.Read())
+                        reader.Read();
                         {
-                            AccountHolder accountHolder = new AccountHolder(
+                            return new AccountHolder(
 
                                 Convert.ToInt32(reader["AccountHolderId"])
 
                             );
-
-
-                            return accountHolder;
                         }
                     }
                 }
             }
-
-            return new AccountHolder(-1);
         }
 
         public bool HasBookingForAccountHolder(int accountId)
@@ -116,9 +107,7 @@ namespace MSSQL
                         return false;
                     }
                 }
-
             }
-
         }
     }
 }

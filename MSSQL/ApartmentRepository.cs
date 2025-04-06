@@ -48,7 +48,6 @@ namespace MSSQL
 
         public Apartment GetApartment(int id)
         {
-
             using (SqlConnection conn = new SqlConnection(_connectionString))
             {
                 conn.Open();
@@ -61,9 +60,9 @@ namespace MSSQL
                     cmd.Parameters.AddWithValue("Id", id);
                     using (SqlDataReader reader = cmd.ExecuteReader())
                     {
-                        while (reader.Read())
+                        reader.Read();
                         {
-                            Apartment apartment = new(
+                            return new(
                                 Convert.ToInt32(reader["ApartmentId"]),
                                  Convert.ToString(reader["Name"])!,
                                  Convert.ToString(reader["Description"])!,
@@ -73,11 +72,9 @@ namespace MSSQL
                                  Convert.ToInt32(reader["ReviewsCount"]),
                                  Convert.ToString(reader["Adress"])!
                             );
-                            return apartment;
                         }
                     }
                 }
-                return new(-1,"","","",0,0,0,"");
             }
         }
 

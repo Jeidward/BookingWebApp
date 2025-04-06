@@ -1,3 +1,4 @@
+using BookingWebApp.ViewModels;
 using MSSQL;
 using Services;
 using Interfaces;
@@ -35,6 +36,7 @@ namespace BookingWebApp
             builder.Services.AddScoped<AccountHolderService>();
             builder.Services.AddScoped<UserService>();
             builder.Services.AddScoped<ApartmentService>();
+           
 
 
 

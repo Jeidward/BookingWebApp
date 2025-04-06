@@ -8,6 +8,7 @@ namespace BookingWebApp.ViewModels
         public int NumberOfGuests { get; set; }
 
         [DataType(DataType.Date)]
+        [IsOverlappingBookingExist]
         public DateTime CheckInDate { get; set; }
        
         [DateRange]

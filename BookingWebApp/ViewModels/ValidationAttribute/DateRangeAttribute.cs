@@ -1,4 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Models.Entities;
+
 namespace BookingWebApp.ViewModels
 {
     public class DateRangeAttribute: ValidationAttribute

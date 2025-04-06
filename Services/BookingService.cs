@@ -45,7 +45,7 @@ namespace Services
 
         public Booking GetBookingWithApartment(int bookingId)
         {
-            Booking booking = _bookingRepository.GetBookingById(bookingId)!;
+            Booking booking = _bookingRepository.GetBookingById(bookingId);
 
             booking.SetApartment(_apartmentRepository.GetApartment(_bookingRepository.GetApartment(bookingId)));
             booking.SetGuestProfile(_bookingRepository.GetBookingGuests(bookingId));

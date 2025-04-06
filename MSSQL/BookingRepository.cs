@@ -206,14 +206,12 @@ namespace MSSQL
                             return int.Parse(reader[0].ToString()!);
                         }
                     }
-
                 }
                 return 0;
-
             }
         }
 
-        public Booking? GetBookingById(int bookingId)
+        public Booking GetBookingById(int bookingId)
         {
             using (SqlConnection conn = new SqlConnection(_connectionString))
             {
@@ -227,24 +225,20 @@ namespace MSSQL
 
                     using (SqlDataReader reader = cmd.ExecuteReader())
                     {
-                        while (reader.Read())
+                        reader.Read();
                         {
                             BookingStatus Status = (BookingStatus)Enum.Parse(typeof(BookingStatus), reader["Status"].ToString()!);
-                            Booking booking = new(
+                            return  new Booking( 
 
                                 Convert.ToInt32(reader["BookingId"]),
                                 Convert.ToDateTime(reader["CheckInDate"]),
                                 Convert.ToDateTime(reader["CheckOutDate"]),
                                 Convert.ToDecimal(reader["TotalPrice"]),
                                 Status
-                                );
-
-                            return booking;
+                            );
                         }
                     }
-
                 }
-                return null;
             }
         }
 
