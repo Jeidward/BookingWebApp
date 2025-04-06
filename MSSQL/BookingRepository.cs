@@ -311,107 +311,11 @@ namespace MSSQL
                     cmd.Parameters.AddWithValue("@ApartmentId", apartmentId);
                     cmd.Parameters.AddWithValue("@CheckInDate", checkInDate);
                     cmd.Parameters.AddWithValue("@CheckOutDate", checkOutDate);
-                    
-                    using SqlDataReader reader = cmd.ExecuteReader();
-                    {
-                        while (reader.Read())
-                        {
-                            return true;
-                        }
-                        return false;
-                    }
+                    int count = (int)cmd.ExecuteScalar(); 
+                    return count > 0; 
                 }
+                
             }
         }
     }
 }
-
-        //public bool IsGuestAlreadyBooked(int guestProfileId, DateTime checkIn, DateTime checkOut)
-        //{
-
-        //    using (SqlConnection conn = new SqlConnection(_connectionString))
-        //    {
-        //        conn.Open();
-
-
-        //        string query = @"SELECT COUNT(*) FROM BookingGuests bg
-        //                     JOIN Bookings b ON bg.BookingId = b.BookingId
-        //                     WHERE bg.GuestProfileId = @GuestProfileId
-        //                     AND((b.CheckInDate < @CheckOut) AND(b.CheckOutDate > @CheckIn))";
-
-
-
-        //        using (SqlCommand cmd = new SqlCommand(query, conn))
-        //        {
-        //            cmd.Parameters.AddWithValue("@GuestProfileId", guestProfileId);
-        //            cmd.Parameters.AddWithValue("@CheckOut", checkOut);
-        //            cmd.Parameters.AddWithValue("@CheckIn", checkIn);
-
-        //            int count = (int)cmd.ExecuteScalar();//will return the first row based on the query
-        //            return count > 0;
-        //        }
-
-
-        //    }
-
-        //}
-
-        //public List<Booking> GetBookingsForApartment(int apartmentId, DateTime? startDate = null, DateTime? endDate = null)
-//        {
-//            List<Booking> bookings = new List<Booking>();
-
-//            using (SqlConnection conn = new SqlConnection(_connectionString))
-//            {
-//                conn.Open();
-
-//                string query = @"
-//            SELECT BookingId, CheckInDate, CheckOutDate, TotalPrice, Status, AccountHolderId 
-//            FROM Bookings 
-//            WHERE ApartmentId = @ApartmentId
-//            AND Status != @CancelledStatus"; 
-
-          
-//                if (startDate.HasValue && endDate.HasValue)
-//                {
-//                    query += @" AND (
-//                (CheckInDate < @EndDate) AND 
-//                (CheckOutDate > @StartDate)
-//            )";
-//                }
-
-//                using (SqlCommand cmd = new SqlCommand(query, conn))
-//                {
-//                    cmd.Parameters.AddWithValue("@ApartmentId", apartmentId);
-//                    cmd.Parameters.AddWithValue("@CancelledStatus", BookingStatus.Cancelled.ToString());
-
-//                    if (startDate.HasValue && endDate.HasValue)
-//                    {
-//                        cmd.Parameters.AddWithValue("@StartDate", startDate.Value);
-//                        cmd.Parameters.AddWithValue("@EndDate", endDate.Value);
-//                    }
-
-//                    using (SqlDataReader reader = cmd.ExecuteReader())
-//                    {
-//                        while (reader.Read())
-//                        {
-//                            Booking booking = new Booking(
-//                                reader.GetDateTime(reader.GetOrdinal("CheckInDate")),
-//                                reader.GetDateTime(reader.GetOrdinal("CheckOutDate"))
-//                            )
-//                            {
-//                                Id = reader.GetInt32(reader.GetOrdinal("BookingId")),
-//                                TotalPrice = reader.GetDecimal(reader.GetOrdinal("TotalPrice")),
-//                                Status = Enum.Parse<BookingStatus>(reader.GetString(reader.GetOrdinal("Status")))
-//                            };
-
-//                            bookings.Add(booking);
-//                        }
-//                    }
-//                }
-//            }
-
-//            return bookings;
-//        }
-
-//    }
-//}
