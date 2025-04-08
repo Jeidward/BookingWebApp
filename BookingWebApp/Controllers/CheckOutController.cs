@@ -70,29 +70,23 @@ namespace BookingWebApp.Controllers
             {
                 return View(viewModel);
             }
-
-            if (viewModel.SkipReview == true)
-            {
-                // no review save to the database
-            }
-
+            
             int? userId = HttpContext.Session.GetInt32("UserId");
-
             var booking = HttpContext.Session.GetString("booking");
-
             var account = _accountHolderService.GetAccountHolderById(userId.Value);
             BookingViewModel bookingViewModel = BookingViewModelHelper.ReadModelBooking(booking);
-
             Apartment apartment = _apartmentService.GetApartment(bookingViewModel.ApartmentId);
-
+            
             _checkoutService.ProcessCheckOut(bookingViewModel.Id);
 
-            var reviewModel = ReviewViewModel.ConvertToEntity(reviewViewModel,account); // need to convert back to entity to save back to the database.
+            if (viewModel.SkipReview != true)
+            {
+                var reviewModel = ReviewViewModel.ConvertToEntity(reviewViewModel, account); // need to convert back to entity to save back to the database.
+                _reviewService.SaveReview(apartment.Id, reviewModel);
+            }
             
-            _reviewService.SaveReview(apartment.Id,reviewModel);
-
             HttpContext.Session.Remove("HasCheckOutToday");
-
+            
             return RedirectToAction("Index", "Home");
         }
         

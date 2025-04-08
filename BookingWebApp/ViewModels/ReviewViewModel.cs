@@ -11,7 +11,7 @@ namespace BookingWebApp.ViewModels
         public int LocationRating { get; set; }
         public int ComfortRating { get; set; }
         public int ValueRating { get; set; }
-        public string Comments { get; set; }
+        public string? Comments { get; set; } // i allow null
         public DateTime CreatedAt { get; set; }
 
         public static Review ConvertToEntity(ReviewViewModel model, AccountHolder account)
