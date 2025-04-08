@@ -3,6 +3,8 @@ using Models.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Services;
 using BookingWebApp.ViewModels;
+using BookingWebApp.Helpers;
+using Enums;
 
 namespace BookingWebApp.Controllers
 {
@@ -24,18 +26,49 @@ namespace BookingWebApp.Controllers
 
             if (userId == null)
             {
-                UserViewModel user = new UserViewModel();
+                IndexViewModel user = new IndexViewModel
+                {
+                    UserViewModel = new UserViewModel(),
+                    BookingViewModel = new List<BookingViewModel>()
+                };
                 return View(user);
             }
-            else
+            User userName = _userService.GetUser(userId.Value);
+
+            bool hasCheckOuToday = this.CheckForTodayCheckOut(userId.Value);
+
+            var userBooking = _bookingService.GetAllBookingsForUser(userId.Value);
+            // Set session and view bag
+            if (hasCheckOuToday == true)
             {
-                User userName = _userService.GetUser(userId.Value);
-
-                UserViewModel viewModel = UserViewModel.ConvertToViewModel(userName);
-
-                return View(viewModel);
-
+                HttpContext.Session.SetInt32("HasCheckOutToday", hasCheckOuToday ? 1 : 0);
+                ViewBag.HasCheckOutToday = hasCheckOuToday;
             }
+            
+            IndexViewModel viewModel = new IndexViewModel
+            {
+                UserViewModel = UserViewModel.ConvertToViewModel(userName),
+                BookingViewModel = BookingViewModelHelper.ConvertToViewModel(userBooking)
+            };
+
+            return View(viewModel);
+
+        }
+
+
+        public bool CheckForTodayCheckOut(int userId) // will maybe inside a service
+        {
+            var bookings = _bookingService.GetAllBookingsForUser(userId).FindAll(booking => booking.Status == BookingStatus.Confirmed);
+
+            foreach (var booking in bookings)
+            {
+                if (booking.CheckOutDate.Date == DateTime.Today.AddDays(-2)) // && confirmed
+                {
+                    HttpContext.Session.SetString("booking",BookingViewModelHelper.CreateString(booking));
+                    return true;
+                }
+            }
+            return false;
         }
 
         public IActionResult Privacy()

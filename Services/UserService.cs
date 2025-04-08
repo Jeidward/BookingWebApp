@@ -55,6 +55,9 @@ namespace Services
             var passwordBytes = Encoding.Default.GetBytes(password);
            var hashedPassword =  hash.ComputeHash(passwordBytes);
            return Convert.ToHexString(hashedPassword);
+           
+           
+           // will aslo inlude salt, right now only hashing.
         }
     }
 }

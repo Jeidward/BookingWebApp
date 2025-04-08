@@ -29,6 +29,7 @@ namespace BookingWebApp
             builder.Services.AddScoped<IAccountHolderRepository, AccountHolderRepository>();
             builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddScoped<IApartmentRepository, ApartmentRepository>();
+            builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
 
          
             builder.Services.AddScoped<BookingService>();
@@ -36,6 +37,8 @@ namespace BookingWebApp
             builder.Services.AddScoped<AccountHolderService>();
             builder.Services.AddScoped<UserService>();
             builder.Services.AddScoped<ApartmentService>();
+            builder.Services.AddScoped<CheckOutService>();
+            builder.Services.AddScoped<ReviewService>();
            
 
 

@@ -534,7 +534,7 @@ body {
 @keyframes fadeIn {
     from {
         opacity: 0;
-        transform: translateZ(-50px);
+        transform: translateZ(-50px);   
     }
 
     to {
@@ -543,4 +543,179 @@ body {
     }
 }
 
+
+/*Notification home checking out*/
+
+.checkout-alert {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 350px;
+    background-color: #fff;
+    border-left: 5px solid #ff6b6b;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+    padding: 20px;
+    animation: slideIn 0.5s ease-in-out;
+    z-index: 1000;
+}
+
+.checkout-alert-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.checkout-alert-title {
+    font-weight: bold;
+    color: #333;
+    margin: 0;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+}
+
+    .checkout-alert-title .icon {
+        margin-right: 10px;
+        color: #ff6b6b;
+    }
+
+.checkout-alert-close {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: #999;
+}
+
+.checkout-alert-content {
+    color: #666;
+    margin-bottom: 15px;
+}
+
+.checkout-alert-apartment {
+    font-weight: 500;
+    margin-bottom: 5px;
+}
+
+.checkout-alert-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.checkout-alert .btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.checkout-alert .btn-primary {
+    background-color: #ff6b6b;
+    color: white;
+}
+
+    .checkout-alert .btn-primary:hover {
+        background-color: #ff5252;
+    }
+
+.checkout-alert .btn-secondary {
+    background-color: #e9ecef;
+    color: #495057;
+}
+
+    .checkout-alert .btn-secondary:hover {
+        background-color: #dee2e6;
+    }
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+
+/*Checkout form*/
+<style >
+/* Slider styling */
+.rating-slider {
+    width: 100%;
+}
+
+.rating-display {
+    width: 40px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.rating-container {
+    display: flex;
+    align-items: center;
+}
+
+/* Customizing the range inputs */
+input[type="range"] {
+    height: 10px;
+    -webkit-appearance: none;
+    appearance: none;
+    background: #e9ecef;
+    border-radius: 5px;
+    outline: none;
+}
+
+    input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 20px;
+        height: 20px;
+        background: #12123e;
+        border-radius: 50%;
+        cursor: pointer;
+        transition: background .3s;
+    }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            background: #0056b3;
+        }
+
+    input[type="range"]::-moz-range-thumb {
+        width: 20px;
+        height: 20px;
+        background: #12123e;
+        border-radius: 50%;
+        cursor: pointer;
+        transition: background .3s;
+    }
+
+        input[type="range"]::-moz-range-thumb:hover {
+            background: #0056b3;
+        }
+
+/* Adding subtle animation to the slider */
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.1);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+input[type="range"]:active::-webkit-slider-thumb {
+    animation: pulse 0.3s ease-in-out;
+}
 

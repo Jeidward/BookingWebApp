@@ -7,7 +7,7 @@ using Enums;
 
 
 namespace MSSQL
-{ //hello testing
+{
     public class AccountHolderRepository : Repository,  IAccountHolderRepository
     {
         public AccountHolderRepository(IConfiguration configuration) : base(configuration) { }
@@ -48,7 +48,7 @@ namespace MSSQL
                             );
                         }
                     }
-                }
+                }// expected if statement
             }
         }
 

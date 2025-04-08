@@ -1,0 +1,185 @@
+﻿@model CheckOutViewModel
+<head>
+    <title>Checkout Confirmation</title>
+    <!-- Bootstrap CSS -->
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <div class="card shadow-sm mb-5">
+                    <div class="card-header bg-white">
+                        <div class="d-flex align-items-center mb-3">
+                            <a class="text-dark me-3" asp-controller="Home" asp-action="Index">
+                                <i class="fas fa-arrow-left fs-4"></i>
+                            </a>
+                            <h2 class="mb-0">Checkout Confirmation</h2>
+                        </div>
+                        <p class="lead mb-0">By clicking <strong>Checkout</strong>, you'll officially complete your stay at <strong>@Model.BookingViewModel.ApartmentViewModel.Name</strong>.</p>
+                    </div>
+                    <div class="card-body">
+                        <div class="alert alert-warning" role="alert">
+                            <i class="fas fa-key me-2"></i>
+                            Please remember to leave your key in the mailbox.
+                        </div>
+
+                        <form id="checkoutForm" asp-controller="CheckOut" asp-action="CheckOut" method="post">
+                            <input type="hidden" name="bookingId" value="@Model.BookingViewModel.Id" />
+
+                            <!-- Pre-Checkout Checklist -->
+                            <div class="card mb-4 border">
+                                <div class="card-header">
+                                    <h5 class="mb-0">Pre-Checkout Checklist</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="form-check mb-3">
+                                        <input class="form-check-input" type="checkbox" id="keyLeft" name="KeyLeft"  value="true" required>
+                                        <label class="form-check-label" for="keyLeft">
+                                            I have left the key in the mailbox.
+                                        </label>
+                                    </div>
+                                    <div class="form-check mb-3">
+                                        <input class="form-check-input" type="checkbox" id="personalBelongings" name="PersonalBelongings" value="true">
+                                        <label class="form-check-label" for="personalBelongings">
+                                            I have collected all my personal belongings.
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="roomCondition" name="RoomCondition" value="true">
+                                        <label class="form-check-label" for="roomCondition">
+                                            I confirm the room is in good condition.
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Rating & Feedback Section -->
+                            <div class="card mb-4 border">
+                                <div class="card-header">
+                                    <h5 class="mb-0">Rate Your Stay</h5>
+                                </div>
+                                <div class="card-body">
+                                    <!-- Overall Rating -->
+                                    <div class="mb-4">
+                                        <label class="form-label fw-bold">Overall Rating</label>
+                                        <div class="rating-container">
+                                            <input type="range" class="rating-slider form-range" id="overallRating" name="overallRating" min="1" max="10" value="8">
+                                            <span class="ms-2 rating-display" id="overallValue">8</span><span>/10</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Detailed Ratings -->
+                                    <div class="row mb-4">
+                                        <div class="col-md-6">
+                                            <!-- Cleanliness -->
+                                            <div class="mb-3">
+                                                <label class="form-label fw-bold">Cleanliness</label>
+                                                <div class="rating-container">
+                                                    <input type="range" class="rating-slider form-range" id="cleanlinessRating" name="CleanlinessRating" min="1" max="10" value="8">
+                                                    <span class="ms-2 rating-display" id="cleanlinessValue">8</span><span>/10</span>
+                                                </div>
+                                            </div>
+                                            <!-- Location -->
+                                            <div class="mb-3">
+	                                            <label class="form-label fw-bold">Location</label>
+	                                            <div class="rating-container">
+		                                            <input type="range" class="rating-slider form-range" id="locationRating" name="LocationRating" min="1" max="10" value="8">
+		                                            <span class="ms-2 rating-display" id="locationValue">8</span><span>/10</span>
+	                                            </div>
+                                            </div>
+                                            <!-- Value -->
+                                            <div class="mb-3">
+	                                            <label class="form-label fw-bold">Value</label>
+	                                            <div class="rating-container">
+		                                            <input type="range" class="rating-slider form-range" id="valueRating" name="ValueRating" min="1" max="10" value="8">
+		                                            <span class="ms-2 rating-display" id="valueValue">8</span><span>/10</span>
+	                                            </div>
+                                            </div>
+                                            <!-- Comfort -->
+                                            <div class="mb-3">
+                                                <label class="form-label fw-bold">Comfort</label>
+                                                <div class="rating-container">
+                                                    <input type="range" class="rating-slider form-range" id="comfortRating" name="ComfortRating" min="1" max="10" value="8">
+                                                    <span class="ms-2 rating-display" id="comfortValue">8</span><span>/10</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Comments -->
+                                    <div class="mb-3">
+                                        <label for="comments" class="form-label fw-bold">Comments or Suggestions</label>
+                                        <textarea class="form-control" id="comments" name="Comments" rows="3" placeholder="Share your experience or suggest improvements..."></textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Booking Details Summary -->
+                            <div class="card mb-4 border">
+                                <div class="card-header">
+                                    <h5 class="mb-0">Booking Summary</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <p><strong>Check-in Date:</strong> @Model.BookingViewModel.CheckInDate.ToString("MMM dd, yyyy")</p>
+                                            <p><strong>Check-out Date:</strong> @Model.BookingViewModel.CheckOutDate.ToString("MMM dd, yyyy")</p>
+                                            <p><strong>Total Nights:</strong> @((Model.BookingViewModel.CheckOutDate - Model.BookingViewModel.CheckInDate).Days)</p>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <p><strong>Apartment:</strong> @Model.BookingViewModel.ApartmentViewModel.Name</p>
+                                            <p><strong>Total Paid:</strong> @Model.BookingViewModel.TotalPrice.ToString("C")</p>
+                                            <p><strong>Booking ID:</strong> @Model.BookingViewModel.Id</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Action Buttons -->
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <button type="submit" name="skipReview" value="true" class="btn btn-secondary me-2">
+                                        Skip Review & Checkout
+                                    </button>
+                                    <button type="submit" class="btn btn-dark px-4">
+                                        <i class="fas fa-check-circle me-2"></i> Complete Checkout
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Create an array of all rating sliders and their display elements
+            const ratingSliders = [
+                { slider: 'overallRating', display: 'overallValue' },
+                { slider: 'cleanlinessRating', display: 'cleanlinessValue' },
+                { slider: 'communicationRating', display: 'communicationValue' },
+                { slider: 'checkinRating', display: 'checkinValue' },
+                { slider: 'locationRating', display: 'locationValue' },
+                { slider: 'valueRating', display: 'valueValue' },
+                { slider: 'comfortRating', display: 'comfortValue' }
+            ];
+
+            // Set up event listeners for all sliders
+            ratingSliders.forEach(rating => {
+                const slider = document.getElementById(rating.slider);
+                const display = document.getElementById(rating.display);
+
+                if (slider && display) {
+                    // Set initial value
+                    display.textContent = slider.value;
+
+                    // Update when slider changes
+                    slider.addEventListener('input', function() {
+                        display.textContent = this.value;
+                    });
+                }
+            });
+        });
+    </script>
+</body>

@@ -208,9 +208,12 @@ namespace BookingWebApp.Controllers
                 return RedirectToAction("Login", "Authentication");
             }
 
-            List<Booking> bookings = _bookingService.GetAllBookingsForUser(userId.Value);
+            List<Booking> bookings = _bookingService.GetAllBookingForUserCurrent(userId.Value);
+            
+            var checkoutBooking = _bookingService.GetAllBookingsForUserCheckout(userId.Value);
 
             List<BookingViewModel> bookingViewModels = BookingViewModelHelper.ConvertToViewModel(bookings);
+            var checkoutViewModel = BookingViewModelCheckout.ConvertToViewModel(checkoutBooking);
 
             if(bookings.Count == 0)
             {
@@ -219,7 +222,8 @@ namespace BookingWebApp.Controllers
 
             ApartmentBookingCompositeViewModel apartmentBookingCompositeViewModel = new ApartmentBookingCompositeViewModel
             {
-                BookingViewModel = bookingViewModels
+                BookingViewModel = bookingViewModels,
+                BookingViewModelCheckouts = checkoutViewModel
             };
 
             return View(apartmentBookingCompositeViewModel);

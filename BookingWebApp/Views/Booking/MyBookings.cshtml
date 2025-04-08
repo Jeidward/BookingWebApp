@@ -1,57 +1,103 @@
 ﻿@model ApartmentBookingCompositeViewModel
 <!DOCTYPE html>
 <html lang="en">
+<style>
+	.booking-status-indicator {
+		padding: 4px 12px;
+		border-radius: 20px;
+		font-size: 12px;
+		font-weight: 600;
+		z-index: 2;
+		font-weight: 600;
+		height: auto;
+		margin-top: auto;
+		margin-bottom: 130px;
+		margin-left: 20px;
+	}
+
+		.booking-status-indicator.checked-out {
+			background-color: #6c757d;
+			color: white;
+		}
+
+</style>
 <head>
-    <meta charset="UTF-8">
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <title>My Apartment Bookings</title>
+	<meta charset="UTF-8">
+	<link rel="stylesheet" href="~/css/site.css" asp-append-version="true"/>
+	<title>My Apartment Bookings</title>
 </head>
 <body>
-    <div class="apartment-bookings-container">
-        <div class="bookings-header">
-            <h2>My Apartment Bookings</h2>
-        </div>
-        
-        @if (Model.BookingViewModel.Count == 0 )
-        {
-            <div class="no-bookings">
-                <p>You have no current apartment bookings.</p>
-            </div>
-        }
-        else{
+<div class="apartment-bookings-container">
+	<div class="bookings-header">
+		<h2>My Apartment Bookings</h2>
+	</div>
 
-            @foreach(var booking in Model.BookingViewModel)
-            {
-                 <div class="apartment-booking-card">
-                    <img class="apartment-image"
-                         src="@Url.Content("~/" + booking.ApartmentViewModel.ImageUrl)"
-                         alt="@booking.ApartmentViewModel.Description"
-                         loading="lazy" />
-                    <div class="booking-details">
-                        <div class="booking-details-header">
-                            <h3>@booking.ApartmentViewModel.Description</h3>
-                        </div>
-                        <div>
-                             @foreach (var guest in booking.GuestProfiles)
-                            {
-                                <div class="col-6">
-                                    <p><strong>Guest:</strong> @guest.FirstName</p> 
-                                </div>
-                            }
-                            <p>Address: @booking.ApartmentViewModel.Adress</p>
-                            <p><strong>Booking Reference:</strong> APT-2025-0315</p>
-                        </div>
-                        <div class="booking-actions">
-                            <div class="booking-dates">
-                                <p>@booking.CheckInDate</p>
-                                <p>@booking.CheckOutDate</p>
-                            </div>
-                            <button class="cancel-booking-btn">Cancel Booking</button>
-                        </div>
-                    </div>
-                </div>
-            }
-        }
-    </div>
+	@if (Model.BookingViewModel.Count == 0)
+	{
+		<div class="no-bookings">
+			<p>You have no current apartment bookings.</p>
+		</div>
+	}
+	else
+	{
+
+		@foreach (var booking in Model.BookingViewModel)
+		{
+			<div class="apartment-booking-card">
+				<img class="apartment-image"
+				     src="@Url.Content("~/" + booking.ApartmentViewModel.ImageUrl)"
+				     alt="@booking.ApartmentViewModel.Description"
+				     loading="lazy"/>
+				<div class="booking-details">
+					<div class="booking-details-header">
+						<h3>@booking.ApartmentViewModel.Description</h3>
+					</div>
+					<div>
+						@foreach (var guest in booking.GuestProfiles)
+						{
+							<div class="col-6">
+								<p><strong>Guest:</strong> @guest.FirstName</p>
+							</div>
+						}
+						<p>Address: @booking.ApartmentViewModel.Adress</p>
+						<p><strong>Booking Reference:</strong>@booking.Id</p>
+					</div>
+					<div class="booking-actions">
+						<div class="booking-dates">
+							<p>@booking.CheckInDate</p>
+							<p>@booking.CheckOutDate</p>
+						</div>
+						<button class="cancel-booking-btn">Cancel Booking</button>
+					</div>
+				</div>
+			</div>
+		}
+
+		@foreach (var booking in Model.BookingViewModelCheckouts)
+		{
+			<div class="apartment-booking-card">
+				<div class="booking-status-indicator checked-out">
+					<span>Checked Out</span>
+				</div>
+				<div class="booking-details">
+					<div class="booking-details-header">
+					</div>
+					<div>
+						<p><strong>Booking Reference:</strong>@booking.Id</p>
+					</div>
+					<div class="booking-actions">
+						<div class="booking-dates">
+							<p>@booking.CheckInDate</p>
+							<p>@booking.CheckOutDate</p>
+						</div>
+						<div class="booking-completed-message">
+							<p>This stay has been completed</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		}
+	}
+</div>
 </body>
 </html>

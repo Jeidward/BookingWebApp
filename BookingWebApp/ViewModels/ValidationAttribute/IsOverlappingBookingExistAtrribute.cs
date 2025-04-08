@@ -18,7 +18,7 @@ public class IsOverlappingBookingExistAttribute : ValidationAttribute
     }
     protected override ValidationResult IsValid(object value, ValidationContext validationContext)
     {
-        _bookingService = (BookingService)validationContext.GetService(typeof(BookingService));
+        _bookingService = (BookingService)validationContext.GetService(typeof(BookingService)); // need to research
         CreateBookingViewModel viewModel = (CreateBookingViewModel)validationContext.ObjectInstance;
      
         var existingBookings = _bookingService.IsOverlappingBookingExist(viewModel.ApartmentId,viewModel.CheckInDate,viewModel.CheckOutDate);

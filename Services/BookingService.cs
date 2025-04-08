@@ -3,6 +3,7 @@ using Enums;
 using Models.Entities;
 using Microsoft.Extensions.Configuration;
 using System.Net.Http;
+using System.Reflection.Metadata.Ecma335;
 using System.Runtime.InteropServices.JavaScript;
 
 namespace Services
@@ -97,6 +98,14 @@ namespace Services
 
             return userBooking;
         }
+
+        public List<Booking> GetAllBookingsForUserCheckout(int userId) => GetAllBookingsForUser(userId)
+            .FindAll(booking => booking.Status == BookingStatus.CheckedOut);
+
+        public List<Booking> GetAllBookingForUserCurrent(int userId) => GetAllBookingsForUser(userId)
+            .FindAll(booking => booking.Status == BookingStatus.Confirmed);
+            
+        
 
         public bool IsOverlappingBookingExist(int apartmentId, DateTime checkInDate, DateTime checkOutDate)
         {
