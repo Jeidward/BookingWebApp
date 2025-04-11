@@ -41,7 +41,7 @@ namespace MSSQL
             }
         }
 
-        public List<Review> GetReviewsApartment(int apartmentId)
+        public List<Review>? GetReviewsApartment(int apartmentId)
         {
             List<Review> reviews = new List<Review>();
 
@@ -55,9 +55,14 @@ namespace MSSQL
 
                     using (SqlDataReader reader = cmd.ExecuteReader())
                     {
-                        reader.Read();
-                        
-                        reviews.Add(new(
+                        if (!reader.HasRows) 
+                        {
+                            return null; 
+                        }
+
+                        while (reader.Read())
+                        {
+                             reviews.Add(new(
 
                              new AccountHolder(Convert.ToInt32(reader["AccountHolderId"])),
                               Convert.ToInt32(reader["Rating"]), 
@@ -70,6 +75,8 @@ namespace MSSQL
                               Convert.ToDateTime(reader["CreatedAt"])
 
                          ));
+                        }
+                       
                     }
                 }
             }

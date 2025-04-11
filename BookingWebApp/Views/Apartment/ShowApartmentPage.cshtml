@@ -148,9 +148,14 @@
                         </div>
                     </div>
                     
+                    @if(Model.ReviewViewModel.Count == 0)
+                    {
+	                    <p> No reviews</p>
+                    }
                       
                     @foreach (var review in Model.ReviewViewModel)
                     {
+	                    
 	                    <!-- Individual Reviews -->
 	                    <div class="border-top pt-4">
 		                    <div class="d-flex mb-4">

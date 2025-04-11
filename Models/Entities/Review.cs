@@ -10,9 +10,9 @@
         public int LocationRating { get; }
         public int ComfortRating { get; }
         public int ValueRating { get; }
-        public DateTime CreatedAt { get; }
+        public DateTime? CreatedAt { get; }
 
-        public Review(AccountHolder account, int rating, string comment, int id, int cleanlinessRating, int locationRating, int comfortRating, int valueRating,DateTime createdAt)
+        public Review(AccountHolder account, int rating, string comment, int id, int cleanlinessRating, int locationRating, int comfortRating, int valueRating,DateTime? createdAt)
         {
             Id = id;
             Account = account;

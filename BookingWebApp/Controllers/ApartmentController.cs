@@ -9,14 +9,11 @@ namespace BookingWebApp.Controllers
     public class ApartmentController : Controller
     {
         private readonly ApartmentService _apartmentService;
-        private readonly ReviewService _reviewService;
-
-        public ApartmentController(ApartmentService apartmentService,ReviewService reviewService)
+        
+        public ApartmentController(ApartmentService apartmentService)
         {
             _apartmentService = apartmentService;
-            _reviewService = reviewService;
         }
-
 
         public IActionResult ShowApartmentList()
         {
@@ -28,8 +25,6 @@ namespace BookingWebApp.Controllers
         public IActionResult ShowApartmentPage(int id)
         {
             Apartment selectedApartment = _apartmentService.GetApartment(id);
-            var reviews = _reviewService.GetReviewsForApartment(id); 
-            selectedApartment.SetReviews(reviews);
             ApartmentViewModel apartmentViewModel = ApartmentViewModel.ConvertToViewModel(selectedApartment);
             return View(apartmentViewModel);
         }

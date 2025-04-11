@@ -26,16 +26,14 @@ namespace BookingWebApp.Controllers
      
         public IActionResult CreateBooking(CreateBookingViewModel viewModel)
         {
-            Apartment getApartment = _apartmentService.GetApartment(viewModel.ApartmentId);
-            ApartmentViewModel apartmentViewModel = ApartmentViewModel.ConvertToViewModel(getApartment);
+            Apartment apartment = _apartmentService.GetApartment(viewModel.ApartmentId);
+            ApartmentViewModel apartmentViewModel = ApartmentViewModel.ConvertToViewModel(apartment);
             
             if (!ModelState.IsValid)
             {
                 return View("~/Views/Apartment/ShowApartmentPage.cshtml",apartmentViewModel);
             }
-            DateTime CheckIn = viewModel.CheckInDate.Date.Add(viewModel.CheckInTime.TimeOfDay);
-            DateTime CheckOut = viewModel.CheckOutDate.Date.Add(viewModel.CheckOutTime.TimeOfDay);
-
+            
             int? userId = HttpContext.Session.GetInt32("UserId");
             {
                 if (userId == null)
@@ -45,12 +43,13 @@ namespace BookingWebApp.Controllers
                 }   
             }
 
-            Apartment apartment = _apartmentService.GetApartment(viewModel.ApartmentId);
+            DateTime CheckIn = viewModel.CheckInDate.Date.Add(viewModel.CheckInTime.TimeOfDay);
+            DateTime CheckOut = viewModel.CheckOutDate.Date.Add(viewModel.CheckOutTime.TimeOfDay);
 
             decimal totalPrice = _bookingService.CalculateTotalPrice(viewModel.CheckInDate, viewModel.CheckOutDate, apartment);
 
             BookingViewModel bookingViewModel = new BookingViewModel() {CheckInDate = CheckIn,CheckOutDate = CheckOut, ApartmentId =viewModel.ApartmentId, UserId = (int)userId, TotalPrice = totalPrice};
-            bookingViewModel.ApartmentViewModel = ApartmentViewModel.ConvertToViewModel(_apartmentService.GetApartment(viewModel.ApartmentId));
+            bookingViewModel.ApartmentViewModel = apartmentViewModel;
 
             ViewData["numberOfNights"] = _bookingService.ComputeNights(CheckIn,CheckOut);
             ViewData["numberOfGuests"] = viewModel.NumberOfGuests;
@@ -65,7 +64,6 @@ namespace BookingWebApp.Controllers
         [HttpPost]
         public IActionResult AddGuestProfile(GuestProfileViewModel guestProfileViewModel)
         {
-            // Get the current guest index and total number of guests
             int? totalGuests = HttpContext.Session.GetInt32("numberOfGuests");
 
             if (totalGuests == null)
@@ -81,6 +79,7 @@ namespace BookingWebApp.Controllers
             int currentGuestIndex = int.Parse(Request.Form["currentGuestIndex"]!);
             int accountHolderId = HttpContext.Session.GetInt32("UserId") ?? 0;
             AccountHolder accountHolder;
+
             if (accountHolderId > 0)
             {
                 accountHolder = _accountHolderService.GetAccountHolderById(accountHolderId)!;
@@ -111,6 +110,7 @@ namespace BookingWebApp.Controllers
                     return RedirectToAction("ApartmentList", "Apartment");
                 }
                 BookingViewModel booking = BookingViewModelHelper.ReadString(bookingString);
+                booking.ApartmentViewModel = ApartmentViewModel.ConvertToViewModel(_apartmentService.GetApartment(booking.ApartmentId));
 
                 // Increment the guest index
                 ViewData["currentGuestIndex"] = currentGuestIndex + 1;
@@ -173,12 +173,11 @@ namespace BookingWebApp.Controllers
             }
 
             Booking booking = new(bookingViewModel.CheckInDate, bookingViewModel.CheckOutDate, bookingViewModel.TotalPrice, _apartmentService.GetApartment(bookingViewModel.ApartmentId));
-            booking.SetGuestProfile(guestProfiles); // this is where booking is actually neccessary, here we want to make the object whole.
+            booking.SetGuestProfile(guestProfiles); 
 
             int bookingId = _bookingService.Save(booking);
             _bookingService.FinalizePayment(booking, PaymentMethod.MASTERCARD);
 
-            
             HttpContext.Session.SetInt32("HasBooking", 1);
             HttpContext.Session.Remove("numberOfGuests");
             HttpContext.Session.Remove("newBooking");
@@ -228,6 +227,7 @@ namespace BookingWebApp.Controllers
 
             return View(apartmentBookingCompositeViewModel);
         }
+
 
 
     }

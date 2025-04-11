@@ -54,9 +54,9 @@ namespace Models.Entities
             Apartment = apartment;
         }
 
-        public Booking()
-        {
-        }
+        //public Booking()
+        //{
+        //}
 
         public void SetGuestProfile(List<GuestProfile> guestProfile)
         {

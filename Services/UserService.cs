@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using System.Security.Cryptography;
 using System.Text;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Identity.Client;
 
 
 namespace Services
@@ -11,35 +12,33 @@ namespace Services
     public class UserService
     {
         private readonly IUserRepository _userRepository;
-        public UserService(IUserRepository userRepository)
+        private readonly PasswordSecurityService _passwordSecurityService;
+        
+        public UserService(IUserRepository userRepository, PasswordSecurityService passwordSecurityService)
         {
             _userRepository = userRepository;
+            _passwordSecurityService = passwordSecurityService;
         }
         public bool Register(string email, string password, string name)
         {
             User newUser = new(email, password,name);
-            //var hashedPW = HashPassword(password);
-
-            if (string.IsNullOrWhiteSpace(newUser.Email) && string.IsNullOrEmpty(newUser.Password))
-            {
-
-
-                throw new ArgumentException("Email and Password cannot be empty.");
-            }
-
-            if (_userRepository.DoesUserExist(newUser.Email))
-            {
-
-                throw new ArgumentException("This email is already registered.");
-            }
             
-            newUser.SetPassword(HashPassword(password));
-            return _userRepository.RegisterUser(newUser.Email,newUser.Password,newUser.Name);
+            var hashedPassword = _passwordSecurityService.HashPassword(password, out byte[] salt);
+            newUser.SetPassword(hashedPassword);
+            newUser.SetSalt(Convert.ToBase64String(salt));
+            return _userRepository.RegisterUser(newUser.Email,newUser.Password,newUser.Name, newUser.Salt);
         }
 
         public int GetExistedLogIn(string email, string password)
         {
-            var hashPassword = HashPassword(password);
+            var user = _userRepository.GetUser(email);
+            if (user == null)
+            {
+                throw new ArgumentException("User not found.");
+            }
+            var storedSalt = Convert.FromBase64String(user.Salt);
+            var hashPassword = _passwordSecurityService.HashPassword(password, storedSalt);
+
             return _userRepository.LogIn(email, hashPassword);
         }
 
@@ -48,16 +47,10 @@ namespace Services
             return _userRepository.GetUser(userId);    
         }
 
-
-        public string HashPassword(string password)
+        public bool DoesUserExist(string email)
         {
-            SHA256 hash = SHA256.Create();
-            var passwordBytes = Encoding.Default.GetBytes(password);
-           var hashedPassword =  hash.ComputeHash(passwordBytes);
-           return Convert.ToHexString(hashedPassword);
-           
-           
-           // will aslo inlude salt, right now only hashing.
+            return _userRepository.DoesUserExist(email);
         }
+
     }
 }

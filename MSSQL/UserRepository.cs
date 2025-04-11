@@ -10,22 +10,23 @@ namespace MSSQL
         public UserRepository(IConfiguration configuration) : base(configuration) { }
 
 
-        public bool RegisterUser(string email, string password, string name)
+        public bool RegisterUser(string email, string password, string name, string salt)
         {
             using (SqlConnection conn = new SqlConnection(_connectionString))
             {
                 conn.Open();
 
                 string query = @"
-                    INSERT INTO Users (Email, [Password],[isArchived],Name)
+                    INSERT INTO Users (Email, [Password],[isArchived],Name, Salt)
                     OUTPUT INSERTED.UserId
-                    VALUES (@Email, @Password, 0,@Name)";
+                    VALUES (@Email, @Password, 0,@Name, @Salt)";
                 int newUserId;
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
                     cmd.Parameters.AddWithValue("@Email", email);
                     cmd.Parameters.AddWithValue("@Password", password);
                     cmd.Parameters.AddWithValue("@Name", name);
+                    cmd.Parameters.AddWithValue("@Salt", salt);
                     newUserId = (int)cmd.ExecuteScalar();
                 }
 
@@ -85,6 +86,33 @@ namespace MSSQL
             }
         }
 
+        public User GetUser(string email)
+        {
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                conn.Open();
+                string query = @"SELECT [UserId],[Email],[Password],[IsArchived],[Name],[Salt] FROM Users WHERE Email = @Email";
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@Email", email);
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            User user = new(
+                                Convert.ToInt32(reader["UserId"]),
+                                Convert.ToString(reader["Email"])!,
+                                Convert.ToString(reader["Password"])!,
+                                Convert.ToString(reader["Name"])!,
+                                Convert.ToString(reader["Salt"])!
+                            );
+                            return user;
+                        }
+                    }
+                }
+                return new( "", "", "");
+            }
+        }
         public User GetUser(int Id) 
         {
             using(SqlConnection conn = new SqlConnection(_connectionString))

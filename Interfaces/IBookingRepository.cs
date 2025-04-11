@@ -17,6 +17,7 @@ namespace Interfaces
         public List<Booking> GetBookingsByUserId(int userId);
         public void Update(Booking  booking);
         public bool IsOverlappingBookingExist(int apartmentId,DateTime checkInDate,DateTime checkOutDate);
+        public void CancelBooking(int bookingId);
 
 
 

@@ -22,16 +22,15 @@ namespace BookingWebApp.ViewModels
             ReviewViewModel = new List<ReviewViewModel>();
         }
 
-        public Apartment ConvertToModel()
-        {
-            Apartment apartment = new Apartment(Id, Name, Description, ImageUrl, PricePerNight, Rating, ReviewsCount, Adress);
-            apartment.SetGallery(Gallery);
-            return apartment;
-        }
-
+        
         public static ApartmentViewModel ConvertToViewModel(Apartment apartment)
         {
            ApartmentViewModel apartmentViewModel = new ApartmentViewModel() { Id = apartment.Id, Name = apartment.Name, Description = apartment.Description, ImageUrl = apartment.ImageUrl, Adress = apartment.Adress, Gallery = apartment.Gallery, PricePerNight = apartment.PricePerNight, Rating = apartment.Rating, ReviewsCount = apartment.ReviewsCount, Booking = new CreateBookingViewModel(){ApartmentId = apartment.Id} };
+
+           if(apartment.Reviews == null)
+            {
+                apartment.SetReviews( new List<Review>());
+            }
 
             foreach (var review in apartment.Reviews)
             {

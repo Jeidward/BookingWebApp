@@ -18,7 +18,7 @@ namespace BookingWebApp.ViewModels
 
         public BookingViewModel()
         {
-            this.GuestProfiles = new List<GuestProfileViewModel>();
+            GuestProfiles = new List<GuestProfileViewModel>();
         }
 
 

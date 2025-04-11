@@ -39,6 +39,7 @@ namespace BookingWebApp
             builder.Services.AddScoped<ApartmentService>();
             builder.Services.AddScoped<CheckOutService>();
             builder.Services.AddScoped<ReviewService>();
+            builder.Services.AddScoped<PasswordSecurityService>();
            
 
 

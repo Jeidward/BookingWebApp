@@ -11,24 +11,27 @@ namespace Services
 {
     public class ApartmentService
     {
-        //private readonly ApartmentRepository _apartmentRepository;
-        private readonly IApartmentRepository _IapartmentRepository;
+        private readonly IApartmentRepository _apartmentRepository;
+        private readonly ReviewService _reviewService;
 
-        public ApartmentService(IApartmentRepository apartmentRepository)
+        public ApartmentService(IApartmentRepository apartmentRepository, ReviewService reviewService)
         {
-            _IapartmentRepository = apartmentRepository;
+            _apartmentRepository = apartmentRepository;
+            _reviewService = reviewService;
         }
 
         public Apartment GetApartment(int id)
         {
-            Apartment selectedApartment = _IapartmentRepository.GetApartment(id);
-            selectedApartment.SetGallery(_IapartmentRepository.GetGallery(id));
+            Apartment selectedApartment = _apartmentRepository.GetApartment(id);
+            var reviews = _reviewService.GetReviewsForApartment(id);
+            selectedApartment.SetReviews(reviews);
+            selectedApartment.SetGallery(_apartmentRepository.GetGallery(id));
             return selectedApartment;
         }
 
         public List<Apartment> GetAllApartments(int count)
         {
-            return _IapartmentRepository.GetApartments(count);
+            return _apartmentRepository.GetApartments(count);
 
         }
 

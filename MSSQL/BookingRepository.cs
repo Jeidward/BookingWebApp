@@ -81,7 +81,7 @@ namespace MSSQL
                         newGuestProfileId = (int)guestCmd.ExecuteScalar();
                     }
 
-                    // 2. Insert into BookingGuests
+                    //Insert into BookingGuests
                     string insertBookingGuestSql = @"
                     INSERT INTO BookingGuests (BookingId, GuestProfileId, IsArchived)
                     VALUES (@BookingId, @GuestProfileId, @IsArchived)";
@@ -252,7 +252,7 @@ namespace MSSQL
                 string sql = @"
                     SELECT BookingId, ApartmentId, AccountHolderId, CheckInDate, CheckOutDate, TotalPrice, Status
                     FROM Bookings
-                    WHERE AccountHolderId = @UserId;";
+                    WHERE AccountHolderId = @UserId";
 
                 using (SqlCommand cmd = new SqlCommand(sql, conn))
                 {
@@ -270,7 +270,7 @@ namespace MSSQL
                                Convert.ToDateTime(reader["CheckInDate"]),
                                Convert.ToDateTime(reader["CheckOutDate"]),
                                Convert.ToDecimal(reader["TotalPrice"]),
-                               Status
+                               Status 
                             );
 
                             bookings.Add(booking);
@@ -296,6 +296,20 @@ namespace MSSQL
             }
         }
 
+        public void CancelBooking(int bookingId)
+        {
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                conn.Open();
+                string sql = @"UPDATE Bookings SET Status = @Status WHERE BookingId = @BookingId;";
+                using (SqlCommand cmd = new SqlCommand(sql, conn))
+                {
+                    cmd.Parameters.AddWithValue("@Status", BookingStatus.Cancelled.ToString());
+                    cmd.Parameters.AddWithValue("@BookingId", bookingId);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
         public bool IsOverlappingBookingExist(int apartmentId, DateTime checkInDate, DateTime checkOutDate)
         {
             using (SqlConnection conn = new SqlConnection(_connectionString))

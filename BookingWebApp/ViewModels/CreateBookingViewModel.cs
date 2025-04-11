@@ -1,5 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Runtime.InteropServices.JavaScript;
+using BookingWebApp.ViewModel;
+using BookingWebApp.ViewModels;
 
 namespace BookingWebApp.ViewModels
 {

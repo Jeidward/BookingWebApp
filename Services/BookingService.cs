@@ -111,6 +111,18 @@ namespace Services
         {
             return _bookingRepository.IsOverlappingBookingExist(apartmentId,checkInDate,checkOutDate);
         }
+
+        public void CancelBooking(int bookingId,DateTime checkInDate)
+        {
+            var currentDay = DateTime.Today;
+            var period = checkInDate - currentDay;
+            var sevenDays = TimeSpan.FromDays(7);
+
+            if (period > sevenDays)
+            {
+                _bookingRepository.CancelBooking(bookingId);
+            }
+        }
     }
 
 

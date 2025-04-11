@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using BookingWebApp.ViewModel;
 using Models.Entities;
 
 namespace BookingWebApp.ViewModels
@@ -10,6 +11,7 @@ namespace BookingWebApp.ViewModels
 
         [Required(ErrorMessage = "Email is required")]
         [DataType(DataType.EmailAddress)]
+        [EmailCheck]
         [Display(Name = "Email")]
         public string  Email { get; set; }
 

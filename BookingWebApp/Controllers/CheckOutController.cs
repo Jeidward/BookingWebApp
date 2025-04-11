@@ -10,18 +10,16 @@ namespace BookingWebApp.Controllers
     public class CheckOutController : Controller
     {
         private readonly CheckOutService _checkoutService;
-        private readonly BookingService _bookingService;
         private readonly UserService _userService;
         private readonly ApartmentService _apartmentService;
         private readonly ReviewService _reviewService;
         private readonly AccountHolderService _accountHolderService;
 
 
-        public CheckOutController(CheckOutService checkOutService, UserService userService, BookingService bookingService,ApartmentService apartmentService, ReviewService reviewService,AccountHolderService accountHolderService)
+        public CheckOutController(CheckOutService checkOutService, UserService userService,ApartmentService apartmentService, ReviewService reviewService,AccountHolderService accountHolderService)
         {
             _checkoutService = checkOutService;
             _userService = userService;
-            _bookingService = bookingService;
             _apartmentService = apartmentService;
             _reviewService = reviewService;
             _accountHolderService = accountHolderService;   
@@ -48,13 +46,9 @@ namespace BookingWebApp.Controllers
         public IActionResult CheckOutForm()
         {
             int? userId = HttpContext.Session.GetInt32("UserId");
-
             var booking = HttpContext.Session.GetString("booking");
-
             BookingViewModel bookingViewModel = BookingViewModelHelper.ReadModelBooking(booking);
-
             Apartment apartment = _apartmentService.GetApartment(bookingViewModel.ApartmentId);
-
             bookingViewModel.ApartmentViewModel = ApartmentViewModel.ConvertToViewModel(apartment);
 
             CheckOutViewModel viewModel = new CheckOutViewModel

@@ -1,4 +1,4 @@
-namespace Models.Entities
+namespace BookingWebApp.ViewModels
 {
     public class ErrorViewModel
     {

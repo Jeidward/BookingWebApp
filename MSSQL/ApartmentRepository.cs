@@ -76,7 +76,7 @@ namespace MSSQL
                     }
                 }
             }
-        }
+        } 
 
 
         public List<string> GetGallery(int id)

@@ -10,7 +10,6 @@ namespace Services
 {
     public class ReviewService
     {
-        
         private readonly IReviewRepository _reviewRepository;
 
         public ReviewService(IReviewRepository reviewRepository)
@@ -23,7 +22,7 @@ namespace Services
             return _reviewRepository.Save(apartmentId, review);
         }
 
-        public List<Review> GetReviewsForApartment(int apartmentId)
+        public List<Review>? GetReviewsForApartment(int apartmentId)
         {
             return _reviewRepository.GetReviewsApartment(apartmentId);
         }

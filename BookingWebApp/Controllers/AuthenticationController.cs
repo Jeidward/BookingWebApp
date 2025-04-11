@@ -24,53 +24,34 @@ namespace BookingWebApp.Controllers
             return View();
         }
 
-
         [HttpPost]
         public ActionResult Register(UserViewModel userViewModel)
         {
-            try
+            if (!ModelState.IsValid)
             {
-                if (!ModelState.IsValid)
-                {
-                    return View(userViewModel);
-                }
-
-                if (_userService.Register(userViewModel.Email,userViewModel.Password, userViewModel.Name))
-                {
-
-                    int userId = _userService.GetExistedLogIn(userViewModel.Email, userViewModel.Password);
-
-                    if (userId == 0)
-                    {
-                        ModelState.AddModelError("", "Invalid email or password");
-                        return View();
-                    }
-
-                    HttpContext.Session.SetInt32("UserId", userId);
-                    bool hasAnyBooking = _accountHolderService.HasAccountHolderAnyBooking(userId);
-                    HttpContext.Session.SetInt32("HasBooking", hasAnyBooking ? 1 : 0);
-
-                    AccountHolder accountHolder = _accountHolderService.GetAccountHolderByUserId(userId); 
-
-                    if (accountHolder.Id != -1)
-                    {
-                        HttpContext.Session.SetInt32("UserId", accountHolder.Id); //accountHolder, is a user
-                    }
-                    return RedirectToAction("Index", "Home");
-                }
                 return View(userViewModel);
             }
-            catch (ArgumentException ex)
+
+            _userService.Register(userViewModel.Email, userViewModel.Password, userViewModel.Name);
+
+            int userId = _userService.GetExistedLogIn(userViewModel.Email, userViewModel.Password);
+
+            HttpContext.Session.SetInt32("UserId", userId);
+            bool hasAnyBooking = _accountHolderService.HasAccountHolderAnyBooking(userId);
+            HttpContext.Session.SetInt32("HasBooking", hasAnyBooking ? 1 : 0);
+
+            AccountHolder accountHolder = _accountHolderService.GetAccountHolderByUserId(userId); 
+
+            if (accountHolder.Id != -1)
             {
-                ModelState.AddModelError("", ex.Message);
-                return View();
+                HttpContext.Session.SetInt32("UserId", accountHolder.Id); 
             }
+            return RedirectToAction("Index", "Home");
         }
 
         public ActionResult LogIn(string mail, string password)
         {
             return View();
-
         }
 
         [HttpPost]
@@ -82,19 +63,13 @@ namespace BookingWebApp.Controllers
             }
 
             int userId = _userService.GetExistedLogIn(userViewModel.Email, userViewModel.Password);
-            if (userId == 0)
-            {
-                ModelState.AddModelError("", "Invalid email or password");
-                return View();
-            }
-
             HttpContext.Session.SetInt32("UserId", userId);
             bool hasAnyBooking = _accountHolderService.HasAccountHolderAnyBooking(userId);
             HttpContext.Session.SetInt32("HasBooking", hasAnyBooking ? 1 : 0);
 
             AccountHolder accountHolder = _accountHolderService.GetAccountHolderByUserId(userId);
             
-            HttpContext.Session.SetInt32("UserId", accountHolder.Id); //accountHolder, is a user
+            HttpContext.Session.SetInt32("UserId", accountHolder.Id); 
             
             return RedirectToAction("Index", "Home");
         }
