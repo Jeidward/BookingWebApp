@@ -63,6 +63,11 @@ namespace BookingWebApp.Controllers
             }
 
             int userId = _userService.GetExistedLogIn(userViewModel.Email, userViewModel.Password);
+            if (userId == 0)
+            {
+                ModelState.AddModelError("Password", "Invalid password.");
+                return View(userViewModel);
+            }
             HttpContext.Session.SetInt32("UserId", userId);
             bool hasAnyBooking = _accountHolderService.HasAccountHolderAnyBooking(userId);
             HttpContext.Session.SetInt32("HasBooking", hasAnyBooking ? 1 : 0);

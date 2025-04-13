@@ -46,8 +46,12 @@ document.addEventListener('DOMContentLoaded', populateCountries);
     type();
     }
 
-    document.addEventListener('DOMContentLoaded', function() {
-      const nameElement = document.getElementById('userName');
-    const originalText = nameElement.innerText;
-    typeWriter3D(nameElement, originalText, 200);
-    });
+document.addEventListener('DOMContentLoaded', function () {
+    const nameElement = document.getElementById('userName');
+    if (nameElement !== null) {
+        const originalText = nameElement.innerText;
+        typeWriter3D(nameElement, originalText, 200);
+    } else {
+        console.warn('Element with id "userName" not found.');
+    }
+});

@@ -719,3 +719,123 @@ input[type="range"]:active::-webkit-slider-thumb {
     animation: pulse 0.3s ease-in-out;
 }
 
+
+
+/*MyBooking*/
+
+/* Custom styles for My Bookings page */
+.card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    margin-bottom: 1.5rem;
+    border: none;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
+}
+
+.badge {
+    font-weight: 500;
+    letter-spacing: 0.5px;
+}
+
+.cancel-booking-btn {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background-color: transparent;
+    color: #dc3545;
+    border: 1px solid #dc3545;
+    border-radius: 0.25rem;
+    cursor: pointer;
+    font-weight: 500;
+    text-align: center;
+    transition: all 0.2s ease;
+}
+
+    .cancel-booking-btn:hover {
+        background-color: #dc3545;
+        color: white;
+    }
+
+.booking-status-indicator {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    z-index: 2;
+}
+
+    .booking-status-indicator.checked-out {
+        background-color: #6c757d;
+        color: white;
+    }
+
+    .booking-status-indicator.confirmed {
+        background-color: #198754;
+        color: white;
+    }
+
+.no-bookings {
+    text-align: center;
+    padding: 3rem;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+/*cancel booking modal styling*/
+
+.border-danger {
+    border-color: #dc3545 !important;
+}
+
+.modal-content {
+    border-radius: 0.5rem;
+    border: none;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+.modal-header, .modal-footer {
+    padding: 1.25rem 1.5rem;
+}
+
+.modal-body {
+    padding: 1rem 1.5rem 1.5rem;
+}
+
+.btn-danger {
+    background-color: #dc3545;
+    border-color: #dc3545;
+}
+
+    .btn-danger:hover {
+        background-color: #bb2d3b;
+        border-color: #b02a37;
+    }
+
+.text-warning {
+    color: #ffc107 !important;
+}
+
+/* Animation for the alert */
+.alert {
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

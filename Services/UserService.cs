@@ -5,6 +5,7 @@ using System.Security.Cryptography;
 using System.Text;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Identity.Client;
+using System.ComponentModel.DataAnnotations;
 
 
 namespace Services
@@ -36,6 +37,7 @@ namespace Services
             {
                 throw new ArgumentException("User not found.");
             }
+
             var storedSalt = Convert.FromBase64String(user.Salt);
             var hashPassword = _passwordSecurityService.HashPassword(password, storedSalt);
 

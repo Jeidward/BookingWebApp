@@ -34,16 +34,6 @@ namespace Models.Entities
             Apartment = apartment;  
         }
 
-        public Booking(int id,DateTime checkIn, DateTime checkOut, decimal totalPrice, Apartment apartment)//dont need guestprofile
-        {
-            Id = id;
-            GuestProfiles = new List<GuestProfile>();
-            CheckInDate = checkIn;
-            CheckOutDate = checkOut;
-            TotalPrice = totalPrice;
-            Apartment = apartment;
-        }
-
         //use for test
         public Booking(DateTime checkIn, DateTime checkOut, decimal totalPrice, Apartment apartment, List<GuestProfile> guestProfile)//dont need guestprofile
         {
@@ -54,10 +44,7 @@ namespace Models.Entities
             Apartment = apartment;
         }
 
-        //public Booking()
-        //{
-        //}
-
+        
         public void SetGuestProfile(List<GuestProfile> guestProfile)
         {
             GuestProfiles = guestProfile;

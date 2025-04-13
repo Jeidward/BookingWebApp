@@ -13,6 +13,7 @@ namespace BookingWebApp.ViewModels
         public DateTime CheckOutDate { get; set; }
         public decimal TotalPrice { get; set; }
         public BookingStatus Status { get; set; }
+        public ApartmentViewModel ApartmentViewModel { get; set; } // this new
 
 
         public static BookingViewModelCheckout ConvertToViewModel(Booking booking)

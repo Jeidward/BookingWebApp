@@ -1,4 +1,5 @@
-﻿using Azure.Core;
+﻿using System.Linq.Expressions;
+using Azure.Core;
 using Models.Entities;
 using Enums;
 using Microsoft.AspNetCore.Mvc;
@@ -6,6 +7,8 @@ using Services;
 using BookingWebApp.ViewModels;
 using BookingWebApp.Helpers;
 using BookingWebApp.CompositeViewModels;
+using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.AspNetCore.SignalR;
 
 namespace BookingWebApp.Controllers
 {
@@ -23,42 +26,42 @@ namespace BookingWebApp.Controllers
             _apartmentService = apartmentService;
         }
 
-     
+
         public IActionResult CreateBooking(CreateBookingViewModel viewModel)
         {
             Apartment apartment = _apartmentService.GetApartment(viewModel.ApartmentId);
             ApartmentViewModel apartmentViewModel = ApartmentViewModel.ConvertToViewModel(apartment);
-            
+
             if (!ModelState.IsValid)
             {
-                return View("~/Views/Apartment/ShowApartmentPage.cshtml",apartmentViewModel);
+                return View("~/Views/Apartment/ShowApartmentPage.cshtml", apartmentViewModel);
             }
-            
+
             int? userId = HttpContext.Session.GetInt32("UserId");
             {
                 if (userId == null)
                 {
                     ViewBag.ShowLoginModal = true;
                     return View("~/Views/Apartment/ShowApartmentPage.cshtml", apartmentViewModel);
-                }   
+                }
             }
 
-            DateTime CheckIn = viewModel.CheckInDate.Date.Add(viewModel.CheckInTime.TimeOfDay);
-            DateTime CheckOut = viewModel.CheckOutDate.Date.Add(viewModel.CheckOutTime.TimeOfDay);
+            DateTime checkIn = viewModel.CheckInDate.Date.Add(viewModel.CheckInTime.TimeOfDay);
+            DateTime checkOut = viewModel.CheckOutDate.Date.Add(viewModel.CheckOutTime.TimeOfDay);
 
             decimal totalPrice = _bookingService.CalculateTotalPrice(viewModel.CheckInDate, viewModel.CheckOutDate, apartment);
 
-            BookingViewModel bookingViewModel = new BookingViewModel() {CheckInDate = CheckIn,CheckOutDate = CheckOut, ApartmentId =viewModel.ApartmentId, UserId = (int)userId, TotalPrice = totalPrice};
+            BookingViewModel bookingViewModel = new BookingViewModel() { CheckInDate = checkIn, CheckOutDate = checkOut, ApartmentId = viewModel.ApartmentId, UserId = (int)userId, TotalPrice = totalPrice };
             bookingViewModel.ApartmentViewModel = apartmentViewModel;
 
-            ViewData["numberOfNights"] = _bookingService.ComputeNights(CheckIn,CheckOut);
+            ViewData["numberOfNights"] = _bookingService.ComputeNights(checkIn, checkOut);
             ViewData["numberOfGuests"] = viewModel.NumberOfGuests;
             HttpContext.Session.SetInt32("numberOfGuests", viewModel.NumberOfGuests);
             ViewData["currentGuestIndex"] = 1; // Starting with the first guest
 
             HttpContext.Session.SetString("newBooking", BookingViewModelHelper.CreateString(bookingViewModel));
 
-            return View("CreateBooking",bookingViewModel);
+            return View("CreateBooking", bookingViewModel);
         }
 
         [HttpPost]
@@ -69,11 +72,6 @@ namespace BookingWebApp.Controllers
             if (totalGuests == null)
             {
                 return RedirectToAction("Index", "Home");
-            }
-
-            if (Request.Form["currentGuestIndex"].ToString() == null)
-            {
-                return RedirectToAction("ApartmentList", "Apartment");
             }
 
             int currentGuestIndex = int.Parse(Request.Form["currentGuestIndex"]!);
@@ -107,7 +105,7 @@ namespace BookingWebApp.Controllers
                 string? bookingString = HttpContext.Session.GetString("newBooking");
                 if (bookingString == null)
                 {
-                    return RedirectToAction("ApartmentList", "Apartment");
+                    return RedirectToAction("ShowApartmentList", "Apartment");
                 }
                 BookingViewModel booking = BookingViewModelHelper.ReadString(bookingString);
                 booking.ApartmentViewModel = ApartmentViewModel.ConvertToViewModel(_apartmentService.GetApartment(booking.ApartmentId));
@@ -130,7 +128,7 @@ namespace BookingWebApp.Controllers
             string? bookingString = HttpContext.Session.GetString("newBooking");
             if (bookingString == null)
             {
-                return RedirectToAction("ApartmentList", "Apartment");
+                return RedirectToAction("ShowApartmentList", "Apartment");
             }
             BookingViewModel booking = BookingViewModelHelper.ReadString(bookingString);
 
@@ -146,16 +144,16 @@ namespace BookingWebApp.Controllers
             string? bookingString = HttpContext.Session.GetString("newBooking");
             if (bookingString == null)
             {
-                return RedirectToAction("ApartmentList", "Apartment");
+                return RedirectToAction("ShowApartmentList", "Apartment");
             }
             BookingViewModel bookingViewModel = BookingViewModelHelper.ReadString(bookingString);
 
             // Get account holder info if available
             int accountHolderId = HttpContext.Session.GetInt32("UserId") ?? 0;
-            AccountHolder accountHolder;
+            
             if (accountHolderId > 0)
             {
-                accountHolder = _accountHolderService.GetAccountHolderById(accountHolderId)!;
+               var accountHolder = _accountHolderService.GetAccountHolderById(accountHolderId)!;
             }
             else
             {
@@ -173,7 +171,7 @@ namespace BookingWebApp.Controllers
             }
 
             Booking booking = new(bookingViewModel.CheckInDate, bookingViewModel.CheckOutDate, bookingViewModel.TotalPrice, _apartmentService.GetApartment(bookingViewModel.ApartmentId));
-            booking.SetGuestProfile(guestProfiles); 
+            booking.SetGuestProfile(guestProfiles);
 
             int bookingId = _bookingService.Save(booking);
             _bookingService.FinalizePayment(booking, PaymentMethod.MASTERCARD);
@@ -189,12 +187,12 @@ namespace BookingWebApp.Controllers
         {
             Booking booking = _bookingService.GetBookingWithApartment(bookingId);
 
-            BookingCompositeViewModel BookingCompositeViewModel = new BookingCompositeViewModel
+            BookingCompositeViewModel bookingCompositeViewModel = new BookingCompositeViewModel
             {
                 BookingViewModel = BookingViewModelHelper.ConvertToViewModel(booking)
             };
 
-            return View(BookingCompositeViewModel);
+            return View(bookingCompositeViewModel);
         }
 
 
@@ -214,11 +212,6 @@ namespace BookingWebApp.Controllers
             List<BookingViewModel> bookingViewModels = BookingViewModelHelper.ConvertToViewModel(bookings);
             var checkoutViewModel = BookingViewModelCheckout.ConvertToViewModel(checkoutBooking);
 
-            if(bookings.Count == 0)
-            {
-                HttpContext.Session.Remove("HasBooking");
-            }
-
             ApartmentBookingCompositeViewModel apartmentBookingCompositeViewModel = new ApartmentBookingCompositeViewModel
             {
                 BookingViewModel = bookingViewModels,
@@ -228,7 +221,37 @@ namespace BookingWebApp.Controllers
             return View(apartmentBookingCompositeViewModel);
         }
 
+        public IActionResult ShowCancelBookingWarning(int bookingId)
+        {
+            TempData["CancelBookingWarning"] = true;
+            TempData["BookingIdToCancel"] = bookingId;
 
+            return RedirectToAction("MyBookings");
+        }
+        public IActionResult CancelBooking(int bookingId)
+        {
+            int? userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null)
+            {
+                return RedirectToAction("Login", "Authentication");
+            }
 
+            List<Booking> bookings = _bookingService.GetAllBookingForUserCurrent(userId.Value);
+            if (!bookings.Any(b => b.Id == bookingId))
+            {
+                throw new Exception("Booking not found or does not belong to the user.");
+            }
+            var booking = _bookingService.GetBookingWithApartment(bookingId);
+            var hasCancel = _bookingService.CancelBooking(bookingId,booking.CheckInDate);
+            
+            if (hasCancel == false)
+            {
+                TempData["ShowCannotCancelModal"] = true;
+                return RedirectToAction("MyBookings");
+            }
+
+            return RedirectToAction("MyBookings");
+
+        }
     }
 }

@@ -50,6 +50,7 @@ namespace BookingWebApp.Helpers
             return $"{bookingViewModel.ApartmentId}${bookingViewModel.CheckInDate}${bookingViewModel.CheckOutDate}${bookingViewModel.TotalPrice}";
         }
 
+
         public static string CreateString(Booking booking)
         {
             return $"{booking.Id}${booking.Apartment.Id}${booking.CheckInDate}${booking.CheckOutDate}${booking.TotalPrice}";
