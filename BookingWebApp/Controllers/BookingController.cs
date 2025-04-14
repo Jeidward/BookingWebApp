@@ -9,6 +9,7 @@ using BookingWebApp.Helpers;
 using BookingWebApp.CompositeViewModels;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.SignalR;
+using Models.Enums;
 
 namespace BookingWebApp.Controllers
 {
@@ -49,9 +50,19 @@ namespace BookingWebApp.Controllers
             DateTime checkIn = viewModel.CheckInDate.Date.Add(viewModel.CheckInTime.TimeOfDay);
             DateTime checkOut = viewModel.CheckOutDate.Date.Add(viewModel.CheckOutTime.TimeOfDay);
 
-            decimal totalPrice = _bookingService.CalculateTotalPrice(viewModel.CheckInDate, viewModel.CheckOutDate, apartment);
+            List<ExtraService> selectedServices = new List<ExtraService>();
+            if (viewModel.ExtraServiceViewModel.Pool)
+                selectedServices.Add(ExtraService.POOL_RENTAL);
+            if (viewModel.ExtraServiceViewModel.Laundry)
+                selectedServices.Add(ExtraService.LAUNDRY_RENTAL);
+            if (viewModel.ExtraServiceViewModel.CarRental)
+                selectedServices.Add(ExtraService.CAR_RENTAL);
 
-            BookingViewModel bookingViewModel = new BookingViewModel() { CheckInDate = checkIn, CheckOutDate = checkOut, ApartmentId = viewModel.ApartmentId, UserId = (int)userId, TotalPrice = totalPrice };
+
+            decimal totalPrice = _bookingService.CalculateTotalPrice(viewModel.CheckInDate, viewModel.CheckOutDate, apartment, selectedServices);
+
+
+            BookingViewModel bookingViewModel = new BookingViewModel() { CheckInDate = checkIn, CheckOutDate = checkOut, ApartmentId = viewModel.ApartmentId, UserId = (int)userId, TotalPrice = totalPrice, ExtraServiceViewModels = viewModel.ExtraServiceViewModel};
             bookingViewModel.ApartmentViewModel = apartmentViewModel;
 
             ViewData["numberOfNights"] = _bookingService.ComputeNights(checkIn, checkOut);
@@ -60,10 +71,10 @@ namespace BookingWebApp.Controllers
             ViewData["currentGuestIndex"] = 1; // Starting with the first guest
 
             HttpContext.Session.SetString("newBooking", BookingViewModelHelper.CreateString(bookingViewModel));
-
             return View("CreateBooking", bookingViewModel);
         }
 
+     
         [HttpPost]
         public IActionResult AddGuestProfile(GuestProfileViewModel guestProfileViewModel)
         {

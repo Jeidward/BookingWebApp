@@ -23,9 +23,10 @@ namespace BookingWebApp.ViewModels
         public DateTime CheckOutTime { get; set; }
 
         public int ApartmentId { get; set; }
-
+        public ExtraServiceViewModel ExtraServiceViewModel { get; set; }
         public CreateBookingViewModel()
         {
+            ExtraServiceViewModel = new ExtraServiceViewModel();
             CheckInDate = DateTime.Today;
             CheckOutDate = DateTime.Today.AddDays(1);
 

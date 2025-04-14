@@ -183,7 +183,7 @@
                             <h3 class="mb-0">$@Model.PricePerNight.ToString("0") <span class="fs-5 text-muted">/ night</span></h3>
                         </div>
                         <form asp-controller="Booking" asp-action="CreateBooking" method="post">
-                            <input type="hidden" name="apartmentId" value="@Model.Id" />
+							<input type="hidden" name="apartmentId" value="@Model.Id" /> <!-- Apartment ID -->
                             
                             @Html.ValidationSummary(false, "", new { @class = "text-danger" })
                             <!-- Date and Time Selection -->

@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using System.Net.Http;
 using System.Reflection.Metadata.Ecma335;
 using System.Runtime.InteropServices.JavaScript;
+using Models.Enums;
 
 namespace Services
 {
@@ -73,9 +74,25 @@ namespace Services
             _bookingRepository.Update(booking);
         }
 
-        public decimal CalculateTotalPrice(DateTime checkInDate, DateTime checkOutDate, Apartment apartment)
+        public decimal CalculateTotalPrice(DateTime checkInDate, DateTime checkOutDate, Apartment apartment, List<ExtraService> extraServices)
         {
             decimal totalPrice = apartment.PricePerNight * ComputeNights(checkInDate, checkOutDate);
+
+            foreach (var service in extraServices)
+            {
+                switch (service)
+                {
+                    case ExtraService.POOL_RENTAL:
+                        totalPrice += 50; 
+                        break;
+                    case ExtraService.LAUNDRY_RENTAL:
+                        totalPrice += 20; 
+                        break;
+                    case ExtraService.CAR_RENTAL:
+                        totalPrice += 100; 
+                        break;
+                }
+            }
             return totalPrice;
         }
 

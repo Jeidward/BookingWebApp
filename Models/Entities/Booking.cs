@@ -1,4 +1,5 @@
 ﻿using Enums;
+using Models.Enums;
 
 
 namespace Models.Entities
@@ -10,9 +11,10 @@ namespace Models.Entities
         public List<GuestProfile> GuestProfiles { get; private set; }
         public DateTime CheckInDate { get; }
         public DateTime CheckOutDate { get; }
-        public decimal TotalPrice { get; }
+        public decimal TotalPrice { get; private set; }
         public BookingStatus Status { get; private set; }
-
+        public ExtraService Service { get; private set; }
+   
         /// <summary>
         /// this is for the repo
         /// </summary>
@@ -44,6 +46,10 @@ namespace Models.Entities
             Apartment = apartment;
         }
 
+        public Booking()
+        {
+            
+        }
         
         public void SetGuestProfile(List<GuestProfile> guestProfile)
         {
@@ -64,6 +70,15 @@ namespace Models.Entities
             this.Status = status;   
         }
 
+        public void SetService(ExtraService service)
+        {
+            this.Service = service;
+        }
+
+        public void SetTotalPrice(decimal totalPrice)
+        {
+            this.TotalPrice = totalPrice;
+        }
 
     }
 }
