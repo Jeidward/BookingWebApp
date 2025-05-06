@@ -6,13 +6,13 @@
         public AccountHolder Account { get; }
         public int Rating { get;  }      //  1 to 5 stars
         public string Comment { get; }
-        public int CleanlinessRating { get;  }
-        public int LocationRating { get; }
-        public int ComfortRating { get; }
-        public int ValueRating { get; }
+        public decimal CleanlinessRating { get;  }
+        public decimal LocationRating { get; }
+        public decimal ComfortRating { get; }
+        public decimal ValueRating { get; }
         public DateTime? CreatedAt { get; }
 
-        public Review(AccountHolder account, int rating, string comment, int id, int cleanlinessRating, int locationRating, int comfortRating, int valueRating,DateTime? createdAt)
+        public Review(AccountHolder account, int rating ,string comment, int id, decimal cleanlinessRating, decimal locationRating, decimal comfortRating, decimal valueRating,DateTime? createdAt)
         {
             Id = id;
             Account = account;

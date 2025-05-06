@@ -24,15 +24,33 @@ namespace Services
         {
             Apartment selectedApartment = _apartmentRepository.GetApartment(id);
             var reviews = _reviewService.GetReviewsForApartment(id);
+            if(reviews==null)
+            {
+                reviews = new List<Review>();
+            }
             selectedApartment.SetReviews(reviews);
+            selectedApartment.SetAvgRating(_reviewService.GetAverageRating(id));
+            selectedApartment.SetReviewsCount(reviews.Count);
             selectedApartment.SetGallery(_apartmentRepository.GetGallery(id));
             return selectedApartment;
         }
 
         public List<Apartment> GetAllApartments(int count)
         {
-            return _apartmentRepository.GetApartments(count);
-
+            var apartments = _apartmentRepository.GetApartments(count);
+            foreach (var apartment in apartments)
+            {
+                var reviews = _reviewService.GetReviewsForApartment(apartment.Id);
+                if (reviews == null)
+                {
+                    reviews = new List<Review>();
+                }
+                apartment.SetReviews(reviews);
+                apartment.SetAvgRating(_reviewService.GetAverageRating(apartment.Id));
+                apartment.SetReviewsCount(reviews.Count);
+                apartment.SetGallery(_apartmentRepository.GetGallery(apartment.Id));
+            }
+            return apartments;
         }
 
     }

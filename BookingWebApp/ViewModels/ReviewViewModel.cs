@@ -7,10 +7,10 @@ namespace BookingWebApp.ViewModels
         public int AccountId { get; set; }
         public int ReviewId { get; set; }
         public int OverallRating { get; set; }
-        public int CleanlinessRating { get; set; }
-        public int LocationRating { get; set; }
-        public int ComfortRating { get; set; }
-        public int ValueRating { get; set; }
+        public decimal CleanlinessRating { get; set; }
+        public decimal LocationRating { get; set; }
+        public decimal ComfortRating { get; set; }
+        public decimal ValueRating { get; set; }
         public string? Comments { get; set; } // i allow null
         public DateTime? CreatedAt { get; set; }
 
@@ -34,8 +34,18 @@ namespace BookingWebApp.ViewModels
                 CreatedAt = review.CreatedAt
             };
         }
-        
-        
+
+        public static List<ReviewViewModel> ConvertToViewModel(List<Review> reviews)
+        {
+            List<ReviewViewModel> reviewViewModels = new List<ReviewViewModel>();
+            foreach (var review in reviews)
+            {
+                reviewViewModels.Add(ConvertToViewModel(review));
+            }
+            return reviewViewModels;
+        }
+
+
 
     }
 }

@@ -127,87 +127,71 @@
     </div>
 </section>
 <section class="py-5 bg-light">
-    <div class="container py-4">
-        <h2 class="display-5 text-center mb-5">Our Amenities & Facilities</h2>
-        <div class="row g-4">
-            <div class="col-6 col-md-3">
-                <div class="bg-white p-4 text-center rounded shadow-sm h-100">
-                    <i class="fas fa-swimming-pool fs-1 mb-3" style="color: #12123e;"></i>
-                    <h5>Swimming Pool</h5>
-                </div>
-            </div>
-            <div class="col-6 col-md-3">
-                <div class="bg-white p-4 text-center rounded shadow-sm h-100">
-                    <i class="fas fa-wifi fs-1 mb-3" style="color: #12123e;"></i>
-                    <h5>Wifi</h5>
-                </div>
-            </div>
-            <div class="col-6 col-md-3">
-                <div class="bg-white p-4 text-center rounded shadow-sm h-100">
-                    <i class="fas fa-washing-machine fs-1 mb-3" style="color: #12123e;"></i>
-                    <h5>Laundry</h5>
-                </div>
-            </div>
-            <div class="col-6 col-md-3">
-                <div class="bg-white p-4 text-center rounded shadow-sm h-100">
-                    <i class="fas fa-parking fs-1 mb-3" style="color: #12123e;"></i>
-                    <h5>Parking space</h5>
-                </div>
-            </div>
-        </div>
-    </div>
+	<div class="container py-4">
+		<h2 class="display-5 text-center mb-5">Our Amenities & Facilities</h2>
+		<div class="row g-4">
+			<div class="col-6 col-md-3">
+				<div class="bg-white p-4 text-center rounded shadow-sm h-100">
+					<i class="fas fa-swimming-pool fs-1 mb-3" style="color: #12123e;"></i>
+					<h5>Swimming Pool</h5>
+				</div>
+			</div>
+			<div class="col-6 col-md-3">
+				<div class="bg-white p-4 text-center rounded shadow-sm h-100">
+					<i class="fas fa-wifi fs-1 mb-3" style="color: #12123e;"></i>
+					<h5>Wifi</h5>
+				</div>
+			</div>
+			<div class="col-6 col-md-3">
+				<div class="bg-white p-4 text-center rounded shadow-sm h-100">
+					<i class="fas fa-washing-machine fs-1 mb-3" style="color: #12123e;"></i>
+					<h5>Laundry</h5>
+				</div>
+			</div>
+			<div class="col-6 col-md-3">
+				<div class="bg-white p-4 text-center rounded shadow-sm h-100">
+					<i class="fas fa-parking fs-1 mb-3" style="color: #12123e;"></i>
+					<h5>Parking space</h5>
+				</div>
+			</div>
+		</div>
+	</div>
 </section>
+<!--all reviews section-->
 <section class="py-5" style="background-color: #f7f2eb;">
     <div class="container py-4">
-        <h2 class="display-5 text-center mb-5">Hear from Our Guests</h2>
-        <div class="row">
-            <div class="col-md-6 mb-4">
-                <div class="bg-white p-4 rounded shadow-sm h-100">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <span>1 Mar. 2023</span>
-                        <div class="text-warning">
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star-half-alt"></i>
-                        </div>
-                    </div>
-                    <p>
-                        The service at the Hotel Monteleone was exceptional. There was absolutely no issue that was not addressed timely and with satisfactory results. We were particulary impressed with how the hotel staff anticipated our needs (periodically coming by the Board Room to check with us). Numerous conference attendees commented on the quality of the food, the quality of the service and overall positive attitude towardy is the longevity of the staff and that sense of investment in the success of every event. I usually offer suggestions for improvements (part of being a marketing professor).
-                    </p>
-                </div>
-            </div>
-            <div class="col-md-6 mb-4">
-                <div class="bg-white p-4 rounded shadow-sm h-100">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <span>2 Mar. 2023</span>
-                        <div class="text-warning">
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star-half-alt"></i>
-                        </div>
-                    </div>
-                    <p>
-                        The service at the Hotel Monteleone was exceptional. There was absolutely no issue that was not addressed timely and with satisfactory results. We were particulary impressed with how the hotel staff anticipated our needs (periodically coming by the Board Room to check with us).
-                    </p>
-                    <div class="d-flex align-items-center mt-4">
-                        <img src="~/IMG/profile.jpg" alt="Anthony Bruff" class="rounded-circle" width="50" height="50">
-                        <span class="ms-3">Anthony Bruff</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="d-flex justify-content-center mt-4">
-            <button class="btn btn-sm btn-dark mx-2">
-                <i class="fas fa-chevron-left"></i>
-            </button>
-            <button class="btn btn-sm btn-dark mx-2">
-                <i class="fas fa-chevron-right"></i>
-            </button>
-        </div>
+	    <h2 class="display-5 text-center mb-5">Hear from Our Guests</h2>
+		<div id="reviewCards" class="row">
+		    @foreach (var review in Model.ReviewViewModel)
+		    {
+			    <div class="col-md-6 mb-4">
+				    <div class="bg-white p-4 rounded shadow-sm h-100">
+					    <div class="d-flex justify-content-between align-items-center mb-3">
+						    <span>@review.CreatedAt</span>
+						    <div class="text-warning">
+							    <i class="fas fa-star"></i>
+							    <i class="fas fa-star"></i>
+							    <i class="fas fa-star"></i>
+							    <i class="fas fa-star"></i>
+							    <i class="fas fa-star-half-alt"></i>
+						    </div>
+					    </div>
+					    <p>
+						   @review.Comments
+					    </p>
+				    </div>
+			    </div>
+		    }
+	    </div>
+	    <div class="d-flex justify-content-center mt-4">
+		    <button id="prevBtn" class="btn btn-sm btn-dark mx-2">
+			    <i class="fas fa-chevron-left"></i>
+		    </button>
+		    <button id="nextBtn" class="btn btn-sm btn-dark mx-2">
+			    <i class="fas fa-chevron-right"></i>
+		    </button>
+	    </div>
+
     </div>
 </section>
 
@@ -242,4 +226,31 @@
             </text>
         }
     });
+
+
+	/* --- pager for review cards ---------------------------------- */
+	document.addEventListener('DOMContentLoaded', () => {
+
+		const pageSize = 2;                             //
+		const cards    = [...document.querySelectorAll('#reviewCards > .col-md-6')];
+		const pages    = Math.ceil(cards.length / pageSize);
+		let   page     = 0;                             // 0-based index
+
+		const render = () => {
+			cards.forEach((card, i) => {
+				card.classList.toggle('d-none', Math.floor(i / pageSize) !== page);
+			});
+		};
+		render();                                       // show first page
+
+		document.getElementById('nextBtn').addEventListener('click', () => {
+			page = (page + 1) % pages;                  // loop forward
+			render();
+		});
+		document.getElementById('prevBtn').addEventListener('click', () => {
+			page = (page - 1 + pages) % pages;          // loop backward
+			render();
+		});
+	});
+
 </script>

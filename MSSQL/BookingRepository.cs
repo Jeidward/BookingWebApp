@@ -11,9 +11,11 @@ namespace MSSQL
     public class BookingRepository : Repository, IBookingRepository
     {
         private readonly AccountHolderRepository _accountHolderRepository;
-        public BookingRepository(IConfiguration configuration) : base(configuration)
+        private readonly IApartmentRepository _apartmentRepository;
+        public BookingRepository(IConfiguration configuration,IApartmentRepository apartmentRepository) : base(configuration)
         {
             _accountHolderRepository = new AccountHolderRepository(configuration);
+            _apartmentRepository = apartmentRepository;
         }
 
         public int SaveBooking(Booking booking)
@@ -331,6 +333,100 @@ namespace MSSQL
                 
             }
         }
+
+        public List<(Booking,string, string)> GetBookingsDue(DateTime date)
+        {
+            const string sql = @"
+            SELECT  b.BookingId,
+                    b.ApartmentId,
+                    b.CheckInDate,
+                    b.CheckOutDate,
+                    b.TotalPrice,
+                    b.Status,
+                    b.CheckoutReminderSent,
+                    u.Email,
+                    u.Name
+            FROM    Bookings AS b
+            JOIN    AccountHolders ah ON ah.AccountHolderId = b.AccountHolderId
+            JOIN    Users          u  ON u.UserId          = ah.UserId
+            WHERE   CAST(b.CheckOutDate AS date)      = @Today
+            AND   b.CheckoutReminderSent = 0;";
+
+            using var conn = new SqlConnection(_connectionString);
+            using var cmd = new SqlCommand(sql, conn);
+            cmd.Parameters.AddWithValue("@Today", date.Date);
+
+            conn.Open();
+            using var reader = cmd.ExecuteReader();
+
+            var results = new List<(Booking, string, string)>();
+
+            while (reader.Read())
+            {
+                BookingStatus status = (BookingStatus)Enum.Parse(typeof(BookingStatus), reader["Status"].ToString()!);
+                var booking = new Booking(
+                    Convert.ToInt32(reader["bookingId"]),
+                       Convert.ToDateTime(reader["CheckInDate"]),
+                       Convert.ToDateTime(reader["CheckOutDate"]), 
+              Convert.ToDecimal(reader["TotalPrice"]),
+                       status
+                );
+
+                booking.SetCheckoutReminderSent(Convert.ToBoolean(reader["CheckoutReminderSent"]));
+                booking.SetApartment(_apartmentRepository.GetApartment(Convert.ToInt32(reader["ApartmentId"])));
+                string email = Convert.ToString(reader["Email"])!;
+                var name = Convert.ToString(reader["Name"])!;
+
+                results.Add((booking, email,name));         
+            }
+            return results;                             
+        }
+
+        public int GetAllBookings()
+        {
+            List<Booking> bookings = new List<Booking>();
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                conn.Open();
+                string sql = @"SELECT BookingId, ApartmentId, AccountHolderId, CheckInDate, CheckOutDate, TotalPrice, Status
+                            FROM Bookings";
+                using (SqlCommand cmd = new SqlCommand(sql, conn))
+                {
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            BookingStatus Status = (BookingStatus)Enum.Parse(typeof(BookingStatus), reader["Status"].ToString()!);
+                            Booking booking = new(
+                               Convert.ToInt32(reader["BookingId"]),
+                               Convert.ToDateTime(reader["CheckInDate"]),
+                               Convert.ToDateTime(reader["CheckOutDate"]),
+                               Convert.ToDecimal(reader["TotalPrice"]),
+                               Status
+                            );
+                            bookings.Add(booking);
+                        }
+                    }
+                }
+            }
+
+            return bookings.Count;
+        }
+        public void MarkCheckoutReminderSent(int bookingId)
+        {
+            const string sql =
+                @"UPDATE Bookings
+                SET    CheckoutReminderSent = 1
+                WHERE  BookingId = @Id;";
+
+            using var conn = new SqlConnection(_connectionString);
+            using var cmd = new SqlCommand(sql, conn);
+            cmd.Parameters.AddWithValue("@Id", bookingId);
+
+            conn.Open();
+            cmd.ExecuteNonQuery();
+        }
+
     }
 }
     

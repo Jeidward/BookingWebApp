@@ -33,9 +33,9 @@ namespace Services
         public int GetExistedLogIn(string email, string password)
         {
             var user = _userRepository.GetUser(email);
-            if (user == null)
+            if (user.Id == -1)
             {
-                throw new ArgumentException("User not found.");
+                return 0;
             }
 
             var storedSalt = Convert.FromBase64String(user.Salt);
@@ -47,6 +47,11 @@ namespace Services
         public User GetUser(int userId)
         {
             return _userRepository.GetUser(userId);    
+        }
+
+        public User GetUserWithEmail(string email)
+        {
+            return _userRepository.GetUser(email);
         }
 
         public bool DoesUserExist(string email)

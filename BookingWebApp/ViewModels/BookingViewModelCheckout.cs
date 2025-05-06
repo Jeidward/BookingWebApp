@@ -20,6 +20,19 @@ namespace BookingWebApp.ViewModels
         {
             BookingViewModelCheckout viewModel = new BookingViewModelCheckout() { Id = booking.Id, ApartmentId = booking.Apartment.Id, CheckInDate = booking.CheckInDate, CheckOutDate = booking.CheckOutDate, TotalPrice = booking.TotalPrice, Status = booking.Status };
 
+            viewModel.ApartmentViewModel = new ApartmentViewModel
+            {
+                Id = booking.Apartment.Id,
+                Name = booking.Apartment.Name,
+                ImageUrl = booking.Apartment.ImageUrl,
+                Description = booking.Apartment.Description,
+                Adress = booking.Apartment.Adress,
+                Gallery = booking.Apartment.Gallery,
+                PricePerNight = booking.Apartment.PricePerNight,
+                AvgRating = booking.Apartment.AvgRating,
+                ReviewsCount = booking.Apartment.ReviewsCount
+            };
+
             return viewModel;
         }
         public static List<BookingViewModelCheckout> ConvertToViewModel(List<Booking> bookings)

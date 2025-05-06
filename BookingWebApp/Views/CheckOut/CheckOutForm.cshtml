@@ -53,29 +53,29 @@
                                 </div>
                             </div>
 
-                            <!-- Rating & Feedback Section -->
+                            <!-- AvgRating & Feedback Section -->
                             <div class="card mb-4 border">
                                 <div class="card-header">
                                     <h5 class="mb-0">Rate Your Stay</h5>
                                 </div>
                                 <div class="card-body">
-                                    <!-- Overall Rating -->
+                                    <!-- Overall AvgRating -->
                                     <div class="mb-4">
-                                        <label class="form-label fw-bold">Overall Rating</label>
+                                        <label class="form-label fw-bold">Overall AvgRating</label>
                                         <div class="rating-container">
-                                            <input type="range" class="rating-slider form-range" id="overallRating" name="overallRating" min="1" max="10" value="8">
+                                            <input type="range" class="rating-slider form-range" id="overallRating" name="overallAvgRating" min="1" max="5" value="3">
                                             <span class="ms-2 rating-display" id="overallValue">8</span><span>/10</span>
                                         </div>
                                     </div>
 
-                                    <!-- Detailed Ratings -->
+                                    <!-- Detailed AvgRatings -->
                                     <div class="row mb-4">
                                         <div class="col-md-6">
                                             <!-- Cleanliness -->
                                             <div class="mb-3">
                                                 <label class="form-label fw-bold">Cleanliness</label>
                                                 <div class="rating-container">
-                                                    <input type="range" class="rating-slider form-range" id="cleanlinessRating" name="CleanlinessRating" min="1" max="10" value="8">
+                                                    <input type="range" class="rating-slider form-range" id="cleanlinessRating" name="CleanlinessAvgRating" min="1" max="5" value="3">
                                                     <span class="ms-2 rating-display" id="cleanlinessValue">8</span><span>/10</span>
                                                 </div>
                                             </div>
@@ -83,7 +83,7 @@
                                             <div class="mb-3">
 	                                            <label class="form-label fw-bold">Location</label>
 	                                            <div class="rating-container">
-		                                            <input type="range" class="rating-slider form-range" id="locationRating" name="LocationRating" min="1" max="10" value="8">
+		                                            <input type="range" class="rating-slider form-range" id="locationRating" name="LocationAvgRating" min="1" max="5" value="3">
 		                                            <span class="ms-2 rating-display" id="locationValue">8</span><span>/10</span>
 	                                            </div>
                                             </div>
@@ -91,7 +91,7 @@
                                             <div class="mb-3">
 	                                            <label class="form-label fw-bold">Value</label>
 	                                            <div class="rating-container">
-		                                            <input type="range" class="rating-slider form-range" id="valueRating" name="ValueRating" min="1" max="10" value="8">
+		                                            <input type="range" class="rating-slider form-range" id="valueRating" name="ValueAvgRating" min="1" max="5" value="3">
 		                                            <span class="ms-2 rating-display" id="valueValue">8</span><span>/10</span>
 	                                            </div>
                                             </div>
@@ -99,7 +99,7 @@
                                             <div class="mb-3">
                                                 <label class="form-label fw-bold">Comfort</label>
                                                 <div class="rating-container">
-                                                    <input type="range" class="rating-slider form-range" id="comfortRating" name="ComfortRating" min="1" max="10" value="8">
+                                                    <input type="range" class="rating-slider form-range" id="comfortRating" name="ComfortAvgRating" min="1" max="5" value="3">
                                                     <span class="ms-2 rating-display" id="comfortValue">8</span><span>/10</span>
                                                 </div>
                                             </div>
@@ -156,13 +156,13 @@
         document.addEventListener('DOMContentLoaded', function() {
             // Create an array of all rating sliders and their display elements
             const ratingSliders = [
-                { slider: 'overallRating', display: 'overallValue' },
-                { slider: 'cleanlinessRating', display: 'cleanlinessValue' },
-                { slider: 'communicationRating', display: 'communicationValue' },
-                { slider: 'checkinRating', display: 'checkinValue' },
-                { slider: 'locationRating', display: 'locationValue' },
-                { slider: 'valueRating', display: 'valueValue' },
-                { slider: 'comfortRating', display: 'comfortValue' }
+                { slider: 'overallAvgRating', display: 'overallValue' },
+                { slider: 'cleanlinessAvgRating', display: 'cleanlinessValue' },
+                { slider: 'communicationAvgRating', display: 'communicationValue' },
+                { slider: 'checkinAvgRating', display: 'checkinValue' },
+                { slider: 'locationAvgRating', display: 'locationValue' },
+                { slider: 'valueAvgRating', display: 'valueValue' },
+                { slider: 'comfortAvgRating', display: 'comfortValue' }
             ];
 
             // Set up event listeners for all sliders

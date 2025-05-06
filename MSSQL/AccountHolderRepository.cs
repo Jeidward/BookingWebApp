@@ -39,7 +39,7 @@ namespace MSSQL
                     cmd.Parameters.AddWithValue("Id", id);
                     using (SqlDataReader reader = cmd.ExecuteReader())
                     {
-                        reader.Read();
+                        if(reader.Read())
                         {
                             return new AccountHolder(
 
@@ -48,7 +48,7 @@ namespace MSSQL
                             );
                         }
                     }
-                }// expected if statement
+                } return AccountHolder.DefaultAccountHolder();
             }
         }
 
@@ -69,7 +69,7 @@ namespace MSSQL
                     cmd.Parameters.AddWithValue("Id", id);
                     using (SqlDataReader reader = cmd.ExecuteReader())
                     {
-                        reader.Read();
+                        if(reader.Read())
                         {
                             return new AccountHolder(
 
@@ -77,8 +77,7 @@ namespace MSSQL
 
                             );
                         }
-                    }
-                    //return new AccountHolder(-1);
+                    } return AccountHolder.DefaultAccountHolder();
                 }
             }
         }
@@ -91,7 +90,7 @@ namespace MSSQL
                 string query = @"
                             SELECT * FROM Bookings b
                             JOIN AccountHolders a ON b.AccountHolderId = a.AccountHolderId
-                            WHERE a.UserId = @userId AND b.Status = 'Confirmed'";
+                            WHERE a.UserId = @userId";
 
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {

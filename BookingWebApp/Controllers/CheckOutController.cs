@@ -42,7 +42,6 @@ namespace BookingWebApp.Controllers
 
         }
 
-
         public IActionResult CheckOutForm()
         {
             int? userId = HttpContext.Session.GetInt32("UserId");

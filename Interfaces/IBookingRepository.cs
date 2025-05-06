@@ -18,6 +18,10 @@ namespace Interfaces
         public void Update(Booking  booking);
         public bool IsOverlappingBookingExist(int apartmentId,DateTime checkInDate,DateTime checkOutDate);
         public void CancelBooking(int bookingId);
+        public List<(Booking, string, string)> GetBookingsDue(DateTime date);
+        public void MarkCheckoutReminderSent(int bookingId);
+
+        public int GetAllBookings();
 
 
 

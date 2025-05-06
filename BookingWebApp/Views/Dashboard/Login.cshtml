@@ -1,0 +1,45 @@
+﻿@model NonDetailUserViewModel
+
+@{
+	Layout = null;
+}
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+	<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+</head>
+<body class="bg-light d-flex align-items-center justify-content-center">
+<div class="card shadow-lg w-100" style="max-width: 480px;">
+	<div class="card-body">
+		<div class="text-center">
+			<h1 class="card-title h3">Log in</h1>
+				<p class="card-text text-muted">Welcome, Host! Please log in to access your dashboard.</p>
+		</div>
+		<div class="mt-4">
+			
+					@using (Html.BeginForm("Login", "Dashboard", FormMethod.Post))
+				{
+					@Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+					<div class="mb-3">
+						@Html.LabelFor(m => m.Email)
+						@Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
+						@Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
+					</div>
+
+					<div class="mb-3">
+						@Html.LabelFor(m => m.Password)
+						@Html.PasswordFor(m => m.Password, new { @class = "form-control" })
+						@Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
+					</div>
+
+					<button type="submit" class="btn btn-primary w-100">Login</button>
+				}
+		</div>
+	</div>
+</div>
+</body>

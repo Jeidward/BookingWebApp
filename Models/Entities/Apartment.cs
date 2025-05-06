@@ -12,10 +12,10 @@ namespace Models.Entities
         public List<string> Gallery { get; private set; }
         public List<Review> Reviews { get; private set; }
         public decimal PricePerNight { get; }
-        public decimal Rating { get; }
-        public int ReviewsCount { get;}
+        public decimal AvgRating { get; private set; }
+        public int ReviewsCount { get; private set; }
 
-        public Apartment(int id, string name, string description, string imageUrl, decimal pricePerNight, decimal rating, int reviewCount, string adress)
+        public Apartment(int id, string name, string description, string imageUrl, decimal pricePerNight, string adress)
         {
             Id = id;
             Name = name;
@@ -23,12 +23,14 @@ namespace Models.Entities
             ImageUrl = imageUrl;
             Adress = adress;
             PricePerNight = pricePerNight;
-            Rating = rating;
-            ReviewsCount = reviewCount;
             Gallery = new List<string>();
             Reviews = new List<Review>();
 
+        }
 
+        public static Apartment DefaultApartment()
+        {
+            return new Apartment(0, string.Empty, string.Empty, string.Empty, 0, string.Empty);
         }
 
         public void SetGallery(List<string> gallery)
@@ -40,11 +42,15 @@ namespace Models.Entities
         {
             Reviews = reviews;
         }
-        // A list of reviews for the apartment
-        //public List<Review> Reviews { get; set; } = new List<Review>();
 
-        //// A list of date ranges representing availability
-        //public List<DateRange> Availability { get; set; } = new List<DateRange>();
+        public void SetAvgRating(decimal rating)
+        {
+            AvgRating = rating;
+        }
 
+        public void SetReviewsCount(int reviewsCount)
+        {
+            ReviewsCount = reviewsCount;
+        }
     }
 }

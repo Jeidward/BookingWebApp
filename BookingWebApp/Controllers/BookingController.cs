@@ -18,13 +18,17 @@ namespace BookingWebApp.Controllers
         private readonly BookingService _bookingService;
         private readonly AccountHolderService _accountHolderService;
         private readonly ApartmentService _apartmentService;
+        private readonly EmailSenderService _emailSenderService;
+        private readonly UserService _userService;
 
 
-        public BookingController(BookingService bookingService, AccountHolderService accountHolderService, ApartmentService apartmentService)
+        public BookingController(BookingService bookingService, AccountHolderService accountHolderService, ApartmentService apartmentService, EmailSenderService emailSenderService, UserService userService)
         {
             _bookingService = bookingService;
             _accountHolderService = accountHolderService;
             _apartmentService = apartmentService;
+            _emailSenderService = emailSenderService;
+            _userService = userService;
         }
 
 
@@ -61,14 +65,18 @@ namespace BookingWebApp.Controllers
 
             decimal totalPrice = _bookingService.CalculateTotalPrice(viewModel.CheckInDate, viewModel.CheckOutDate, apartment, selectedServices);
 
-
             BookingViewModel bookingViewModel = new BookingViewModel() { CheckInDate = checkIn, CheckOutDate = checkOut, ApartmentId = viewModel.ApartmentId, UserId = (int)userId, TotalPrice = totalPrice, ExtraServiceViewModels = viewModel.ExtraServiceViewModel};
             bookingViewModel.ApartmentViewModel = apartmentViewModel;
 
             ViewData["numberOfNights"] = _bookingService.ComputeNights(checkIn, checkOut);
             ViewData["numberOfGuests"] = viewModel.NumberOfGuests;
             HttpContext.Session.SetInt32("numberOfGuests", viewModel.NumberOfGuests);
-            ViewData["currentGuestIndex"] = 1; // Starting with the first guest
+
+            int currentGuestIndex = HttpContext.Session.GetInt32("CurrentGuestIndex") ?? 1;
+            if (HttpContext.Session.GetInt32("CurrentGuestIndex") == null)          
+                HttpContext.Session.SetInt32("CurrentGuestIndex", currentGuestIndex);
+
+            ViewData["currentGuestIndex"] = currentGuestIndex; 
 
             HttpContext.Session.SetString("newBooking", BookingViewModelHelper.CreateString(bookingViewModel));
             return View("CreateBooking", bookingViewModel);
@@ -85,7 +93,7 @@ namespace BookingWebApp.Controllers
                 return RedirectToAction("Index", "Home");
             }
 
-            int currentGuestIndex = int.Parse(Request.Form["currentGuestIndex"]!);
+            int currentGuestIndex = HttpContext.Session.GetInt32("CurrentGuestIndex") ?? 1;
             int accountHolderId = HttpContext.Session.GetInt32("UserId") ?? 0;
             AccountHolder accountHolder;
 
@@ -118,10 +126,12 @@ namespace BookingWebApp.Controllers
                 {
                     return RedirectToAction("ShowApartmentList", "Apartment");
                 }
+
                 BookingViewModel booking = BookingViewModelHelper.ReadString(bookingString);
                 booking.ApartmentViewModel = ApartmentViewModel.ConvertToViewModel(_apartmentService.GetApartment(booking.ApartmentId));
+                booking.ExtraServiceViewModels = new ExtraServiceViewModel();
 
-                // Increment the guest index
+                HttpContext.Session.SetInt32("CurrentGuestIndex", currentGuestIndex + 1);
                 ViewData["currentGuestIndex"] = currentGuestIndex + 1;
                 ViewData["numberOfGuests"] = totalGuests;
                 ViewData["numberOfNights"] = _bookingService.ComputeNights(booking.CheckInDate, booking.CheckOutDate);
@@ -150,7 +160,7 @@ namespace BookingWebApp.Controllers
         }
 
         [HttpPost]
-        public IActionResult FinalizeBooking(PaymentViewModel paymentViewModel)
+        public async Task<IActionResult> FinalizeBooking(PaymentViewModel paymentViewModel)
         {
             string? bookingString = HttpContext.Session.GetString("newBooking");
             if (bookingString == null)
@@ -161,7 +171,8 @@ namespace BookingWebApp.Controllers
 
             // Get account holder info if available
             int accountHolderId = HttpContext.Session.GetInt32("UserId") ?? 0;
-            
+            var user = _userService.GetUser(accountHolderId); // use for the email sender
+
             if (accountHolderId > 0)
             {
                var accountHolder = _accountHolderService.GetAccountHolderById(accountHolderId)!;
@@ -191,9 +202,17 @@ namespace BookingWebApp.Controllers
             HttpContext.Session.Remove("numberOfGuests");
             HttpContext.Session.Remove("newBooking");
 
+            //email sending section//
+            var reciever = user.Email;
+            var subject = "Booking Confirmation";
+            var body = $"Dear {user.Name},\n\nYour booking has been confirmed!\n\nBooking ID: {bookingId}\nCheck-in Date: {booking.CheckInDate:MMMM dd, yyyy}\nCheck-out Date: {booking.CheckOutDate:MMMM dd, yyyy}\nTotal Payment: {booking.TotalPrice:C}\n\nThank you for choosing us!\n\nBest regards,\nThe Booking Team";
+
+           await _emailSenderService.SendEmail(reciever, subject, body);
+
             return RedirectToAction("BookingSuccessful", "Booking", new { bookingId = bookingId });
         }
 
+      
         public IActionResult BookingSuccessful(int bookingId)
         {
             Booking booking = _bookingService.GetBookingWithApartment(bookingId);

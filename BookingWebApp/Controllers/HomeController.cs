@@ -13,15 +13,18 @@ namespace BookingWebApp.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly BookingService _bookingService;
         private readonly UserService _userService;
-        public HomeController(ILogger<HomeController> logger,BookingService bookingService, UserService userService)
+        private readonly ReviewService _reviewService;
+        public HomeController(ILogger<HomeController> logger,BookingService bookingService, UserService userService, ReviewService reviewService)
         {
             _logger = logger;
             _bookingService = bookingService;
-            _userService = userService; 
+            _userService = userService;
+            _reviewService = reviewService;
         }
 
         public IActionResult Index()
         {
+           var reviews =  _reviewService.GetAllReviews(); // this review still need fixing.
             int? userId = HttpContext.Session.GetInt32("UserId");
 
             if (userId == null)
@@ -29,7 +32,9 @@ namespace BookingWebApp.Controllers
                 IndexViewModel user = new IndexViewModel
                 {
                     UserViewModel = new UserViewModel(),
-                    BookingViewModel = new List<BookingViewModel>()
+                    BookingViewModel = new List<BookingViewModel>(),
+                    ReviewViewModel = ReviewViewModel.ConvertToViewModel(reviews)
+
                 };
                 return View(user);
             }
@@ -38,7 +43,7 @@ namespace BookingWebApp.Controllers
             bool hasCheckOuToday = this.CheckForTodayCheckOut(userId.Value);
 
             var userBooking = _bookingService.GetAllBookingsForUser(userId.Value);
-            // Set session and view bag
+        
             if (hasCheckOuToday == true)
             {
                 HttpContext.Session.SetInt32("HasCheckOutToday", hasCheckOuToday ? 1 : 0);
@@ -48,7 +53,8 @@ namespace BookingWebApp.Controllers
             IndexViewModel viewModel = new IndexViewModel
             {
                 UserViewModel = UserViewModel.ConvertToViewModel(userName),
-                BookingViewModel = BookingViewModelHelper.ConvertToViewModel(userBooking)
+                BookingViewModel = BookingViewModelHelper.ConvertToViewModel(userBooking),
+                ReviewViewModel = ReviewViewModel.ConvertToViewModel(reviews)
             };
 
             return View(viewModel);
@@ -62,7 +68,7 @@ namespace BookingWebApp.Controllers
 
             foreach (var booking in bookings)
             {
-                if (booking.CheckOutDate.Date == DateTime.Today.AddDays(-2)) // && confirmed
+                if (booking.CheckOutDate.Date == DateTime.Today) // && confirmed
                 {
                     HttpContext.Session.SetString("booking",BookingViewModelHelper.CreateString(booking));
                     return true;
@@ -76,7 +82,6 @@ namespace BookingWebApp.Controllers
             return View();
         }
 
- 
         
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

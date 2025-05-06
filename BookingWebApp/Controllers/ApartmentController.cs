@@ -3,6 +3,7 @@ using Models.Entities;
 using Microsoft.Extensions.Configuration;
 using Services;
 using BookingWebApp.ViewModels;
+using DTOs;
 
 namespace BookingWebApp.Controllers
 {
@@ -26,6 +27,8 @@ namespace BookingWebApp.Controllers
         {
             Apartment selectedApartment = _apartmentService.GetApartment(id);
             ApartmentViewModel apartmentViewModel = ApartmentViewModel.ConvertToViewModel(selectedApartment);
+            //if (apartmentViewModel.ReviewViewModel.Count == 0)
+            //    apartmentViewModel.AverageCleanliness = 0;
             return View(apartmentViewModel);
         }
     }

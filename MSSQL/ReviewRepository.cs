@@ -41,6 +41,39 @@ namespace MSSQL
             }
         }
 
+        public List<Review> GetAllReviews()
+        {
+            var reviews = new List<Review>();
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                conn.Open();
+                string query =
+                    @"SELECT AccountHolderId,Rating, Comment,CreatedAt,IsArchived,CleanlinessRating,LocationRating,ComfortRating,ValueRating FROM Reviews";
+                SqlCommand cmd = new SqlCommand(query, conn);
+
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        reviews.Add(new(
+
+                             new AccountHolder(Convert.ToInt32(reader["AccountHolderId"])),
+                             Convert.ToInt32(reader["Rating"]),
+                             Convert.ToString(reader["Comment"]),
+                             Convert.ToInt32(reader["IsArchived"]),
+                             Convert.ToInt32(reader["CleanlinessRating"]),
+                             Convert.ToInt32(reader["LocationRating"]),
+                             Convert.ToInt32(reader["ComfortRating"]),
+                             Convert.ToInt32(reader["ValueRating"]),
+                             Convert.ToDateTime(reader["CreatedAt"])
+
+                        ));
+                    }
+                    return reviews;
+                }
+            }
+        }
+
         public List<Review>? GetReviewsApartment(int apartmentId)
         {
             List<Review> reviews = new List<Review>();
@@ -65,7 +98,7 @@ namespace MSSQL
                              reviews.Add(new(
 
                              new AccountHolder(Convert.ToInt32(reader["AccountHolderId"])),
-                              Convert.ToInt32(reader["Rating"]), 
+                              Convert.ToInt32(reader["Rating"]),
                               reader["Comment"].ToString(),
                               Convert.ToInt32(reader["IsArchived"]), 
                               Convert.ToInt32(reader["CleanlinessRating"]),
@@ -73,7 +106,6 @@ namespace MSSQL
                               Convert.ToInt32(reader["ComfortRating"]),
                               Convert.ToInt32(reader["ValueRating"]),
                               Convert.ToDateTime(reader["CreatedAt"])
-
                          ));
                         }
                        

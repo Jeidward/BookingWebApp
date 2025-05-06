@@ -23,9 +23,10 @@ namespace BookingWebApp.Helpers
                 Adress = booking.Apartment.Adress,
                 Gallery = booking.Apartment.Gallery,
                 PricePerNight = booking.Apartment.PricePerNight,
-                Rating = booking.Apartment.Rating,
+                AvgRating = booking.Apartment.AvgRating,
                 ReviewsCount = booking.Apartment.ReviewsCount
             };
+
             foreach (var guest in booking.GuestProfiles)
             {
              
@@ -47,7 +48,7 @@ namespace BookingWebApp.Helpers
 
         public static string CreateString(BookingViewModel bookingViewModel)
         {
-            return $"{bookingViewModel.ApartmentId}${bookingViewModel.CheckInDate}${bookingViewModel.CheckOutDate}${bookingViewModel.TotalPrice}";
+            return $"{bookingViewModel.ApartmentId}${bookingViewModel.CheckInDate}${bookingViewModel.CheckOutDate}${bookingViewModel.TotalPrice}${bookingViewModel.ExtraServiceViewModels.Pool}${bookingViewModel.ExtraServiceViewModels.Laundry}${bookingViewModel.ExtraServiceViewModels.CarRental}";
         }
 
 
@@ -74,14 +75,22 @@ namespace BookingWebApp.Helpers
 
         public static BookingViewModel ReadString(string bookingString)
         {
-            string[] bookingInfo = bookingString.Split('$');
-            BookingViewModel readBooking = new BookingViewModel() {
+            string[] bookingInfo = bookingString.Split('$');    
+            var extras = new ExtraServiceViewModel
+            {
+                Pool = bool.Parse(bookingInfo[4]),
+                Laundry = bool.Parse(bookingInfo[5]),
+                CarRental = bool.Parse(bookingInfo[6])
+            };
+
+            return new BookingViewModel
+            {
+                ApartmentId = int.Parse(bookingInfo[0]),
                 CheckInDate = DateTime.Parse(bookingInfo[1]),
                 CheckOutDate = DateTime.Parse(bookingInfo[2]),
                 TotalPrice = decimal.Parse(bookingInfo[3]),
-                ApartmentId = int.Parse(bookingInfo[0])
+                ExtraServiceViewModels = extras
             };
-            return readBooking;
         }
     }
     

@@ -10,7 +10,7 @@ namespace BookingWebApp.ViewModel
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
         {
             var viewModel = (UserViewModel)validationContext.ObjectInstance;
-            _userService = (UserService)validationContext.GetService(typeof(UserService));
+            _userService = (UserService)validationContext.GetService(typeof(UserService))!;
 
             var emailAlreadyExist = _userService.DoesUserExist(viewModel.Email);
 

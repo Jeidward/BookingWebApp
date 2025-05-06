@@ -134,16 +134,12 @@ namespace Services
             var currentDay = DateTime.Today;
             var period = checkInDate - currentDay;
             var sevenDays = TimeSpan.FromDays(7);
-            period = DateTime.Today.TimeOfDay; // for testing, remove after
             if (period > sevenDays)
             {
                 _bookingRepository.CancelBooking(bookingId);
                 return true;
-            }
-            else
-            { 
-                return false;
-            }
+            } 
+            return false;
         }
     }
 }

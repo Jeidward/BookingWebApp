@@ -14,7 +14,8 @@ namespace Models.Entities
         public decimal TotalPrice { get; private set; }
         public BookingStatus Status { get; private set; }
         public ExtraService Service { get; private set; }
-   
+        public bool CheckoutReminderSent { get; private set; }
+
         /// <summary>
         /// this is for the repo
         /// </summary>
@@ -50,6 +51,11 @@ namespace Models.Entities
         {
             
         }
+
+        public void SetCheckoutReminderSent(bool checkoutReminderSent)
+        {
+            CheckoutReminderSent = checkoutReminderSent;
+        }
         
         public void SetGuestProfile(List<GuestProfile> guestProfile)
         {
@@ -68,16 +74,6 @@ namespace Models.Entities
         public void SetStatus(BookingStatus status)
         {
             this.Status = status;   
-        }
-
-        public void SetService(ExtraService service)
-        {
-            this.Service = service;
-        }
-
-        public void SetTotalPrice(decimal totalPrice)
-        {
-            this.TotalPrice = totalPrice;
         }
 
     }

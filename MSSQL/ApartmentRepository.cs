@@ -18,9 +18,8 @@ namespace MSSQL
             {
                 conn.Open();
                 string query = $@"
-                    SELECT TOP {count} ApartmentId, Name, Description, ImageUrl, PricePerNight, Rating, ReviewsCount, Adress 
-                    FROM Apartments 
-                    ORDER BY Rating DESC";
+                    SELECT TOP {count} ApartmentId, Name, Description, ImageUrl, PricePerNight, Adress 
+                    FROM Apartments";
 
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
@@ -29,14 +28,12 @@ namespace MSSQL
                         while (reader.Read())
                         {
                             apartments.Add(new Apartment(
-                                reader.GetInt32(reader.GetOrdinal("ApartmentId")),
-                                reader.GetString(reader.GetOrdinal("Name")),
-                                reader.GetString(reader.GetOrdinal("Description")),
-                                reader.GetString(reader.GetOrdinal("ImageUrl")),
-                                reader.GetDecimal(reader.GetOrdinal("PricePerNight")),
-                                reader.GetDecimal(reader.GetOrdinal("Rating")),
-                                reader.GetInt32(reader.GetOrdinal("ReviewsCount")),
-                                reader.GetString(reader.GetOrdinal("Adress"))
+                                Convert.ToInt32(reader["ApartmentId"]),
+                                Convert.ToString(reader["Name"])!,
+                                Convert.ToString(reader["Description"])!,
+                                Convert.ToString(reader["ImageUrl"])!,
+                                Convert.ToDecimal(reader["PricePerNight"]),
+                                Convert.ToString(reader["Adress"])!
                             ));
                         }
                     }
@@ -52,7 +49,7 @@ namespace MSSQL
             {
                 conn.Open();
                 string query = $@"
-                    SELECT ApartmentId, Name, Description, ImageUrl, PricePerNight, Rating, ReviewsCount, Adress 
+                    SELECT ApartmentId, Name, Description, ImageUrl, PricePerNight,Adress 
                     FROM Apartments WHERE ApartmentId = @Id";
 
                 using (SqlCommand cmd = new SqlCommand(query, conn))
@@ -60,7 +57,7 @@ namespace MSSQL
                     cmd.Parameters.AddWithValue("Id", id);
                     using (SqlDataReader reader = cmd.ExecuteReader())
                     {
-                        reader.Read();
+                        if(reader.Read())
                         {
                             return new(
                                 Convert.ToInt32(reader["ApartmentId"]),
@@ -68,11 +65,10 @@ namespace MSSQL
                                  Convert.ToString(reader["Description"])!,
                                  Convert.ToString(reader["ImageUrl"])!,
                                  Convert.ToDecimal(reader["PricePerNight"]),
-                                 Convert.ToDecimal(reader["Rating"]),
-                                 Convert.ToInt32(reader["ReviewsCount"]),
                                  Convert.ToString(reader["Adress"])!
                             );
                         }
+                        return Apartment.DefaultApartment();
                     }
                 }
             }

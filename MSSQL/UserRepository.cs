@@ -1,4 +1,5 @@
-﻿using Interfaces;
+﻿using System.Runtime.Serialization;
+using Interfaces;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using Models.Entities;
@@ -17,9 +18,9 @@ namespace MSSQL
                 conn.Open();
 
                 string query = @"
-                    INSERT INTO Users (Email, [Password],[isArchived],Name, Salt)
+                    INSERT INTO Users (Email, [Password],[isArchived],Name, Salt, RoleId)
                     OUTPUT INSERTED.UserId
-                    VALUES (@Email, @Password, 0,@Name, @Salt)";
+                    VALUES (@Email, @Password, 0,@Name, @Salt,@RoleId)";
                 int newUserId;
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
@@ -27,6 +28,7 @@ namespace MSSQL
                     cmd.Parameters.AddWithValue("@Password", password);
                     cmd.Parameters.AddWithValue("@Name", name);
                     cmd.Parameters.AddWithValue("@Salt", salt);
+                    cmd.Parameters.AddWithValue("@RoleId", 1); // 1 for regular users
                     newUserId = (int)cmd.ExecuteScalar();
                 }
 
@@ -86,12 +88,13 @@ namespace MSSQL
             }
         }
 
+
         public User GetUser(string email)
         {
             using (SqlConnection conn = new SqlConnection(_connectionString))
             {
                 conn.Open();
-                string query = @"SELECT [UserId],[Email],[Password],[IsArchived],[Name],[Salt] FROM Users WHERE Email = @Email";
+                string query = @"SELECT [UserId],[Email],[Password],[IsArchived],[Name],[Salt],[RoleId] FROM Users WHERE Email = @Email";
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
                     cmd.Parameters.AddWithValue("@Email", email);
@@ -104,13 +107,14 @@ namespace MSSQL
                                 Convert.ToString(reader["Email"])!,
                                 Convert.ToString(reader["Password"])!,
                                 Convert.ToString(reader["Name"])!,
-                                Convert.ToString(reader["Salt"])!
+                                Convert.ToString(reader["Salt"])!,
+                                Convert.ToInt32(reader["RoleId"])
                             );
                             return user;
                         }
                     }
                 }
-                return new( "", "", "");
+                return new( -1);
             }
         }
         public User GetUser(int Id) 

@@ -27,7 +27,6 @@ namespace BookingWebApp.Helpers
                 dataPairs.Add(data.Split(':')[0], data.Split(':')[1]);
             }
 
-            //AccountHolder account = _accountHolderRepository.GetAccountHolder(int.Parse(dataPairs["AccountHolderId"]));
             AccountHolder account = _accountHolderService.GetAccountHolderById(int.Parse(dataPairs["AccountHolderId"]));
             return new(account, dataPairs["FirstName"], dataPairs["LastName"], int.Parse(dataPairs["Age"]), dataPairs["Email"], dataPairs["PhoneNumber"], dataPairs["Country"], dataPairs["Adress"]);
         }

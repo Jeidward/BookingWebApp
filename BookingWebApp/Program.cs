@@ -23,7 +23,9 @@ namespace BookingWebApp
             });
 
             builder.Services.AddHttpContextAccessor();
-      
+            builder.Services.AddHostedService<CheckoutReminderWorkerService>();
+
+
             builder.Services.AddScoped<IBookingRepository, BookingRepository>();
             builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
             builder.Services.AddScoped<IAccountHolderRepository, AccountHolderRepository>();
@@ -40,7 +42,8 @@ namespace BookingWebApp
             builder.Services.AddScoped<CheckOutService>();
             builder.Services.AddScoped<ReviewService>();
             builder.Services.AddScoped<PasswordSecurityService>();
-           
+            builder.Services.AddScoped<EmailSenderService>();
+            builder.Services.AddScoped<DashboardService>();
 
 
 

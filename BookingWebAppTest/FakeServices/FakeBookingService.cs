@@ -31,7 +31,20 @@ namespace BookingWebAppTest.FakeServices
             return bookingId;
         }
 
-      
+        public bool CancelBooking(int bookingId, DateTime checkInDate)
+        {
+            var currentDay = DateTime.Today;
+            var period = checkInDate - currentDay;
+            var sevenDays = TimeSpan.FromDays(7);
+            if (period > sevenDays)
+            {
+                _bookingRepository.CancelBooking(bookingId);
+                return true;
+            }
+            return false;
+        }
+
+
         public void FinalizePayment(int bookingId, Booking booking, PaymentMethod paymentMethod)
         {
             booking.SetId(bookingId);
