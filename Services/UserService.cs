@@ -13,13 +13,15 @@ namespace Services
     public class UserService
     {
         private readonly IUserRepository _userRepository;
-        private readonly PasswordSecurityService _passwordSecurityService;
+        private readonly IPasswordSecurityService _passwordSecurityService;
         
-        public UserService(IUserRepository userRepository, PasswordSecurityService passwordSecurityService)
+        public UserService(IUserRepository userRepository, IPasswordSecurityService passwordSecurityService)
         {
             _userRepository = userRepository;
             _passwordSecurityService = passwordSecurityService;
         }
+
+            
         public bool Register(string email, string password, string name)
         {
             User newUser = new(email, password,name);

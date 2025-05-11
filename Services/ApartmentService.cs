@@ -35,9 +35,9 @@ namespace Services
             return selectedApartment;
         }
 
-        public List<Apartment> GetAllApartments(int count)
+        public List<Apartment> GetAllApartments()
         {
-            var apartments = _apartmentRepository.GetApartments(count);
+            var apartments = _apartmentRepository.GetApartments();
             foreach (var apartment in apartments)
             {
                 var reviews = _reviewService.GetReviewsForApartment(apartment.Id);
@@ -52,6 +52,23 @@ namespace Services
             }
             return apartments;
         }
+
+        public void DeleteApartment(int apartmentId)
+        {
+            _apartmentRepository.Delete(apartmentId);
+        }
+
+        public void AddApartment(Apartment apartment)
+        {
+            _apartmentRepository.CreateApartment(apartment);
+            var lastApartment = _apartmentRepository.GetApartments().LastOrDefault(); // redundant, but it works
+            if (lastApartment == null)
+                throw new Exception("No apartments found in the database.");    // for stop complaining about null reference.
+
+            foreach (var image in apartment.Gallery)
+                _apartmentRepository.AddApartmentImages(lastApartment.Id, image);
+        }
+
 
     }
 }

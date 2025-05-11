@@ -1,4 +1,5 @@
-﻿using Microsoft.Data.SqlClient;
+﻿using Enums;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using Interfaces;
 using Models.Entities;
@@ -40,6 +41,35 @@ namespace MSSQL
             // Return the payment object after saving it
             return payment;
         }
+
+        public decimal GetTotalRevenue()
+        {
+            decimal totalRevenue = 0;
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                conn.Open();
+                try
+                {
+                    string query = "SELECT SUM(Amount) FROM Payments WHERE Status = @Status";
+                    using (SqlCommand cmd = new SqlCommand(query, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@Status", PaymentStatus.SUCCESS.ToString());
+                        object result = cmd.ExecuteScalar();
+                        if (result != DBNull.Value)
+                        {
+                            totalRevenue = Convert.ToDecimal(result);
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception("" + ex.Message);
+                }
+            }
+            return totalRevenue;
+        }
+
+
 
 
     }

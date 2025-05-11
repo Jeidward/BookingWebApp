@@ -82,6 +82,18 @@ namespace MSSQL
             }
         }
 
+        public int GetTotalAccountHolder()
+        {
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                conn.Open();
+                string query = @"SELECT COUNT(*) FROM AccountHolders";
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                {
+                    return (int)cmd.ExecuteScalar();
+                }
+            }
+        }
         public bool HasBookingForAccountHolder(int accountId)
         {
             using (SqlConnection conn = new SqlConnection(_connectionString))

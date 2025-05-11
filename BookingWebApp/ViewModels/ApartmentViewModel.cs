@@ -9,6 +9,8 @@ namespace BookingWebApp.ViewModels
         public string Description { get; set; }
         public string Adress { get; set; }
         public string ImageUrl { get; set; }
+        public int Bedrooms { get; set; }
+        public int Bathrooms { get; set; }
         public List<string> Gallery { get; set; }
         public decimal PricePerNight { get; set; }
         public decimal AvgRating { get; set; }
@@ -19,7 +21,8 @@ namespace BookingWebApp.ViewModels
         public decimal AverageComfort     { get; set; }
         public decimal AverageValue       { get; set; }
         public CreateBookingViewModel Booking { get; set; }
-        
+        public bool IsOccupied { get; set; }// this is for the view to show if the apartment is occupied or not.
+
         public ApartmentViewModel()
         {
             Gallery = new List<string>();
@@ -29,7 +32,7 @@ namespace BookingWebApp.ViewModels
         
         public static ApartmentViewModel ConvertToViewModel(Apartment apartment)
         {
-           ApartmentViewModel apartmentViewModel = new ApartmentViewModel() { Id = apartment.Id, Name = apartment.Name, Description = apartment.Description, ImageUrl = apartment.ImageUrl, Adress = apartment.Adress, Gallery = apartment.Gallery, PricePerNight = apartment.PricePerNight, AvgRating = apartment.AvgRating, ReviewsCount = apartment.ReviewsCount, Booking = new CreateBookingViewModel(){ApartmentId = apartment.Id} };
+           ApartmentViewModel apartmentViewModel = new ApartmentViewModel() { Id = apartment.Id, Name = apartment.Name, Description = apartment.Description, ImageUrl = apartment.ImageUrl,Bedrooms = apartment.Bedrooms,Bathrooms = apartment.Bathrooms,Adress = apartment.Adress, Gallery = apartment.Gallery, PricePerNight = apartment.PricePerNight, AvgRating = apartment.AvgRating, ReviewsCount = apartment.ReviewsCount, Booking = new CreateBookingViewModel(){ApartmentId = apartment.Id}, IsOccupied = apartment.IsOccupied};
 
            if(apartment.Reviews == null)
             {
@@ -77,5 +80,7 @@ namespace BookingWebApp.ViewModels
                 return viewModels;
             }
         }
+
+      
     }
 }

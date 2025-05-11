@@ -11,6 +11,8 @@ namespace Interfaces
     {
         public Payment SavePayment(Payment payment);
 
+        public decimal GetTotalRevenue();
+
 
     }
         

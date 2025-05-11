@@ -23,11 +23,7 @@ namespace Services
             _paymentService = paymentService;
         }
 
-        public BookingService(IBookingRepository bookingRepository)
-        {
-            _bookingRepository = bookingRepository;
-        }
-
+        
         public void FinalizePayment(Booking booking, PaymentMethod paymentMethod)
         {
             Payment payment = _paymentService.CreatePayment(booking, booking.TotalPrice, paymentMethod);
@@ -110,7 +106,6 @@ namespace Services
             {
                 booking.SetApartment(_apartmentRepository.GetApartment(_bookingRepository.GetApartment(booking.Id)));
                 booking.SetGuestProfile( _bookingRepository.GetBookingGuests(booking.Id));
-
             }
 
             return userBooking;
@@ -137,9 +132,11 @@ namespace Services
             if (period > sevenDays)
             {
                 _bookingRepository.CancelBooking(bookingId);
+                
                 return true;
             } 
             return false;
         }
+
     }
 }

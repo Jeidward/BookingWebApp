@@ -33,7 +33,7 @@ namespace MSSQL
 
                     using (SqlCommand bookingCmd = new SqlCommand(insertBookingSql, conn))
                     {
-                        bookingCmd.Parameters.AddWithValue("@ApartmentId", booking.Apartment.Id);
+                        bookingCmd.Parameters.AddWithValue("@ApartmentId", booking.Apartment.Id); // booking already has apartmentId dont need to readh apartment
                         bookingCmd.Parameters.AddWithValue("@AccountHolderId", booking.GuestProfiles[0].Account.Id);
                         bookingCmd.Parameters.AddWithValue("@CheckInDate", booking.CheckInDate);
                         bookingCmd.Parameters.AddWithValue("@CheckOutDate", booking.CheckOutDate);
@@ -389,7 +389,7 @@ namespace MSSQL
             {
                 conn.Open();
                 string sql = @"SELECT BookingId, ApartmentId, AccountHolderId, CheckInDate, CheckOutDate, TotalPrice, Status
-                            FROM Bookings";
+                            FROM Bookings WHERE Status = 'Confirmed'";
                 using (SqlCommand cmd = new SqlCommand(sql, conn))
                 {
                     using (SqlDataReader reader = cmd.ExecuteReader())
@@ -412,6 +412,38 @@ namespace MSSQL
 
             return bookings.Count;
         }
+
+        public List<Booking> GetAllBookingsWithObject()
+        {
+            List<Booking> bookings = new List<Booking>();
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                conn.Open();
+                string sql = @"SELECT BookingId, ApartmentId, AccountHolderId, CheckInDate, CheckOutDate, TotalPrice, Status
+                            FROM Bookings WHERE Status = 'Confirmed'";
+                using (SqlCommand cmd = new SqlCommand(sql, conn))
+                {
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            BookingStatus Status = (BookingStatus)Enum.Parse(typeof(BookingStatus), reader["Status"].ToString()!);
+                            Booking booking = new(
+                                Convert.ToInt32(reader["BookingId"]),
+                                Convert.ToInt32(reader["ApartmentId"]),
+                                Convert.ToDateTime(reader["CheckInDate"]),
+                                Convert.ToDateTime(reader["CheckOutDate"]),
+                                Convert.ToDecimal(reader["TotalPrice"]),
+                                Status
+                            );
+                            bookings.Add(booking);
+                        }
+                    }
+                }
+            }
+
+            return bookings;
+        }
         public void MarkCheckoutReminderSent(int bookingId)
         {
             const string sql =
@@ -426,7 +458,6 @@ namespace MSSQL
             conn.Open();
             cmd.ExecuteNonQuery();
         }
-
     }
 }
     

@@ -18,7 +18,7 @@ namespace BookingWebApp.Controllers
 
         public IActionResult ShowApartmentList()
         {
-            List<Apartment> apartments = _apartmentService.GetAllApartments(3);
+            List<Apartment> apartments = _apartmentService.GetAllApartments();
             List<ApartmentViewModel> apartmentsViewModel = ApartmentViewModel.ConvertToViewModel(apartments);
             return View(apartmentsViewModel);
         }
@@ -26,10 +26,15 @@ namespace BookingWebApp.Controllers
         public IActionResult ShowApartmentPage(int id)
         {
             Apartment selectedApartment = _apartmentService.GetApartment(id);
+            if (selectedApartment.Id == 0) //  I implemented this, because the url can be manipulated.
+                return RedirectToAction("ErrorResult");
             ApartmentViewModel apartmentViewModel = ApartmentViewModel.ConvertToViewModel(selectedApartment);
-            //if (apartmentViewModel.ReviewViewModel.Count == 0)
-            //    apartmentViewModel.AverageCleanliness = 0;
             return View(apartmentViewModel);
+        }
+
+        public IActionResult ErrorResult()
+        {
+            return View();
         }
     }
 }

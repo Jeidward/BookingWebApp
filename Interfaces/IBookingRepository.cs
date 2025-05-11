@@ -22,6 +22,7 @@ namespace Interfaces
         public void MarkCheckoutReminderSent(int bookingId);
 
         public int GetAllBookings();
+        public List<Booking> GetAllBookingsWithObject();
 
 
 

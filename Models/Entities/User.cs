@@ -4,7 +4,7 @@ namespace Models.Entities
 {
     public class User
     {
-        public int Id { get; }
+        public int Id { get; private set; }
         public string Name { get; }
         public string Email { get; private set; } // can remove this latter as set is use for testing.
         public string Password { get; private set; }
@@ -58,5 +58,7 @@ namespace Models.Entities
         {
             this.RoleId = id;
         }
+
+        
     }
 }

@@ -10,12 +10,16 @@ namespace Interfaces
 {
     public interface IApartmentRepository
     {
-        public List<Apartment> GetApartments(int count);
+        public List<Apartment> GetApartments();
 
         public Apartment GetApartment(int id);
 
         public List<string> GetGallery(int id);
+        public void CreateApartment(Apartment apartment);
 
+        public void AddApartmentImages(int aptId, string imgPath);
+
+        public void Delete(int aptId);
 
     }
 }

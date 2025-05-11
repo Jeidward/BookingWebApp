@@ -4,10 +4,12 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using Interfaces;
+
 
 namespace Services
 {
-    public class PasswordSecurityService
+    public class PasswordSecurityService : IPasswordSecurityService
     {
         private const int _keySize = 64;
         private const int _iterations = 350000;
@@ -30,5 +32,6 @@ namespace Services
             var hash = Rfc2898DeriveBytes.Pbkdf2(Encoding.UTF8.GetBytes(password), salt, _iterations, hashAlgorithm, _keySize);
             return Convert.ToBase64String(hash);
         }
+
     }
 }

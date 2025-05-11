@@ -13,7 +13,7 @@ namespace Services
     {
         public Task SendEmail(string email, string subject, string message)
         {
-            var mail = "jeidwardroopz@gmail.com";
+            var mail = "jeidwardruiz@gmail.com";
             var password = configuration["Email:Smtp:Password"];
 
             var client = new SmtpClient("smtp.gmail.com", 587)
@@ -27,7 +27,6 @@ namespace Services
                 to: email,
                 subject,
                 message));
-
         }
     }
 }

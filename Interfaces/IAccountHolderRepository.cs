@@ -17,5 +17,7 @@ namespace Interfaces
         public AccountHolder GetAccountHolderByUserId(int id);
 
         public bool HasBookingForAccountHolder(int accountId);
+
+        public int GetTotalAccountHolder();
     }
 }

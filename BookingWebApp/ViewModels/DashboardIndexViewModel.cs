@@ -1,15 +1,22 @@
-﻿namespace BookingWebApp.ViewModels
+﻿using Models.Entities;
+
+namespace BookingWebApp.ViewModels
 {
     public class DashboardIndexViewModel
     {
         public int TotalBookings { get; set; }
         public int TotalUsers { get; set; }
-        
-        public static DashboardIndexViewModel ConvertToViewModel(int totalBookings)
+        public decimal TotalRevenue { get; set; }
+        public int UpcomingBookings { get; set; }
+
+        public static DashboardIndexViewModel ConvertToViewModel(DashboardAnalytics dashboardAnalytics)
         {
             return new DashboardIndexViewModel
             {
-                TotalBookings = totalBookings,
+                TotalBookings = dashboardAnalytics.TotalBookings,
+                TotalUsers = dashboardAnalytics.TotalUsers,
+                TotalRevenue = dashboardAnalytics.TotalRevenue,
+                UpcomingBookings = dashboardAnalytics.UpcomingBookings
             };
         }
     }

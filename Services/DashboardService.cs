@@ -1,27 +1,93 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading.Tasks;
+using Enums;
 using Interfaces;
+using Microsoft.Extensions.Configuration;
+using Models.Entities;
 
 namespace Services
 {
     public class DashboardService
     {
         private readonly IBookingRepository _bookingRepository;
-        public DashboardService(IBookingRepository bookingRepository)
+        private readonly IAccountHolderRepository _accountHolderRepository;
+        private readonly IPaymentRepository _paymentRepository;
+        private readonly IApartmentRepository _apartmentRepository;
+
+        public DashboardService(IBookingRepository bookingRepository, IAccountHolderRepository accountHolderRepository, IPaymentRepository paymentRepository, IApartmentRepository apartmentRepository)
         {
             _bookingRepository = bookingRepository;
+            _accountHolderRepository = accountHolderRepository;
+            _paymentRepository = paymentRepository;
+            _apartmentRepository = apartmentRepository;
         }
+
         public int GetTotalBookings()
         {
             return _bookingRepository.GetAllBookings();
         }
 
-        //public int GetTotalActiveAccountHolders()
-        //{
+        public int UpcomingBookings()
+        {
+            var bookings = _bookingRepository.GetAllBookingsWithObject();
+            var upcomingBooking = new List<Booking>();
 
-        //};
+            foreach (var booking in bookings)
+            {
+                if (booking.CheckInDate > DateTime.Today)
+                {
+                    upcomingBooking.Add(booking);
+                }
+
+            }
+
+            return upcomingBooking.Count;
+        }
+
+        public int GetTotalActiveAccountHolders()
+        {
+            return _accountHolderRepository.GetTotalAccountHolder();
+        }
+
+        public decimal GetTotalRevenue()
+        {
+            return _paymentRepository.GetTotalRevenue();
+        }
+
+        public DashboardAnalytics GetDashboardAnalytics()
+        {
+            var totalBookings = GetTotalBookings();
+            var upcomingBookings = UpcomingBookings();
+            var totalAccountHolders = GetTotalActiveAccountHolders();
+            var totalRevenue = GetTotalRevenue();
+
+            return new DashboardAnalytics(totalBookings, totalAccountHolders, totalRevenue, upcomingBookings);
+        }
+
+        //manage apartments section//
+        
+        public List<Booking> GetOccupiedApartmentFromBookings() =>
+            _bookingRepository.GetAllBookingsWithObject().Where(b => DateTime.Today >= b.CheckInDate.Date && DateTime.Today < b.CheckOutDate.Date).ToList();
+
+
+        public List<Apartment> GetAvailableApartments(DateTime checkIn, DateTime checkOut)
+        {
+            var apartments = _apartmentRepository.GetApartments();  
+            var free = new List<Apartment>();
+
+            foreach (var apartment in apartments)
+            {
+                if (!_bookingRepository.IsOverlappingBookingExist(apartment.Id, checkIn, checkOut))
+                    free.Add(apartment);
+            }
+
+            return free;  
+        }
+
+
     }
 }

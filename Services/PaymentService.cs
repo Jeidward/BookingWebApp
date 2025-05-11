@@ -25,6 +25,7 @@ namespace Services
             if (payment.PaymentStatus != PaymentStatus.SUCCESS)
             {
                 payment.PaymentStatus = PaymentStatus.SUCCESS;
+                payment = _paymentRepository.SavePayment(payment);
             }
             else
             {
@@ -36,12 +37,12 @@ namespace Services
 
         public Payment CreatePayment(Booking booking, decimal amount, PaymentMethod paymentMethod)
         {
-            
             int transactionId = new Random().Next(100000, 999999);
             Payment payment = new Payment(booking, amount, paymentMethod, PaymentStatus.UNPAID, transactionId);
 
-            payment = _paymentRepository.SavePayment(payment);
             return payment;
         }
+
+        
     }
 }

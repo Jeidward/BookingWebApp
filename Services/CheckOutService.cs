@@ -12,7 +12,6 @@ namespace Services
     public class CheckOutService
     {
         private readonly BookingService _bookingService;
-
         public CheckOutService(BookingService bookingService)
         {
             _bookingService = bookingService;
@@ -21,16 +20,15 @@ namespace Services
         {
             Booking booking = _bookingService.GetBookingWithApartment(bookingId);
             
-            if (booking.CheckOutDate.Date == DateTime.Today.AddDays(2)) // for test
+            if (booking.CheckOutDate.Date == DateTime.Today.AddDays(2)) // for test, will be remove
             {
                 booking.SetStatus(BookingStatus.CheckedOut);
                 _bookingService.Update(booking);
-           
+            }
+            else
+            {
+                throw new InvalidOperationException("Cannot process checkout");
             }
         }
-
-
-        
-        
     }
 }

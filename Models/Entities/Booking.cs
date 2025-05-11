@@ -6,7 +6,9 @@ namespace Models.Entities
 {
     public class Booking
     {
-        public int Id { get; private set; } // possible will use the id for the refrence.
+        public int Id { get; private set; } 
+
+        public int ApartmentId { get; private set; } // hmmm not sure if i need to let booking know about the apartment
         public Apartment Apartment { get; private set; }
         public List<GuestProfile> GuestProfiles { get; private set; }
         public DateTime CheckInDate { get; }
@@ -23,6 +25,16 @@ namespace Models.Entities
         public Booking(int id,DateTime checkInDate, DateTime checkOutDate,decimal totalPrice, BookingStatus status)
         {
             Id = id;
+            CheckInDate = checkInDate;
+            CheckOutDate = checkOutDate;
+            TotalPrice = totalPrice;
+            Status = status;
+        }
+
+        public Booking(int id,int apartmentId ,DateTime checkInDate, DateTime checkOutDate, decimal totalPrice, BookingStatus status)
+        {
+            Id = id;
+            ApartmentId = apartmentId;
             CheckInDate = checkInDate;
             CheckOutDate = checkOutDate;
             TotalPrice = totalPrice;
@@ -47,10 +59,12 @@ namespace Models.Entities
             Apartment = apartment;
         }
 
-        public Booking()
+        public Booking(int id)
         {
-            
+            Id = id;
         }
+
+        // empty constructor dont forget.
 
         public void SetCheckoutReminderSent(bool checkoutReminderSent)
         {
@@ -65,6 +79,15 @@ namespace Models.Entities
         public void SetApartment(Apartment apartment)
         {
             Apartment = apartment;
+        }
+
+        public void SetApartments(List<Apartment> apartments)
+        {
+            foreach (var apartment in apartments)
+            {
+                Apartment = apartment;
+            }
+
         }
         public void SetId(int id)
         {
