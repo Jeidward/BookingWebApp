@@ -15,8 +15,10 @@ namespace Models.Entities
         public DateTime CheckOutDate { get; }
         public decimal TotalPrice { get; private set; }
         public BookingStatus Status { get; private set; }
-        public ExtraService Service { get; private set; }
+        public ExtraService Service { get; }
         public bool CheckoutReminderSent { get; private set; }
+
+
 
         /// <summary>
         /// this is for the repo
@@ -50,8 +52,9 @@ namespace Models.Entities
         }
 
         //use for test
-        public Booking(DateTime checkIn, DateTime checkOut, decimal totalPrice, Apartment apartment, List<GuestProfile> guestProfile)//dont need guestprofile
+        public Booking(int id,DateTime checkIn, DateTime checkOut, decimal totalPrice, Apartment apartment, List<GuestProfile> guestProfile)
         {
+            Id = id;
             GuestProfiles = guestProfile;
             CheckInDate = checkIn;
             CheckOutDate = checkOut;

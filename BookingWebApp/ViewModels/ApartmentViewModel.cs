@@ -16,6 +16,7 @@ namespace BookingWebApp.ViewModels
         public decimal AvgRating { get; set; }
         public int ReviewsCount { get; set; }
         public List<ReviewViewModel> ReviewViewModel { get; set; }
+        public List<AmenitiesViewModel> Amenities { get; set; } 
         public decimal AverageCleanliness { get; set; }
         public decimal AverageLocation    { get; set; }
         public decimal AverageComfort     { get; set; }
@@ -27,12 +28,17 @@ namespace BookingWebApp.ViewModels
         {
             Gallery = new List<string>();
             ReviewViewModel = new List<ReviewViewModel>();
+            Amenities = new List<AmenitiesViewModel>();
         }
 
-        
+
+        public static Apartment ConvertToEntity(ApartmentViewModel viewModel)
+        {
+            return new Apartment(viewModel.Id, viewModel.Name, viewModel.Description, viewModel.ImageUrl, viewModel.Gallery, viewModel.PricePerNight, viewModel.Adress, viewModel.Bedrooms, viewModel.Bathrooms);
+        }
         public static ApartmentViewModel ConvertToViewModel(Apartment apartment)
         {
-           ApartmentViewModel apartmentViewModel = new ApartmentViewModel() { Id = apartment.Id, Name = apartment.Name, Description = apartment.Description, ImageUrl = apartment.ImageUrl,Bedrooms = apartment.Bedrooms,Bathrooms = apartment.Bathrooms,Adress = apartment.Adress, Gallery = apartment.Gallery, PricePerNight = apartment.PricePerNight, AvgRating = apartment.AvgRating, ReviewsCount = apartment.ReviewsCount, Booking = new CreateBookingViewModel(){ApartmentId = apartment.Id}, IsOccupied = apartment.IsOccupied};
+           ApartmentViewModel apartmentViewModel = new ApartmentViewModel() { Id = apartment.Id, Name = apartment.Name, Description = apartment.Description, ImageUrl = apartment.ImageUrl,Bedrooms = apartment.Bedrooms,Bathrooms = apartment.Bathrooms,Adress = apartment.Adress, Gallery = apartment.Gallery,PricePerNight = apartment.PricePerNight, AvgRating = apartment.AvgRating, ReviewsCount = apartment.ReviewsCount, Booking = new CreateBookingViewModel(){ApartmentId = apartment.Id}, IsOccupied = apartment.IsOccupied};
 
            if(apartment.Reviews == null)
             {
@@ -43,6 +49,9 @@ namespace BookingWebApp.ViewModels
             {
                 apartmentViewModel.ReviewViewModel.Add(ViewModels.ReviewViewModel.ConvertToViewModel(review));
             }
+
+            foreach (var amenities in apartment.Amenities)
+                apartmentViewModel.Amenities.Add(AmenitiesViewModel.ConvertToViewModel(amenities));
 
             if (apartmentViewModel.ReviewViewModel.Any())
             {

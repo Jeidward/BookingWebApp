@@ -30,6 +30,20 @@ namespace BookingWebApp.ViewModels
             };
         }
 
+        public static GuestProfile ConvertToEntity(GuestProfileViewModel guestProfileViewModel)
+        {
+            return new GuestProfile(
+                new AccountHolder(guestProfileViewModel.AccountId),
+                guestProfileViewModel.FirstName,
+                guestProfileViewModel.LastName,
+                guestProfileViewModel.Age,
+                guestProfileViewModel.Email,
+                guestProfileViewModel.PhoneNumber,
+                guestProfileViewModel.Country,
+                guestProfileViewModel.Adress
+            );
+        }
+
 
     }
 }

@@ -1,9 +1,9 @@
 ﻿using Models.Entities;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
-using Interfaces;
 using Enums;
 using System.Diagnostics.CodeAnalysis;
+using Interfaces.IRepositories;
 
 
 namespace MSSQL

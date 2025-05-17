@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Models;
 using Models.Entities;
 
-namespace Interfaces
+namespace Interfaces.IRepositories
 {
     public interface IAccountHolderRepository
     {

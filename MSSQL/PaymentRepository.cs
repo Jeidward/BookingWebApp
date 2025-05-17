@@ -1,8 +1,8 @@
 ﻿using Enums;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
-using Interfaces;
 using Models.Entities;
+using Interfaces.IRepositories;
 
 namespace MSSQL
 {

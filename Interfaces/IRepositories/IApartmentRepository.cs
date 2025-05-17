@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Interfaces
+namespace Interfaces.IRepositories
 {
     public interface IApartmentRepository
     {
@@ -20,6 +20,10 @@ namespace Interfaces
         public void AddApartmentImages(int aptId, string imgPath);
 
         public void Delete(int aptId);
+
+        public void Update(Apartment apartment);
+
+        public void UpdateGallery(int id, List<string> gallery);
 
     }
 }

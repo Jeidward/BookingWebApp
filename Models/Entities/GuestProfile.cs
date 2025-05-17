@@ -3,7 +3,7 @@
     public class GuestProfile
     {
         public int Id { get; }
-        public AccountHolder Account { get; }
+        public AccountHolder Account { get; private set; }
         public string FirstName { get; }
         public string LastName { get; }
         public int Age { get; }
@@ -24,6 +24,25 @@
             Address = address;
 
         }
+
+        public GuestProfile(GuestProfile guest)
+        {
+            Account = guest.Account;
+            FirstName = guest.FirstName;
+            LastName = guest.LastName;
+            Age = guest.Age;
+            Email = guest.Email;
+            PhoneNumber = guest.PhoneNumber;
+            Country = guest.Country;
+            Address = guest.Address;
+        }
+
+        public void SetAccountHolder(AccountHolder accountHolder)
+        {
+            Account = accountHolder;
+        }
+
+
 
     }
 }

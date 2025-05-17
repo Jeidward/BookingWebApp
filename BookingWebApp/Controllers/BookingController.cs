@@ -97,7 +97,7 @@ namespace BookingWebApp.Controllers
             int accountHolderId = HttpContext.Session.GetInt32("UserId") ?? 0;
             AccountHolder accountHolder;
 
-            if (accountHolderId > 0)
+            if (accountHolderId > 0) //  It will not even go here.
             {
                 accountHolder = _accountHolderService.GetAccountHolderById(accountHolderId)!;
             }
@@ -106,16 +106,10 @@ namespace BookingWebApp.Controllers
                 return RedirectToAction("Login", "Authentication");
             }
 
-            GuestProfile profile = _accountHolderService.CreateGuestProfile(
-                accountHolder,
-                guestProfileViewModel.FirstName,
-                guestProfileViewModel.LastName,
-                guestProfileViewModel.Age,
-                guestProfileViewModel.Email,
-                guestProfileViewModel.PhoneNumber,
-                guestProfileViewModel.Country,
-                guestProfileViewModel.Adress
-            );
+            var guest = GuestProfileViewModel.ConvertToEntity(guestProfileViewModel);
+            guest.SetAccountHolder(accountHolder);
+            GuestProfile profile = _accountHolderService.CreateGuestProfile(guest);
+            
 
             HttpContext.Session.SetString($"GuestProfile_{currentGuestIndex}", GuestProfileViewModelHelper.CreateGuestProfileString(GuestProfileViewModel.ConvertToViewModel(profile)));
 

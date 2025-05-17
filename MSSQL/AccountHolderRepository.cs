@@ -1,9 +1,9 @@
 ﻿using Microsoft.Data.SqlClient;
 using System.Configuration;
 using Microsoft.Extensions.Configuration;
-using Interfaces;
 using Models.Entities;
 using Enums;
+using Interfaces.IRepositories;
 
 
 namespace MSSQL

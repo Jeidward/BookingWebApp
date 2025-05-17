@@ -32,8 +32,13 @@ namespace BookingWebApp.Controllers
                 return View(userViewModel);
             }
 
-            _userService.Register(userViewModel.Email, userViewModel.Password, userViewModel.Name);
-
+            var result =  _userService.Register(userViewModel.Email, userViewModel.Password, userViewModel.Name); // new implemented.
+            if(!result.IsValid)
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError("error", error);
+                    return View(userViewModel);
+                }
             int userId = _userService.GetExistedLogIn(userViewModel.Email, userViewModel.Password);
 
             HttpContext.Session.SetInt32("UserId", userId);

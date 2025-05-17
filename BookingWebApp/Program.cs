@@ -1,7 +1,8 @@
 using BookingWebApp.ViewModels;
 using MSSQL;
 using Services;
-using Interfaces;
+using Interfaces.IServices;
+using Interfaces.IRepositories;
 
 namespace BookingWebApp
 {
@@ -32,6 +33,7 @@ namespace BookingWebApp
             builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddScoped<IApartmentRepository, ApartmentRepository>();
             builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
+            builder.Services.AddScoped<IAmenitiesRepository, AmenitiesRepository>();
 
          
             builder.Services.AddScoped<BookingService>();
@@ -40,7 +42,7 @@ namespace BookingWebApp
             builder.Services.AddScoped<UserService>();
             builder.Services.AddScoped<ApartmentService>();
             builder.Services.AddScoped<CheckOutService>();
-            builder.Services.AddScoped<ReviewService>();
+            builder.Services.AddScoped<IReviewService,ReviewService>();
             builder.Services.AddScoped<IPasswordSecurityService,PasswordSecurityService>();
             builder.Services.AddScoped<EmailSenderService>();
             builder.Services.AddScoped<DashboardService>();

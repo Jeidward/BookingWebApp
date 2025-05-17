@@ -1,6 +1,6 @@
 ﻿using Models.Entities;
 
-namespace Interfaces
+namespace Interfaces.IRepositories
 {
     public interface IReviewRepository
     {

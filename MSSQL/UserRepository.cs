@@ -1,5 +1,5 @@
 ﻿using System.Runtime.Serialization;
-using Interfaces;
+using Interfaces.IRepositories;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using Models.Entities;

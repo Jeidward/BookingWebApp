@@ -1,22 +1,25 @@
 ﻿using Models.Entities;
-using Interfaces;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using System.Collections.Generic;
+using Interfaces.IRepositories;
 
 namespace MSSQL
 {
     public class ApartmentRepository : Repository, IApartmentRepository
     {
-        public ApartmentRepository(IConfiguration configuration) : base(configuration) { }
+        public ApartmentRepository(IConfiguration configuration) : base(configuration)
+        {
+        }
 
         public void CreateApartment(Apartment apartment)
         {
             using (SqlConnection conn = new SqlConnection(_connectionString))
             {
                 conn.Open();
-                string query = @"INSERT INTO Apartments (Name, Description, ImageUrl, PricePerNight, Adress, Bedrooms, Bathrooms) 
-                                 VALUES (@Name, @Description, @ImageUrl, @PricePerNight, @Adress, @Bedrooms, @Bathrooms)";
+                string query =
+                    @"INSERT INTO Apartments (Name, Description, ImageUrl, PricePerNight, Adress, Bedrooms, Bathrooms,IsArchived) 
+                                 VALUES (@Name, @Description, @ImageUrl, @PricePerNight, @Adress, @Bedrooms, @Bathrooms, @IsArchived)";
 
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
@@ -27,6 +30,7 @@ namespace MSSQL
                     cmd.Parameters.AddWithValue("@Adress", apartment.Adress);
                     cmd.Parameters.AddWithValue("@Bedrooms", apartment.Bedrooms);
                     cmd.Parameters.AddWithValue("@Bathrooms", apartment.Bathrooms);
+                    cmd.Parameters.AddWithValue("IsArchived", 0);
                     cmd.ExecuteNonQuery();
 
                 }
@@ -41,7 +45,7 @@ namespace MSSQL
                 string query = @"UPDATE Apartments SET IsArchived = 1 WHERE ApartmentId = @ApartmentId";
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
-                    cmd.Parameters.AddWithValue("@ApartmentId", aptId); 
+                    cmd.Parameters.AddWithValue("@ApartmentId", aptId);
                     cmd.ExecuteNonQuery();
                 }
             }
@@ -63,6 +67,7 @@ namespace MSSQL
                 }
             }
         }
+
         public List<Apartment> GetApartments()
         {
             List<Apartment> apartments = new List<Apartment>();
@@ -86,7 +91,7 @@ namespace MSSQL
                                 Convert.ToString(reader["Description"])!,
                                 Convert.ToString(reader["ImageUrl"])!,
                                 Convert.ToDecimal(reader["PricePerNight"]),
-                                Convert.ToString(reader["Adress"])!, 
+                                Convert.ToString(reader["Adress"])!,
                                 Convert.ToInt32(reader["Bedrooms"]),
                                 Convert.ToInt32(reader["Bathrooms"])
                             ));
@@ -112,25 +117,26 @@ namespace MSSQL
                     cmd.Parameters.AddWithValue("Id", id);
                     using (SqlDataReader reader = cmd.ExecuteReader())
                     {
-                        if(reader.Read())
+                        if (reader.Read())
                         {
                             return new(
                                 Convert.ToInt32(reader["ApartmentId"]),
-                                 Convert.ToString(reader["Name"])!,
-                                 Convert.ToString(reader["Description"])!,
-                                 Convert.ToString(reader["ImageUrl"])!,
-                                 Convert.ToDecimal(reader["PricePerNight"]),
-                                 Convert.ToString(reader["Adress"])!,
+                                Convert.ToString(reader["Name"])!,
+                                Convert.ToString(reader["Description"])!,
+                                Convert.ToString(reader["ImageUrl"])!,
+                                Convert.ToDecimal(reader["PricePerNight"]),
+                                Convert.ToString(reader["Adress"])!,
                                 Convert.ToInt32(reader["Bedrooms"]),
-                                 Convert.ToInt32(reader["Bathrooms"])
+                                Convert.ToInt32(reader["Bathrooms"])
 
                             );
                         }
+
                         return Apartment.DefaultApartment();
                     }
                 }
             }
-        } 
+        }
 
 
         public List<string> GetGallery(int id)
@@ -160,6 +166,46 @@ namespace MSSQL
             return apartmentsImages;
         }
 
+        public void Update(Apartment apartment)
+        {
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                conn.Open();
+                string query = @"UPDATE Apartments 
+                                 SET Name = @Name, Description = @Description, ImageUrl = @ImageUrl, PricePerNight = @PricePerNight, Adress = @Adress, Bedrooms = @Bedrooms, Bathrooms = @Bathrooms 
+                                 WHERE ApartmentId = @ApartmentId";
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@ApartmentId", apartment.Id);
+                    cmd.Parameters.AddWithValue("@Name", apartment.Name);
+                    cmd.Parameters.AddWithValue("@Description", apartment.Description);
+                    cmd.Parameters.AddWithValue("@ImageUrl", apartment.ImageUrl);
+                    cmd.Parameters.AddWithValue("@PricePerNight", apartment.PricePerNight);
+                    cmd.Parameters.AddWithValue("@Adress", apartment.Adress);
+                    cmd.Parameters.AddWithValue("@Bedrooms", apartment.Bedrooms);
+                    cmd.Parameters.AddWithValue("@Bathrooms", apartment.Bathrooms);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public void UpdateGallery(int id, List<string> gallery)
+        {
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                conn.Open();
+                string query = @"UPDATE ApartmentImages SET ImgPath = @ImgPath WHERE ApartmentId = @ApartmentId";
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@ApartmentId", id);
+                    cmd.ExecuteNonQuery();
+                }
+
+                foreach (var imgPath in gallery)
+                {
+                    AddApartmentImages(id, imgPath);
+                }
+            }
+        }
     }
 }
-

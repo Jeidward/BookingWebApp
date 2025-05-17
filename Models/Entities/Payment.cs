@@ -7,7 +7,6 @@ namespace Models.Entities
         //public int Id { get; }
         public Booking Booking { get; }
         public decimal Amount { get; }
-
         public PaymentMethod PaymentMethods { get; }
         public PaymentStatus PaymentStatus { get; set; }
         public int TransactionId { get; }

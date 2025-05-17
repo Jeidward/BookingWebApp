@@ -1,5 +1,5 @@
 ﻿using Enums;
-using Interfaces;
+using Interfaces.IRepositories;
 using Models.Entities;
 using Moq;
 using Services;
@@ -43,7 +43,7 @@ namespace BookingWebAppTest
                  new GuestProfile(new AccountHolder(2),"Kevin","some",23,"kevin@mail.com","0738990","Germany","groesbeek")
             };
 
-            Booking testBooking = new Booking(DateTime.Now, DateTime.Now.AddDays(4), 120, testApartment, testGuestProfile);
+            Booking testBooking = new Booking(bookingId,DateTime.Now, DateTime.Now.AddDays(4), 120, testApartment, testGuestProfile);
             testBooking.SetId(bookingId);
             Assert.AreEqual(BookingStatus.Pending, testBooking.Status, "booking should start with pending");
 

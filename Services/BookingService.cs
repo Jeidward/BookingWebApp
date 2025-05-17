@@ -1,11 +1,11 @@
-﻿using Interfaces;
-using Enums;
+﻿using Enums;
 using Models.Entities;
 using Microsoft.Extensions.Configuration;
 using System.Net.Http;
 using System.Reflection.Metadata.Ecma335;
 using System.Runtime.InteropServices.JavaScript;
 using Models.Enums;
+using Interfaces.IRepositories;
 
 namespace Services
 {

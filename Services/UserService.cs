@@ -1,11 +1,12 @@
 ﻿using Models.Entities;
-using Interfaces;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Cryptography;
 using System.Text;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Identity.Client;
 using System.ComponentModel.DataAnnotations;
+using Interfaces.IServices;
+using Interfaces.IRepositories;
 
 
 namespace Services
@@ -22,14 +23,20 @@ namespace Services
         }
 
             
-        public bool Register(string email, string password, string name)
+        public DomainValidationResult Register(string email, string password, string name) // this could just to test if it run it one time
         {
-            User newUser = new(email, password,name);
-            
-            var hashedPassword = _passwordSecurityService.HashPassword(password, out byte[] salt);
-            newUser.SetPassword(hashedPassword);
-            newUser.SetSalt(Convert.ToBase64String(salt));
-            return _userRepository.RegisterUser(newUser.Email,newUser.Password,newUser.Name, newUser.Salt);
+            var result = UserValidator.ValidUser(email, password, name);
+            if (result.IsValid)
+            {
+                User newUser = new(email, password, name);
+                var hashedPassword = _passwordSecurityService.HashPassword(password, out byte[] salt);
+                newUser.SetPassword(hashedPassword);
+                newUser.SetSalt(Convert.ToBase64String(salt));
+
+                 _userRepository.RegisterUser(newUser.Email, newUser.Password, newUser.Name, newUser.Salt);
+            }
+
+            return result;
         }
 
         public int GetExistedLogIn(string email, string password)

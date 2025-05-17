@@ -1,5 +1,7 @@
+using System.Runtime.InteropServices;
+using System.Runtime.InteropServices.Marshalling;
 using Enums;
-using Interfaces;
+using Interfaces.IRepositories;
 using Models.Entities;
 using Moq;
 using Services;
@@ -38,10 +40,32 @@ public class AccountHolderServiceTest
     [TestMethod]
     public void HasAccountHolderAnyBooking_ShouldReturnFalse_WhenBookingDoesNotExist()
     {
-        var booking = new Booking(0);
+        var booking = new Booking(999);
         _mockAccountHolderRepository.Setup(repo => repo.HasBookingForAccountHolder(booking.Id))
             .Returns(false);
         var hasBooking = _accountHolderService.HasAccountHolderAnyBooking(booking.Id);
         Assert.IsFalse(hasBooking);
+    }
+
+    [TestMethod]
+    public void HasAccountHolderAnyBooking_ShouldThrowException_WhenBookingIsNotValid()
+    {
+        var booking = new Booking(id: 0);
+        Assert.ThrowsException<ArgumentException>(() => _accountHolderService.HasAccountHolderAnyBooking(booking.Id));
+    }
+
+    [TestMethod]
+    public void GetAccountHolderByUserId_ShouldThrowException_WheneUserIdIsLessOrEqualToZero()
+    {
+        var accountHolder = new AccountHolder( 0);
+        Assert.ThrowsException<ArgumentException>(() => _accountHolderService.GetAccountHolderByUserId(accountHolder.Id));
+    }
+
+    [TestMethod]
+    public void CreateGuestProfile_ShouldThrowExeption_WhenGuestProfileIsNotAValidObjectForCreation()
+    {
+        var guest = new GuestProfile(new AccountHolder(0), "joshua", "sanchez", 0, "", "", "", "");
+
+        Assert.ThrowsException<ArgumentException>(() => _accountHolderService.CreateGuestProfile(guest));
     }
 }

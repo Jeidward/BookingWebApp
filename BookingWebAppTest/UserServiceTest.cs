@@ -1,4 +1,5 @@
-using Interfaces;
+using Interfaces.IRepositories;
+using Interfaces.IServices;
 using Models.Entities;
 using Moq;
 using Services;

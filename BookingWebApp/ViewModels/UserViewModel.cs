@@ -11,7 +11,7 @@ namespace BookingWebApp.ViewModels
 
         [Required(ErrorMessage = "Email is required")]
         [DataType(DataType.EmailAddress)]
-        [EmailCheck]
+        [EmailAddress(ErrorMessage = "Invalid email address")]
         [Display(Name = "Email")]
         public string  Email { get; set; }
 

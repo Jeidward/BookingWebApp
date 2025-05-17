@@ -39,53 +39,20 @@
                 
                 <h3 class="mb-3">What this place offers</h3>
                 <div class="row mb-4">
-                    <div class="col-md-6">
-                        <ul class="list-unstyled">
-                            <li class="d-flex align-items-center mb-3">
-                                <i class="fas fa-leaf me-3 text-secondary"></i>
-                                <span>Garden view</span>
-                            </li>
-                            <li class="d-flex align-items-center mb-3">
-                                <i class="fas fa-wifi me-3 text-secondary"></i>
-                                <span>Wifi</span>
-                            </li>
-                            <li class="d-flex align-items-center mb-3">
-                                <i class="fas fa-washer me-3 text-secondary"></i>
-                                <span>Free washer - in building</span>
-                            </li>
-                            <li class="d-flex align-items-center mb-3">
-                                <i class="fas fa-snowflake me-3 text-secondary"></i>
-                                <span>Central air conditioning</span>
-                            </li>
-                            <li class="d-flex align-items-center mb-3">
-                                <i class="fas fa-refrigerator me-3 text-secondary"></i>
-                                <span>Refrigerator</span>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="col-md-6">
-                        <ul class="list-unstyled">
-                            <li class="d-flex align-items-center mb-3">
-                                <i class="fas fa-utensils me-3 text-secondary"></i>
-                                <span>Kitchen</span>
-                            </li>
-                            <li class="d-flex align-items-center mb-3">
-                                <i class="fas fa-paw me-3 text-secondary"></i>
-                                <span>Pets allowed</span>
-                            </li>
-                            <li class="d-flex align-items-center mb-3">
-                                <i class="fas fa-dryer me-3 text-secondary"></i>
-                                <span>Dryer</span>
-                            </li>
-                            <li class="d-flex align-items-center mb-3">
-                                <i class="fas fa-video me-3 text-secondary"></i>
-                                <span>Security cameras on property</span>
-                            </li>
-                        </ul>
-                    </div>
+	                <div class="col-md-6">
+		                <ul class="list-unstyled">
+			                @foreach (var amenity in Model.Amenities)
+			                {
+				                <li class="d-flex align-items-center mb-3">
+					                <i class="fas fa-check-circle me-3 text-secondary"></i>
+					                <img class="col-md-1" src="@Url.Content("~/" + amenity.ImgIcon)">
+					                <span class="ms-2"> @amenity.Name</span>
+				                </li>
+			                }
+		                </ul>
+	                </div>
                 </div>
-                @* <button class="btn btn-outline-dark px-4 mb-5">Show all @Model.Amenities.Count amenities</button> *@
-              
+             
                 <!-- Reviews Section -->
                 <div class="mt-5">
                     <div class="d align-items-center mb-4">

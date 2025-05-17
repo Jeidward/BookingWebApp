@@ -5,6 +5,7 @@ using Services;
 using BookingWebApp.ViewModels;
 using BookingWebApp.Helpers;
 using Enums;
+using Interfaces.IServices;
 
 namespace BookingWebApp.Controllers
 {
@@ -13,8 +14,8 @@ namespace BookingWebApp.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly BookingService _bookingService;
         private readonly UserService _userService;
-        private readonly ReviewService _reviewService;
-        public HomeController(ILogger<HomeController> logger,BookingService bookingService, UserService userService, ReviewService reviewService)
+        private readonly IReviewService _reviewService;
+        public HomeController(ILogger<HomeController> logger,BookingService bookingService, UserService userService, IReviewService reviewService)
         {
             _logger = logger;
             _bookingService = bookingService;

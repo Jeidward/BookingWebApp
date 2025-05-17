@@ -36,9 +36,7 @@ namespace BookingWebApp.Controllers
             var host = HttpContext.Session.GetInt32("HostId");
             if (host != null)
             {
-                return
-                    RedirectToAction(
-                        "Index"); // put this so, when the host is already logged in, and he or she alter the url to go to login action, the system will know that she already log in
+                return RedirectToAction("Index"); // put this so, when the host is already logged in, and he or she alter the url to go to login action, the system will know that she already log in
             }
 
             if (!ModelState.IsValid)
@@ -99,7 +97,7 @@ namespace BookingWebApp.Controllers
 
             var apartments = _apartmentService.GetAllApartments();
             var viewModels = ApartmentViewModel.ConvertToViewModel(apartments);
-
+            var viewModelEdit = AddApartmentViewModel.ConvertToViewModel(apartments);
             var occupiedBookings = _dashboardService.GetOccupiedApartmentFromBookings();
             var occupiedIds = occupiedBookings.Select(b => b.ApartmentId).ToList();
 
@@ -109,9 +107,7 @@ namespace BookingWebApp.Controllers
                     occupiedApartment.IsOccupied = true;
             }
 
-            var availableToday = _dashboardService
-                .GetAvailableApartments(DateTime.Today, DateTime.Today);
-
+            var availableToday = _dashboardService.GetAvailableApartments(DateTime.Today, DateTime.Today);
 
             var dashboard = new DashboardApartmentManagementViewModel
             {
@@ -119,7 +115,8 @@ namespace BookingWebApp.Controllers
                 ApartmentTotal = viewModels.Count,
                 ApartmentCurrentlyOccupied = occupiedIds.Count,
                 ApartmentAvailable = availableToday.Count,
-                ApartmentViewModel = new ApartmentViewModel() // maybe this will be removed.
+                EditApartmentViewModels = viewModelEdit,
+                Amenities = AmenitiesViewModel.ConverToViewModel(_apartmentService.GetAmenitiesList()),
             };
 
             return View(dashboard);
@@ -133,27 +130,11 @@ namespace BookingWebApp.Controllers
                 return RedirectToAction("ShowLogin");
             }
 
-            var savedNames = new List<string>();
-            foreach (var file in Gallery)
-            {
-                if (file.Length == 0) continue;
-
-                var ext = Path.GetExtension(file.FileName);
-                var fileName = Path.GetFileNameWithoutExtension(file.FileName);
-                var name = $"{fileName}{ext}";
-                var path = Path.Combine(_env.WebRootPath, "IMG", name);
-
-                Directory.CreateDirectory(Path.GetDirectoryName(path)!);
-
-                using var stream = System.IO.File.Create(path);   
-                file.CopyTo(stream);
-
-                savedNames.Add(name);      
-            }
-
+            var webRootPath = _env.WebRootPath;
+            var savedNames = _dashboardService.AddImage(Gallery,webRootPath);
+            
             apartmentViewModel.ImageUrl = $"IMG/{savedNames.First()}";
             apartmentViewModel.Gallery = savedNames.Select(image => $"IMG/{image}").ToList();
-
 
             var apartment = AddApartmentViewModel.ConvertToEntity(apartmentViewModel);
 
@@ -164,23 +145,20 @@ namespace BookingWebApp.Controllers
 
         public IActionResult DeleteApartment(int id)
         {
+            var host = HttpContext.Session.GetInt32("HostId");
+            if (host == null)
+                return RedirectToAction("ShowLogin");
+
             _apartmentService.DeleteApartment(id);
             return RedirectToAction("ManageApartment", "Dashboard");
         }
 
-        public IActionResult EditApartment(int Id)
+        public IActionResult EditApartment(int Id, AddApartmentViewModel apartmentViewModel)
         {
-            var apartment = _apartmentService.GetApartment(Id);
+            var apartment  =  AddApartmentViewModel.ConvertToEntity(apartmentViewModel);
+            _apartmentService.UpdateApartment(apartment);
 
-            var viewModel = new DashboardApartmentManagementViewModel()
-            {
-                ApartmentViewModels = null,
-                ApartmentTotal = 0,
-                ApartmentCurrentlyOccupied = 0,
-                ApartmentAvailable = 0,
-                ApartmentViewModel = ApartmentViewModel.ConvertToViewModel(apartment)
-            };
-            return View(viewModel);
+            return RedirectToAction("ManageApartment");
         }
     }
 

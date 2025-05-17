@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading.Tasks;
 using Enums;
-using Interfaces;
+using Interfaces.IRepositories;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Models.Entities;
 
@@ -39,12 +41,8 @@ namespace Services
             foreach (var booking in bookings)
             {
                 if (booking.CheckInDate > DateTime.Today)
-                {
                     upcomingBooking.Add(booking);
-                }
-
             }
-
             return upcomingBooking.Count;
         }
 
@@ -71,8 +69,29 @@ namespace Services
         //manage apartments section//
         
         public List<Booking> GetOccupiedApartmentFromBookings() =>
-            _bookingRepository.GetAllBookingsWithObject().Where(b => DateTime.Today >= b.CheckInDate.Date && DateTime.Today < b.CheckOutDate.Date).ToList();
+            _bookingRepository.GetAllBookingsWithObject().Where(b => DateTime.Today >= b.CheckInDate.Date && DateTime.Today <= b.CheckOutDate.Date).ToList();
 
+        public List<string> AddImage(IFormFile[] gallery,string webRootPath)
+        {
+            var savedNames = new List<string>();
+            foreach (var file in gallery)
+            {
+                if (file.Length == 0) continue;
+
+                var ext = Path.GetExtension(file.FileName);
+                var fileName = Path.GetFileNameWithoutExtension(file.FileName);
+                var name = $"{fileName}{ext}";
+                var path = Path.Combine(webRootPath, "IMG", name);
+
+                Directory.CreateDirectory(Path.GetDirectoryName(path)!);
+
+                using var stream = File.Create(path);
+                file.CopyTo(stream);
+
+                savedNames.Add(name);
+            }
+            return savedNames;
+        }
 
         public List<Apartment> GetAvailableApartments(DateTime checkIn, DateTime checkOut)
         {
