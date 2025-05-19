@@ -14,30 +14,38 @@ namespace MSSQL
     {
         public AmenitiesRepository(IConfiguration configuration) : base(configuration) { }
 
-        public List<Amenities> GetAmenities(int id) // for apartment details page
+        public List<Amenities> GetAmenities(int apartmentId)
         {
-            using SqlConnection conn = new SqlConnection(_connectionString);
+            using var conn = new SqlConnection(_connectionString);
             conn.Open();
-            string query = @"SELECT AAP.Id,AAP.ApartmentId,AAP.AmenityId,AM.Name,AM.ImgIcon FROM Amenities_apartment AS AAP
-                                 INNER JOIN Amenities AS AM ON AM.Id = AAP.AmenityId 
-                                   WHERE AAP.ApartmentId = @ApartmentId";
-            using var cmd = new SqlCommand(query, conn);
-            cmd.Parameters.AddWithValue("ApartmentId", id);
+
+            const string query = @"
+            SELECT  AAP.AmenityId   AS AmenityId,   
+                    AM.Name,
+                    AM.ImgIcon
+            FROM    Amenities_apartment AS AAP
+            INNER JOIN Amenities        AS AM ON AM.Id = AAP.AmenityId
+            WHERE   AAP.ApartmentId = @ApartmentId";
+
+                using var cmd = new SqlCommand(query, conn);
+            cmd.Parameters.AddWithValue("@ApartmentId", apartmentId);
+
             using var reader = cmd.ExecuteReader();
-            var amenitiesList = new List<Amenities>();
+            var amenities = new List<Amenities>();
+
             while (reader.Read())
             {
-                var amenities = new Amenities(
-
-                    Convert.ToInt32(reader["Id"]),
+                var amenity = new Amenities(
+                    Convert.ToInt32(reader["AmenityId"]),   
                     reader["Name"].ToString()!,
                     reader["ImgIcon"].ToString()!
                 );
-
-                amenitiesList.Add(amenities);
+                amenities.Add(amenity);
             }
-            return amenitiesList;
+
+            return amenities;
         }
+
 
         public List<Amenities> GetAmenitiesList()
         {
@@ -84,13 +92,33 @@ namespace MSSQL
             while (reader.Read())
             {
                 var amenitiesList = new Amenities(
-                    Convert.ToInt32(cmd.ExecuteReader()["Id"]),
-                    cmd.ExecuteReader()["Name"].ToString()!,
-                    cmd.ExecuteReader()["ImgIcon"].ToString()!
+                    Convert.ToInt32(reader["Id"]),
+                    reader["Name"].ToString()!,
+                    reader["ImgIcon"].ToString()!
                 );
                 amenities.Add(amenitiesList);
             }
             return amenities;
         }
+
+        public void Update(int apartmenId, int amenityId)
+        {
+            using SqlConnection conn = new SqlConnection(_connectionString);
+            conn.Open();
+            string query = @"DELETE FROM Amenities_apartment WHERE ApartmentId = @ApartmentId";
+            using SqlCommand cmd = new SqlCommand(query, conn);
+            cmd.Parameters.AddWithValue("@ApartmentId", apartmenId);
+            cmd.ExecuteNonQuery();
+        }
+
+        public void Delete(int apartmentId)
+        {
+            using SqlConnection conn = new SqlConnection(_connectionString);
+            conn.Open();
+            string query = @"DELETE FROM Amenities_apartment WHERE ApartmentId = @ApartmentId";
+            using SqlCommand cmd = new SqlCommand(query, conn);
+            cmd.Parameters.AddWithValue("@ApartmentId", apartmentId);
+            cmd.ExecuteNonQuery();
+        } 
     }
 }

@@ -8,7 +8,7 @@ namespace Models.Entities
         public string Name { get; }
         public string Description { get; }
         public string Adress { get; }
-        public string ImageUrl { get; }
+        public string FirstImage { get; private set; }
         public int Bedrooms { get; }
         public int Bathrooms { get; }
         public  bool IsOccupied { get; private set; }
@@ -19,12 +19,11 @@ namespace Models.Entities
         public decimal AvgRating { get; private set; }
         public int ReviewsCount { get; private set; }
 
-        public Apartment(int id, string name, string description, string imageUrl, decimal pricePerNight, string adress, int bedrooms, int bathrooms)
+        public Apartment(int id, string name, string description, decimal pricePerNight, string adress, int bedrooms, int bathrooms)
         {
             Id = id;
             Name = name;
             Description = description;
-            ImageUrl = imageUrl;
             Adress = adress;
             PricePerNight = pricePerNight;
             Gallery = new List<string>();
@@ -34,12 +33,12 @@ namespace Models.Entities
             Bathrooms = bathrooms;
         }
 
-        public Apartment(int id, string name, string description, string imageUrl,List<string> gallery,decimal pricePerNight, string adress, int bedrooms, int bathrooms)
+        public Apartment(int id, string name, string description, string firstImage,List<string> gallery,decimal pricePerNight, string adress, int bedrooms, int bathrooms)
         {
             Id = id;
             Name = name;
             Description = description;
-            ImageUrl = imageUrl;
+            FirstImage = firstImage;
             Adress = adress;
             PricePerNight = pricePerNight;
             Gallery = gallery;
@@ -48,12 +47,12 @@ namespace Models.Entities
             Bathrooms = bathrooms;
         }
 
-        public Apartment(int id,string name, string description, string imageUrl,List<Amenities>amenities,List<string> gallery, decimal pricePerNight, string adress, int bedrooms, int bathrooms) // constructor for creating an apartment with amenities/ use now for testing but later will be used for creating an apartment with amenities Line 37 will(constructor)
+        public Apartment(int id,string name, string description, string firstImage,List<Amenities>amenities,List<string> gallery, decimal pricePerNight, string adress, int bedrooms, int bathrooms) // constructor for creating an apartment with amenities/ use now for testing but later will be used for creating an apartment with amenities Line 37 will(constructor)
         {
             Id = id;
             Name = name;
             Description = description;
-            ImageUrl = imageUrl;
+            FirstImage = firstImage;
             Adress = adress;
             PricePerNight = pricePerNight;
             Gallery = gallery;
@@ -64,7 +63,7 @@ namespace Models.Entities
         }
         public static Apartment DefaultApartment()
         {
-            return new Apartment(0, string.Empty, string.Empty, string.Empty, 0, string.Empty,0,0);
+            return new Apartment(0, string.Empty, string.Empty, 0, string.Empty,0,0);
         }
 
         public void SetGallery(List<string> gallery)
@@ -72,6 +71,10 @@ namespace Models.Entities
             Gallery = gallery;
         }
 
+        public void SetFirstImage(string firstImage)
+        {
+            FirstImage = firstImage;
+        }
         public void SetReviews(List<Review> reviews)
         {
             Reviews = reviews;

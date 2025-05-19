@@ -24,7 +24,7 @@ namespace DTOs
                 Name = apartment.Name,
                 Description = apartment.Description,
                 Adress = apartment.Adress,
-                ImageUrl = apartment.ImageUrl,
+                ImageUrl = apartment.FirstImage,
                 PricePerNight = apartment.PricePerNight
             };
 

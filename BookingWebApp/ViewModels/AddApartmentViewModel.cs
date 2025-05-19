@@ -10,7 +10,10 @@ namespace BookingWebApp.ViewModels
         public string Adress { get; set; }
         public string ImageUrl { get; set; }
         public List<int> SelectedAmenityIds { get; set; } = new List<int>();// for the create page.
+        public List<AmenitiesViewModel> Amenities { get; set; } = new List<AmenitiesViewModel>();
         public List<string>? Gallery { get; set; }
+        public List<string> SelectedImages { get; set; } = new();
+        public IFormFile[] NewImages { get; set; } = Array.Empty<IFormFile>();
         public decimal CostPerNight { get; set; }
         public int Bedrooms { get; set; }
         public int Bathrooms { get; set; }
@@ -28,7 +31,7 @@ namespace BookingWebApp.ViewModels
                 Id = apartment.Id,
                 Name = apartment.Name,
                 Description = apartment.Description,
-                ImageUrl = apartment.ImageUrl,
+                ImageUrl = apartment.FirstImage,
                 Adress = apartment.Adress,
                 CostPerNight = apartment.PricePerNight,
                 Bedrooms = apartment.Bedrooms,

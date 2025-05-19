@@ -30,9 +30,10 @@ namespace Services
 
         public Apartment GetApartment(int id)
         {
-            if (id <= 0)
-                throw new ArgumentException("Invalid apartment ID.");
             Apartment selectedApartment = _apartmentRepository.GetApartment(id);
+            if (selectedApartment.Id == 0)
+                return selectedApartment;
+
             var reviews = _reviewService.GetReviewsForApartment(id);
             if(reviews==null)
             {
@@ -41,7 +42,10 @@ namespace Services
             selectedApartment.SetReviews(reviews);
             selectedApartment.SetAvgRating(_reviewService.GetAverageRating(id));
             selectedApartment.SetReviewsCount(reviews.Count);
-            selectedApartment.SetGallery(_apartmentRepository.GetGallery(id));
+            var gallery = _apartmentRepository.GetGallery(id);
+            var onlyThisGallery = gallery.Skip(1).ToList();
+            selectedApartment.SetFirstImage(gallery.First());
+            selectedApartment.SetGallery(onlyThisGallery);
             selectedApartment.SetAmenities(_amenitiesRepository.GetAmenities(id));
             return selectedApartment;
         }
@@ -59,6 +63,7 @@ namespace Services
                 apartment.SetReviews(reviews);
                 apartment.SetAvgRating(_reviewService.GetAverageRating(apartment.Id));
                 apartment.SetReviewsCount(reviews.Count);
+                apartment.SetFirstImage(_apartmentRepository.GetGallery(apartment.Id).First());
                 apartment.SetGallery(_apartmentRepository.GetGallery(apartment.Id));
                 apartment.SetAmenities(_amenitiesRepository.GetAmenities(apartment.Id));
             }
@@ -93,6 +98,10 @@ namespace Services
                 throw new ArgumentNullException(nameof(apartment));
             _apartmentRepository.Update(apartment);
             _apartmentRepository.UpdateGallery(apartment.Id, apartment.Gallery);
+            _amenitiesRepository.Delete(apartment.Id); // I first delete everything
+
+            foreach (var amenity in apartment.Amenities)
+                _amenitiesRepository.AddAmenities(apartment.Id, amenity.Id);
         }
 
         public List<Amenities> GetAmenitiesList() => _amenitiesRepository.GetAmenitiesList();

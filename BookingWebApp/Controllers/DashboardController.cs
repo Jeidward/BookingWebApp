@@ -3,6 +3,7 @@ using Enums;
 using Microsoft.AspNetCore.Mvc;
 using Models.Entities;
 using Services;
+using System.Diagnostics;
 
 
 namespace BookingWebApp.Controllers
@@ -81,7 +82,7 @@ namespace BookingWebApp.Controllers
                 return RedirectToAction("ShowLogin");
             }
 
-            var dashboardAnalytics = _dashboardService.GetDashboardAnalytics(); // way cleaner
+            var dashboardAnalytics = _dashboardService.GetDashboardAnalytics(); 
             DashboardIndexViewModel dashboardViewModel = DashboardIndexViewModel.ConvertToViewModel(dashboardAnalytics);
             return View(dashboardViewModel);
         }
@@ -100,6 +101,10 @@ namespace BookingWebApp.Controllers
             var viewModelEdit = AddApartmentViewModel.ConvertToViewModel(apartments);
             var occupiedBookings = _dashboardService.GetOccupiedApartmentFromBookings();
             var occupiedIds = occupiedBookings.Select(b => b.ApartmentId).ToList();
+            var allAmenities = AmenitiesViewModel.ConverToViewModel(_apartmentService.GetAmenitiesList());
+
+            foreach (var vm in viewModelEdit)
+                vm.Amenities = allAmenities;
 
             foreach (var occupiedApartment in viewModels)
             {
@@ -116,13 +121,15 @@ namespace BookingWebApp.Controllers
                 ApartmentCurrentlyOccupied = occupiedIds.Count,
                 ApartmentAvailable = availableToday.Count,
                 EditApartmentViewModels = viewModelEdit,
-                Amenities = AmenitiesViewModel.ConverToViewModel(_apartmentService.GetAmenitiesList()),
+                Amenities = allAmenities
             };
 
             return View(dashboard);
         }
 
-        public IActionResult AddApartment(AddApartmentViewModel apartmentViewModel, IFormFile[] Gallery)
+      
+
+        public IActionResult AddApartment(AddApartmentViewModel apartmentViewModel, IFormFile[] gallery)
         {
             var host = HttpContext.Session.GetInt32("HostId");
             if (host == null)
@@ -131,7 +138,7 @@ namespace BookingWebApp.Controllers
             }
 
             var webRootPath = _env.WebRootPath;
-            var savedNames = _dashboardService.AddImage(Gallery,webRootPath);
+            var savedNames = _dashboardService.AddImage(gallery,webRootPath);
             
             apartmentViewModel.ImageUrl = $"IMG/{savedNames.First()}";
             apartmentViewModel.Gallery = savedNames.Select(image => $"IMG/{image}").ToList();
@@ -153,13 +160,26 @@ namespace BookingWebApp.Controllers
             return RedirectToAction("ManageApartment", "Dashboard");
         }
 
-        public IActionResult EditApartment(int Id, AddApartmentViewModel apartmentViewModel)
+        public IActionResult EditApartment(AddApartmentViewModel apartmentViewModel)
         {
-            var apartment  =  AddApartmentViewModel.ConvertToEntity(apartmentViewModel);
+            var finalGallery = apartmentViewModel.SelectedImages.ToList();
+            if (apartmentViewModel.NewImages.Any() == true)
+            {
+                var webRootPath = _env.WebRootPath;
+                var savedNames = _dashboardService.AddImage(apartmentViewModel.NewImages, webRootPath);
+                apartmentViewModel.ImageUrl = $"IMG/{savedNames.First()}";
+                apartmentViewModel.Gallery = savedNames.Select(image => $"IMG/{image}").ToList();
+                finalGallery.AddRange(apartmentViewModel.Gallery);
+            }
+
+            apartmentViewModel.Gallery = finalGallery;
+
+            var apartment = AddApartmentViewModel.ConvertToEntity(apartmentViewModel);
             _apartmentService.UpdateApartment(apartment);
 
             return RedirectToAction("ManageApartment");
         }
+
     }
 
 }

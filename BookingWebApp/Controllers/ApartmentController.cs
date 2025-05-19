@@ -26,7 +26,7 @@ namespace BookingWebApp.Controllers
         public IActionResult ShowApartmentPage(int id)
         {
             Apartment selectedApartment = _apartmentService.GetApartment(id);
-            if (selectedApartment.Id == 0) //  I implemented this, because the url can be manipulated.
+            if (selectedApartment.Id == 0 ) 
                 return RedirectToAction("ErrorResult");
             ApartmentViewModel apartmentViewModel = ApartmentViewModel.ConvertToViewModel(selectedApartment);
             return View(apartmentViewModel);

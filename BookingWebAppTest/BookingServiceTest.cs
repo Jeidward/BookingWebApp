@@ -36,7 +36,7 @@ namespace BookingWebAppTest
         public void FinalizePayment_ShouldSetBookingStatusToConfirmed_WhenPaymentStatusSucceed()
         {
             int bookingId = 123;
-            Apartment testApartment = new(456, "apartment", "a very relaxing apartment", "Aruba.png", 30,"papaya 12", 3, 2);
+            Apartment testApartment = new(456, "a very relaxing apartment", "Aruba.png", 30,"papaya 12", 3, 2);
             List<GuestProfile> testGuestProfile = new List<GuestProfile>
             {
                 new GuestProfile(new AccountHolder(2),"Joshua","Sanchez",23,"josh@mail.com","0634565620","Netherlands","stationsplein 9k76"),

@@ -18,14 +18,13 @@ namespace MSSQL
             {
                 conn.Open();
                 string query =
-                    @"INSERT INTO Apartments (Name, Description, ImageUrl, PricePerNight, Adress, Bedrooms, Bathrooms,IsArchived) 
-                                 VALUES (@Name, @Description, @ImageUrl, @PricePerNight, @Adress, @Bedrooms, @Bathrooms, @IsArchived)";
+                    @"INSERT INTO Apartments (Name, Description, PricePerNight, Adress, Bedrooms, Bathrooms,IsArchived) 
+                                 VALUES (@Name, @Description, @FirstImage, @PricePerNight, @Adress, @Bedrooms, @Bathrooms, @IsArchived)";
 
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
                     cmd.Parameters.AddWithValue("@Name", apartment.Name);
                     cmd.Parameters.AddWithValue("@Description", apartment.Description);
-                    cmd.Parameters.AddWithValue("@ImageUrl", apartment.ImageUrl);
                     cmd.Parameters.AddWithValue("@PricePerNight", apartment.PricePerNight);
                     cmd.Parameters.AddWithValue("@Adress", apartment.Adress);
                     cmd.Parameters.AddWithValue("@Bedrooms", apartment.Bedrooms);
@@ -76,7 +75,7 @@ namespace MSSQL
             {
                 conn.Open();
                 string query = $@"
-                    SELECT  ApartmentId, Name, Description, ImageUrl, PricePerNight, Adress, Bedrooms, Bathrooms 
+                    SELECT  ApartmentId, Name, Description, PricePerNight, Adress, Bedrooms, Bathrooms 
                     FROM Apartments WHERE IsArchived = 0";
 
                 using (SqlCommand cmd = new SqlCommand(query, conn))
@@ -89,7 +88,6 @@ namespace MSSQL
                                 Convert.ToInt32(reader["ApartmentId"]),
                                 Convert.ToString(reader["Name"])!,
                                 Convert.ToString(reader["Description"])!,
-                                Convert.ToString(reader["ImageUrl"])!,
                                 Convert.ToDecimal(reader["PricePerNight"]),
                                 Convert.ToString(reader["Adress"])!,
                                 Convert.ToInt32(reader["Bedrooms"]),
@@ -109,7 +107,7 @@ namespace MSSQL
             {
                 conn.Open();
                 string query = $@"
-                    SELECT ApartmentId, Name, Description, ImageUrl, PricePerNight,Adress, Bedrooms, Bathrooms 
+                    SELECT ApartmentId, Name, Description, PricePerNight,Adress, Bedrooms, Bathrooms 
                     FROM Apartments WHERE ApartmentId = @Id AND IsArchived = 0";
 
                 using (SqlCommand cmd = new SqlCommand(query, conn))
@@ -123,7 +121,6 @@ namespace MSSQL
                                 Convert.ToInt32(reader["ApartmentId"]),
                                 Convert.ToString(reader["Name"])!,
                                 Convert.ToString(reader["Description"])!,
-                                Convert.ToString(reader["ImageUrl"])!,
                                 Convert.ToDecimal(reader["PricePerNight"]),
                                 Convert.ToString(reader["Adress"])!,
                                 Convert.ToInt32(reader["Bedrooms"]),
@@ -172,14 +169,13 @@ namespace MSSQL
             {
                 conn.Open();
                 string query = @"UPDATE Apartments 
-                                 SET Name = @Name, Description = @Description, ImageUrl = @ImageUrl, PricePerNight = @PricePerNight, Adress = @Adress, Bedrooms = @Bedrooms, Bathrooms = @Bathrooms 
+                                 SET Name = @Name, Description = @Description, PricePerNight = @PricePerNight, Adress = @Adress, Bedrooms = @Bedrooms, Bathrooms = @Bathrooms 
                                  WHERE ApartmentId = @ApartmentId";
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
                     cmd.Parameters.AddWithValue("@ApartmentId", apartment.Id);
                     cmd.Parameters.AddWithValue("@Name", apartment.Name);
                     cmd.Parameters.AddWithValue("@Description", apartment.Description);
-                    cmd.Parameters.AddWithValue("@ImageUrl", apartment.ImageUrl);
                     cmd.Parameters.AddWithValue("@PricePerNight", apartment.PricePerNight);
                     cmd.Parameters.AddWithValue("@Adress", apartment.Adress);
                     cmd.Parameters.AddWithValue("@Bedrooms", apartment.Bedrooms);
@@ -191,20 +187,19 @@ namespace MSSQL
 
         public void UpdateGallery(int id, List<string> gallery)
         {
-            using (SqlConnection conn = new SqlConnection(_connectionString))
-            {
-                conn.Open();
-                string query = @"UPDATE ApartmentImages SET ImgPath = @ImgPath WHERE ApartmentId = @ApartmentId";
-                using (SqlCommand cmd = new SqlCommand(query, conn))
-                {
-                    cmd.Parameters.AddWithValue("@ApartmentId", id);
-                    cmd.ExecuteNonQuery();
-                }
 
-                foreach (var imgPath in gallery)
-                {
-                    AddApartmentImages(id, imgPath);
-                }
+            using var conn = new SqlConnection(_connectionString);
+            conn.Open();
+            using (var del = new SqlCommand(
+                       "DELETE FROM ApartmentImages WHERE ApartmentId = @ApartmentId", conn))
+            {
+                del.Parameters.AddWithValue("@ApartmentId", id);
+                del.ExecuteNonQuery();
+            }
+
+            foreach (var imgPath in gallery)
+            {
+                AddApartmentImages(id, imgPath);
             }
         }
     }

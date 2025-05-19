@@ -26,7 +26,7 @@ public class PaymentServiceTest
             new GuestProfile(new AccountHolder(1), "", "", 2, "", "23444", "wdddd", "wedeidh")
         };
         
-        var apartment = new Apartment(1, "apartment", "a very relaxing apartment", "Aruba.png", 30, "papaya 12", 3, 2);
+        var apartment = new Apartment(1, "a very relaxing apartment", "Aruba.png", 30, "papaya 12", 3, 2);
         var booking = new Booking(1, DateTime.Today, DateTime.Today.AddDays(3), 123, apartment,guestProfiles);
         decimal amount = 100;
 

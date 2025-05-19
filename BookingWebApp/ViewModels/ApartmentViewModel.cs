@@ -38,43 +38,39 @@ namespace BookingWebApp.ViewModels
         }
         public static ApartmentViewModel ConvertToViewModel(Apartment apartment)
         {
-           ApartmentViewModel apartmentViewModel = new ApartmentViewModel() { Id = apartment.Id, Name = apartment.Name, Description = apartment.Description, ImageUrl = apartment.ImageUrl,Bedrooms = apartment.Bedrooms,Bathrooms = apartment.Bathrooms,Adress = apartment.Adress, Gallery = apartment.Gallery,PricePerNight = apartment.PricePerNight, AvgRating = apartment.AvgRating, ReviewsCount = apartment.ReviewsCount, Booking = new CreateBookingViewModel(){ApartmentId = apartment.Id}, IsOccupied = apartment.IsOccupied};
+           ApartmentViewModel apartmentViewModel = new ApartmentViewModel() { Id = apartment.Id, Name = apartment.Name, Description = apartment.Description, ImageUrl = apartment.FirstImage,Bedrooms = apartment.Bedrooms,Bathrooms = apartment.Bathrooms,Adress = apartment.Adress, Gallery = apartment.Gallery,PricePerNight = apartment.PricePerNight, AvgRating = apartment.AvgRating, ReviewsCount = apartment.ReviewsCount, Booking = new CreateBookingViewModel(){ApartmentId = apartment.Id}, IsOccupied = apartment.IsOccupied};
 
            if(apartment.Reviews == null)
-            {
-                apartment.SetReviews( new List<Review>());
-            }
+               apartment.SetReviews( new List<Review>());
 
-            foreach (var review in apartment.Reviews)
-            {
+           foreach (var review in apartment.Reviews)
                 apartmentViewModel.ReviewViewModel.Add(ViewModels.ReviewViewModel.ConvertToViewModel(review));
-            }
 
-            foreach (var amenities in apartment.Amenities)
-                apartmentViewModel.Amenities.Add(AmenitiesViewModel.ConvertToViewModel(amenities));
+           foreach (var amenities in apartment.Amenities)
+               apartmentViewModel.Amenities.Add(AmenitiesViewModel.ConvertToViewModel(amenities));
 
-            if (apartmentViewModel.ReviewViewModel.Any())
-            {
-                apartmentViewModel.AverageCleanliness =
-                    apartmentViewModel.ReviewViewModel.Average(r => r.CleanlinessRating);
+           if (apartmentViewModel.ReviewViewModel.Any())
+           {
+               apartmentViewModel.AverageCleanliness =
+                   apartmentViewModel.ReviewViewModel.Average(r => r.CleanlinessRating);
 
-                apartmentViewModel.AverageLocation =
-                    apartmentViewModel.ReviewViewModel.Average(r => r.LocationRating);
+               apartmentViewModel.AverageLocation =
+                   apartmentViewModel.ReviewViewModel.Average(r => r.LocationRating);
 
-                apartmentViewModel.AverageComfort =
-                    apartmentViewModel.ReviewViewModel.Average(r => r.ComfortRating);
+               apartmentViewModel.AverageComfort =
+                   apartmentViewModel.ReviewViewModel.Average(r => r.ComfortRating);
 
-                apartmentViewModel.AverageValue =
-                    apartmentViewModel.ReviewViewModel.Average(r => r.ValueRating);
-            }
-            else
-            {
-                apartmentViewModel.AverageCleanliness = 0;
-                apartmentViewModel.AverageLocation = 0;
-                apartmentViewModel.AverageComfort = 0;
-                apartmentViewModel.AverageValue = 0; 
-            }
-            return apartmentViewModel;
+               apartmentViewModel.AverageValue =
+                   apartmentViewModel.ReviewViewModel.Average(r => r.ValueRating);
+           }
+           else
+           {
+               apartmentViewModel.AverageCleanliness = 0;
+               apartmentViewModel.AverageLocation = 0;
+               apartmentViewModel.AverageComfort = 0;
+               apartmentViewModel.AverageValue = 0; 
+           }
+           return apartmentViewModel;
         }
         public static List<ApartmentViewModel> ConvertToViewModel(List<Apartment> apartments) // apartment list page.
         {
@@ -82,9 +78,8 @@ namespace BookingWebApp.ViewModels
             {
                 foreach (var apartment in apartments)
                 {
-                    {
-                        viewModels.Add(ConvertToViewModel(apartment));
-                    }
+                    
+                   viewModels.Add(ConvertToViewModel(apartment));
                 }
                 return viewModels;
             }

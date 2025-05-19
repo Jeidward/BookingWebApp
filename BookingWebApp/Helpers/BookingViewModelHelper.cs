@@ -18,7 +18,7 @@ namespace BookingWebApp.Helpers
             {
                 Id = booking.Apartment.Id,
                 Name = booking.Apartment.Name,
-                ImageUrl = booking.Apartment.ImageUrl,
+                ImageUrl = booking.Apartment.FirstImage,
                 Description = booking.Apartment.Description,
                 Adress = booking.Apartment.Adress,
                 Gallery = booking.Apartment.Gallery,

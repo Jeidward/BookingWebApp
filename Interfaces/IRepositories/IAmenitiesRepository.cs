@@ -13,5 +13,8 @@ namespace Interfaces.IRepositories
         public List<Amenities> GetAmenitiesList();
         public void AddAmenities(int apartmentId, int amenityId);
         public List<Amenities> GetSelectedAmenities(int apartmentId);
+        public void Update(int apartmentId, int amenityId);
+
+        public void Delete(int apartmentId);
     }
 }
