@@ -1,4 +1,4 @@
-﻿@model List<ApartmentViewModel>
+﻿@model PaginatedList<ApartmentViewModel>
 @{
     ViewData["Title"] = "Apartment List";
 }
@@ -6,30 +6,76 @@
 <h1 class="text-center">Our Apartments</h1>
 
 <div class="apartment-list">
-    @foreach (var apartment in Model)
-    {
-        <div class="apartment-card">
-            <div class="apartment-card__image">
-                <img src="@Url.Content("~/" + apartment.ImageUrl)" alt="@apartment.Name" />
-            </div>
-            <div class="apartment-card__content">
-                <div class="apartment-card__header">
-                    <h3>@apartment.Name</h3>
-                    <span class="apartment-card__rating">
-                         @apartment.AvgRating
-                         <i class="fas fa-star me-2"></i>
-                    </span>
-                </div>
+	@foreach (var apartment in Model.Items)
+	{
+		<div class="apartment-card">
+			<div class="apartment-card__image">
+				<img src="@Url.Content("~/" + apartment.ImageUrl)" alt="@apartment.Name" />
+			</div>
+			<div class="apartment-card__content">
+				<div class="apartment-card__header">
+					<h3>@apartment.Name</h3>
+					<span class="apartment-card__rating">
+						@apartment.AvgRating
+						<i class="fas fa-star me-2"></i>
+					</span>
+				</div>
 
-                <p class="apartment-card__description">@apartment.Description</p>
+				<p class="apartment-card__description">@apartment.Description</p>
 
-                <div class="apartment-card__footer">
-                    <div class="apartment-card__price">
-                        $@apartment.PricePerNight <span>/ night</span>
-                    </div>
-                    <a class="nav-link text-white btn btn-dark" asp-controller="Apartment" asp-action="ShowApartmentPage" asp-route-id="@apartment.Id">Book now</a>
-                </div>
-            </div>
-        </div>
-    }
+				<div class="apartment-card__footer">
+					<div class="apartment-card__price">
+						$@apartment.PricePerNight <span>/ night</span>
+					</div>
+					<a class="nav-link text-white btn btn-dark" asp-controller="Apartment" asp-action="ShowApartmentPage" asp-route-id="@apartment.Id">Book now</a>
+				</div>
+			</div>
+		</div>
+	}
 </div>
+
+@if (Model.TotalPages > 1)
+{
+    <nav aria-label="Apartment list pagination">
+        <ul class="pagination justify-content-center">
+
+            <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
+                <a class="page-link text-black"
+                   asp-action="ShowApartmentList"
+                   asp-route-pageIndex="1"
+                   asp-route-pageSize="@Model.PageSize">First</a>
+            </li>
+
+            <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
+                <a class="page-link text-black"
+                   asp-action="ShowApartmentList"
+                   asp-route-pageIndex="@(Model.PageIndex - 1)"
+                   asp-route-pageSize="@Model.PageSize">Previous</a>
+            </li>
+
+            @for (var i = 1; i <= Model.TotalPages; i++)
+            {
+                <li class="page-item @(i == Model.PageIndex ? "active" : "")">
+                    <a class="page-link text-black"
+                       asp-action="ShowApartmentList"
+                       asp-route-pageIndex="@i"
+                       asp-route-pageSize="@Model.PageSize">@i</a>
+                </li>
+            }
+
+            <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
+                <a class="page-link text-black"
+                   asp-action="ShowApartmentList"
+                   asp-route-pageIndex="@(Model.PageIndex + 1)"
+                   asp-route-pageSize="@Model.PageSize">Next</a>
+            </li>
+
+            <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
+                <a class="page-link text-black"
+                   asp-action="ShowApartmentList"
+                   asp-route-pageIndex="@Model.TotalPages"
+                   asp-route-pageSize="@Model.PageSize">Last</a>
+            </li>
+        </ul>
+    </nav>
+}

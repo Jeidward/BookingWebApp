@@ -1,4 +1,5 @@
-﻿using Models.Entities;
+﻿using System.Runtime.CompilerServices;
+using Models.Entities;
 
 namespace BookingWebApp.ViewModels
 {

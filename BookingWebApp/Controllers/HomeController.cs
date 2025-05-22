@@ -6,9 +6,11 @@ using BookingWebApp.ViewModels;
 using BookingWebApp.Helpers;
 using Enums;
 using Interfaces.IServices;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BookingWebApp.Controllers
 {
+    
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
@@ -23,6 +25,7 @@ namespace BookingWebApp.Controllers
             _reviewService = reviewService;
         }
 
+      
         public IActionResult Index()
         {
            var reviews =  _reviewService.GetAllReviews(); // this review still need fixing.

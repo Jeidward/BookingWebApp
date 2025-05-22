@@ -24,6 +24,8 @@ namespace Interfaces.IRepositories
         public int GetAllBookings();
         public List<Booking> GetAllBookingsWithObject();
 
+        public List<ActivityDashboard> GetAllActivitiesObjects();
+
 
 
 

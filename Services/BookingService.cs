@@ -72,7 +72,11 @@ namespace Services
 
         public decimal CalculateTotalPrice(DateTime checkInDate, DateTime checkOutDate, Apartment apartment, List<ExtraService> extraServices)
         {
-            decimal totalPrice = apartment.PricePerNight * ComputeNights(checkInDate, checkOutDate);
+            var checkDay = DateOnly.FromDateTime(checkInDate);
+            var checkoutDay = DateOnly.FromDateTime(checkOutDate);
+            var checkInValue = DateTime.Parse(checkDay.ToString());
+            var checkOutValue = DateTime.Parse(checkoutDay.ToString());
+            decimal totalPrice = apartment.PricePerNight * ComputeNights(checkInValue, checkOutValue);
 
             foreach (var service in extraServices)
             {
@@ -94,7 +98,10 @@ namespace Services
 
         public int ComputeNights(DateTime checkIn, DateTime checkOut)
         {
-            return (checkOut - checkIn).Days;
+            var checkInDay = DateOnly.FromDateTime(checkIn);
+            var checkOutDay = DateOnly.FromDateTime(checkOut);
+
+            return checkOutDay.Day - checkInDay.Day;
         }
 
 
@@ -111,11 +118,23 @@ namespace Services
             return userBooking;
         }
 
-        public List<Booking> GetAllBookingsForUserCheckout(int userId) => GetAllBookingsForUser(userId)
-            .FindAll(booking => booking.Status == BookingStatus.CheckedOut);
+        public List<Booking> GetAllBookingsForUserCheckout(int userId)
+        {
+            var bookings =  GetAllBookingsForUser(userId).FindAll(booking => booking.Status == BookingStatus.CheckedOut);
+            foreach (var booking in bookings)
+                booking.Apartment.SetFirstImage(_apartmentRepository.GetGallery(booking.Apartment.Id).First());
 
-        public List<Booking> GetAllBookingForUserCurrent(int userId) => GetAllBookingsForUser(userId)
-            .FindAll(booking => booking.Status == BookingStatus.Confirmed);
+            return bookings;
+        } 
+
+        public List<Booking> GetAllBookingForUserCurrent(int userId)
+        {
+           var bookings = GetAllBookingsForUser(userId).FindAll(booking => booking.Status == BookingStatus.Confirmed);
+           foreach (var booking in bookings)
+               booking.Apartment.SetFirstImage(_apartmentRepository.GetGallery(booking.Apartment.Id).First());
+
+           return bookings;
+        }
             
         
 

@@ -1,0 +1,103 @@
+﻿@model ReviewsPageViewModel
+@{
+  
+}
+
+<div class="container mt-5">
+
+    <a asp-controller="Apartment"
+       asp-action="ShowApartmentPage"
+       asp-route-id="@Model.ApartmentId"
+       class="text-dark mb-3 d-inline-flex align-items-center">
+        <i class="fas fa-arrow-left me-2"></i> Back to apartment
+    </a>
+
+    <h1 class="mb-1">@Model.ApartmentName</h1>
+    <p class="text-muted">
+        <i class="fas fa-star"></i> @Model.AvgRating • @Model.ReviewsCount reviews
+    </p>
+
+    <hr />
+
+    <!-- ───── reviews list ───── -->
+    @if (!Model.ReviewPage.Items.Any())
+    {
+        <p>No reviews yet.</p>
+    }
+    else
+    {
+        @foreach (var r in Model.ReviewPage.Items)
+        {
+            <div class="border-top pt-4">
+                <div class="d-flex mb-2">
+                    <strong>@r.AccountId</strong>
+                    <span class="text-muted ms-2">@r.CreatedAt:d</span>
+                    <span class="ms-auto"><i>@r.OverallRating</i></span>
+                </div>
+                <p>@r.Comments</p>
+            </div>
+        }
+    }
+
+    <!-- ───── pagination ───── -->
+    @if (Model.ReviewPage.TotalPages > 1)
+    {
+        <nav aria-label="Review pages" class="mt-4">
+            <ul class="pagination justify-content-center">
+
+                <li class="page-item @(Model.ReviewPage.HasPreviousPage?"":"disabled")">
+                    <a class="page-link"
+                       asp-action="Reviews"
+                       asp-route-id="@Model.ApartmentId"
+                       asp-route-pageIndex="1"
+                       asp-route-pageSize="@Model.ReviewPage.PageSize">
+                        First
+                    </a>
+                </li>
+
+                <li class="page-item @(Model.ReviewPage.HasPreviousPage?"":"disabled")">
+                    <a class="page-link"
+                       asp-action="Reviews"
+                       asp-route-id="@Model.ApartmentId"
+                       asp-route-pageIndex="@(Model.ReviewPage.PageIndex-1)"
+                       asp-route-pageSize="@Model.ReviewPage.PageSize">
+                        Prev
+                    </a>
+                </li>
+
+                @for (var i = 1; i <= Model.ReviewPage.TotalPages; i++)
+                {
+                    <li class="page-item @(i==Model.ReviewPage.PageIndex?"active":"")">
+                        <a class="page-link"
+                           asp-action="Reviews"
+                           asp-route-id="@Model.ApartmentId"
+                           asp-route-pageIndex="@i"
+                           asp-route-pageSize="@Model.ReviewPage.PageSize">
+                            @i
+                        </a>
+                    </li>
+                }
+
+                <li class="page-item @(Model.ReviewPage.HasNextPage?"":"disabled")">
+                    <a class="page-link"
+                       asp-action="Reviews"
+                       asp-route-id="@Model.ApartmentId"
+                       asp-route-pageIndex="@(Model.ReviewPage.PageIndex+1)"
+                       asp-route-pageSize="@Model.ReviewPage.PageSize">
+                        Next
+                    </a>
+                </li>
+
+                <li class="page-item @(Model.ReviewPage.HasNextPage?"":"disabled")">
+                    <a class="page-link"
+                       asp-action="Reviews"
+                       asp-route-id="@Model.ApartmentId"
+                       asp-route-pageIndex="@Model.ReviewPage.TotalPages"
+                       asp-route-pageSize="@Model.ReviewPage.PageSize">
+                        Last
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    }
+</div>

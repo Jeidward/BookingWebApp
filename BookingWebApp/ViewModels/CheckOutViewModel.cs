@@ -6,8 +6,6 @@ namespace BookingWebApp.ViewModels
     {
         public BookingViewModel BookingViewModel { get; set; }
 
-      
-
        
     }
 }

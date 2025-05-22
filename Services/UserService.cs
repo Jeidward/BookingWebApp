@@ -5,6 +5,7 @@ using System.Text;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Identity.Client;
 using System.ComponentModel.DataAnnotations;
+using System.Security.Claims;
 using Interfaces.IServices;
 using Interfaces.IRepositories;
 
@@ -37,6 +38,17 @@ namespace Services
             }
 
             return result;
+        }
+
+        public List<Claim> CreateClaims(int userId, string email,string role)
+        {
+            var claims = new List<Claim>
+            {
+                new Claim("Id", userId.ToString()),
+                new Claim(ClaimTypes.Email, email),
+                new Claim(ClaimTypes.Role, role)
+            };
+            return claims;
         }
 
         public int GetExistedLogIn(string email, string password)

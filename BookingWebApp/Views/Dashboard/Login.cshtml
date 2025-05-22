@@ -21,7 +21,7 @@
 		</div>
 		<div class="mt-4">
 			
-					@using (Html.BeginForm("Login", "Dashboard", FormMethod.Post))
+					@using (Html.BeginForm("LoginHost", "Authentication", FormMethod.Post))
 				{
 					@Html.ValidationSummary(true, "", new { @class = "text-danger" })
 

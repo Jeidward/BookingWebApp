@@ -1,99 +1,118 @@
 ﻿@model BookingViewModel
 
 <div class="container">
-    <h2>Booking Details</h2>
+	<div class="d-flex align-items-center mb-3  mt-3">
+	<a class="text-dark me-3"asp-controller="Apartment" asp-action="ShowApartmentPage" asp-route-id="@Model.ApartmentViewModel.Id">
+		<i class="fas fa-arrow-left fs-4"> </i>
+	</a>
+	<h2>Booking Details</h2>
+	</div>
 
-    <div class="row">
-        <div class="col-md-8">
-            <div class="card mb-3">
-                <div class="card-header">
-                    <h5>@Model.ApartmentViewModel.Name</h5>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <p>
-                                <strong>Check-in:</strong> @Model.CheckInDate.ToString("MMM dd, yyyy")
-                                <button type="button" class="btn btn-sm btn-outline-dark">Change</button>
-                            </p>
-                            <p>
-                                <strong>Check-out:</strong> @Model.CheckOutDate.ToString("MMM dd, yyyy")
-                                <button type="button" class="btn btn-sm btn-outline-dark">Change</button>
-                            </p>
-                            <p><strong>Guests:</strong> @ViewData["numberOfGuests"]</p>
-                        </div>
-                        <div class="col-md-6">
-                            <img src="@Url.Content("~/" + Model.ApartmentViewModel.ImageUrl)" class="img-fluid" alt="@Model.ApartmentViewModel.Name" />
-                        </div>
-                    </div>
-                </div>
-            </div>
+	<div class="row">
+		<div class="col-md-8">
+			<div class="card mb-3">
+				<div class="card-header">
+					<h5>@Model.ApartmentViewModel.Name</h5>
+				</div>
+				<div class="card-body">
+					<div class="row">
+						<div class="col-md-6">
+							<p>
+								<strong>Check-in:</strong> @Model.CheckInDate.ToString("MMM dd, yyyy")
+							</p>
+							<p>
+								<strong>Check-out:</strong> @Model.CheckOutDate.ToString("MMM dd, yyyy")
+							</p>
+							<p><strong>Guests:</strong> @ViewData["numberOfGuests"]</p>
+						</div>
+						<div class="col-md-6">
+							<img src="@Url.Content("~/" + Model.ApartmentViewModel.ImageUrl)" class="img-fluid" alt="@Model.ApartmentViewModel.Name"/>
+						</div>
+					</div>
+				</div>
+			</div>
 
-            <div class="card">
-                <div class="card-header">
-                    <h5>Price Details</h5>
-                </div>
-                <div class="card-body">
-                    <div class="d-flex justify-content-between mb-2">
-                        <span>@Model.ApartmentViewModel.PricePerNight.ToString("C") × @ViewData["numberOfNights"] nights</span>
-                    </div>
-                    <hr />
-                    <div class="d-flex justify-content-between">
-                        <strong>Total</strong>
-                        <strong>@Model.TotalPrice.ToString("C")</strong>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+			<div class="card">
+				<div class="card-header">
+					<h5>Price Details</h5>
+				</div>
+				<div class="card-body">
+					<div class="d-flex justify-content-between mb-2">
+						<span>@Model.ApartmentViewModel.PricePerNight.ToString("C") × @ViewData["numberOfNights"] nights</span>
+					</div>
+					<hr/>
+					<div class="d-flex justify-content-between">
+						<strong>Total</strong>
+						<strong>@Model.TotalPrice.ToString("C")</strong>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 
-    <div class="container">
-	    <form id="additionalService" asp-controller="Booking" asp-action="CreateBooking" method="post">
-		    <input type="hidden" name="ApartmentId" value="@Model.ApartmentId" />
-		    <input type="hidden" name="CheckInDate" value="@Model.CheckInDate.ToString("yyyy-MM-dd")" />
-		    <input type="hidden" name="CheckOutDate" value="@Model.CheckOutDate.ToString("yyyy-MM-dd")" />
-		    <input type="hidden" name="CheckInTime" value="@Model.CheckInDate.TimeOfDay" />
-		    <input type="hidden" name="CheckOutTime" value="@Model.CheckOutDate.TimeOfDay" />
-		    <input type="hidden" name="NumberOfGuests" value="@ViewData["numberOfGuests"]" /> <!--needed this, to be able to retry the controller-->
-		    <h3>Additional Services</h3>
-		    <div class="row mb-4">
-			    <div class="col">
-				    <div class="text-center p-3 border rounded">
-                        <input class="form-check-input" type="checkbox" id="Pool" name="ExtraServiceViewModel.Pool" value="true" @(Model.ExtraServiceViewModels.Pool ? "checked" : "") onchange="this.form.submit();">
-					    <label for="Pool" class="form-check-label">
-						    <i class="bi bi-water"></i>
-						    <p class="mb-0">Swimming Pool</p>
-					    </label>
-				    </div>
-			    </div>
-			    <div class="col">
-				    <div class="text-center p-3 border rounded">
-                        <input class="form-check-input" type="checkbox" id="Laundry" name="ExtraServiceViewModel.Laundry" value="true" @(Model.ExtraServiceViewModels.Laundry ? "checked" : "") onchange="this.form.submit();">
-					    <label for="Laundry" class="form-check-label">
-						    <i class="bi bi-droplet"></i>
-						    <p class="mb-0">Laundry</p>
-					    </label>
-				    </div>
-			    </div>
-			    <div class="col">
-				    <div class="text-center p-3 border rounded">
-                        <input class="form-check-input" type="checkbox" id="CarRental" name="ExtraServiceViewModel.CarRental" value="true" @(Model.ExtraServiceViewModels.CarRental ? "checked" : "") onchange="this.form.submit();">
-					    <label for="CarRental" class="form-check-label">
-						    <i class="bi bi-car-front"></i>
-						    <p class="mb-0">Car Rental</p>
-					    </label>
-				    </div>
-			    </div>
-		    </div>
-	    </form>
+	<div class="container">
+		<form id="additionalService" asp-controller="Booking" asp-action="CreateBooking" method="post">
+			<input type="hidden" name="ApartmentId" value="@Model.ApartmentId"/>
+			<input type="hidden" name="CheckInDate" value="@Model.CheckInDate.ToString("yyyy-MM-dd")"/>
+			<input type="hidden" name="CheckOutDate" value="@Model.CheckOutDate.ToString("yyyy-MM-dd")"/>
+			<input type="hidden" name="CheckInTime" value="@Model.CheckInDate.TimeOfDay"/>
+			<input type="hidden" name="CheckOutTime" value="@Model.CheckOutDate.TimeOfDay"/>
+			<input type="hidden" name="NumberOfGuests" value="@ViewData["numberOfGuests"]"/> <!--needed this, to be able to retry the controller-->
+			<h3>Additional Services</h3>
+			<div class="row mb-4">
+				<div class="col">
+					<div class="text-center p-3 border rounded">
+						<input class="form-check-input" type="checkbox" id="Pool" name="ExtraServiceViewModel.Pool" value="true" @(Model.ExtraServiceViewModels.Pool ? "checked" : "") onchange="this.form.submit();">
+						<label for="Pool" class="form-check-label">
+							<i class="bi bi-water"></i>
+							<p class="mb-0">Swimming Pool</p>
+						</label>
+					</div>
+				</div>
+				<div class="col">
+					<div class="text-center p-3 border rounded">
+						<input class="form-check-input" type="checkbox" id="Laundry" name="ExtraServiceViewModel.Laundry" value="true" @(Model.ExtraServiceViewModels.Laundry ? "checked" : "") onchange="this.form.submit();">
+						<label for="Laundry" class="form-check-label">
+							<i class="bi bi-droplet"></i>
+							<p class="mb-0">Laundry</p>
+						</label>
+					</div>
+				</div>
+				<div class="col">
+					<div class="text-center p-3 border rounded">
+						<input class="form-check-input" type="checkbox" id="CarRental" name="ExtraServiceViewModel.CarRental" value="true" @(Model.ExtraServiceViewModels.CarRental ? "checked" : "") onchange="this.form.submit();">
+						<label for="CarRental" class="form-check-label">
+							<i class="bi bi-car-front"></i>
+							<p class="mb-0">Car Rental</p>
+						</label>
+					</div>
+				</div>
+			</div>
 
-        @if (ViewContext.RouteData.Values["action"].ToString() == "PaymentDetails")
-        {
-            <partial name="PaymentDetailsForm" model="Model" />
-        }
-        else
-        {
-            <partial name="GuestProfileForm" model="Model" />
-        }
-    </div>
+
+			<div class="form-check mb-3">
+				<input class="form-check-input"
+				       type="checkbox"
+				       id="AddMyself"
+				       name="AddMyself"
+				       value="true"
+				       onchange="this.form.submit();"/>
+
+				<input type="hidden" name="AddMyself" value="false"/>
+
+				<label for="AddMyself" class="form-check-label">Add myself</label>
+			</div>
+
+
+		</form>
+
+		@if (ViewContext.RouteData.Values["action"].ToString() == "PaymentDetails")
+		{
+			<partial name="PaymentDetailsForm" model="Model"/>
+		}
+		else
+		{
+			<partial name="GuestProfileForm" model="Model.GuestProfile"/>
+		}
+	</div>
 </div>

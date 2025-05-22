@@ -23,13 +23,13 @@ public class UserServiceTest
       _userService = new UserService(_mockUserRepository.Object,_passwordSecurityService);
     }
 
-    [TestMethod]
+    [TestMethod] // when I\user doesnt exist
     public void GetExistedLogIn_ShouldReturnZero_WhenEqualsToMinusOne() // bad flow
     {
         User user = new User(-1);
         var expectedResult = 0;
         _mockUserRepository.Setup(repo => repo.GetUser(It.IsAny<string>())).Returns(user);
-        var userInt = _userService.GetExistedLogIn("something@mail.com", "1234567890");
+        var userInt = _userService.GetExistedLogIn("something@mail.com", "1234567890"); // when email doesn't exist.
         Assert.AreEqual(expectedResult,userInt);
     }
 

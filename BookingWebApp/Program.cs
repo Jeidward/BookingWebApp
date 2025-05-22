@@ -47,10 +47,43 @@ namespace BookingWebApp
             builder.Services.AddScoped<EmailSenderService>();
             builder.Services.AddScoped<DashboardService>();
 
+            builder.Services.AddAuthentication("UserScheme")         
+                .AddCookie("UserScheme", opts =>
+                {
+                    opts.Cookie.Name = "UserLoginCookie";
+                    opts.LoginPath = "/Authentication/LogIn";
+                    opts.AccessDeniedPath = "/Account/AccessDenied";
+                    opts.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+                })
+                .AddCookie("HostScheme", opts =>
+                {
+                    opts.Cookie.Name = "HostLoginCookie";
+                    opts.LoginPath = "/Authentication/ShowLogin";
+                    opts.AccessDeniedPath = "/Host/AccessDenied";
+                    opts.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+                });
+
+            builder.Services.AddAuthorization(options =>
+            {
+                options.AddPolicy("User", policy =>
+                {
+                    policy.AuthenticationSchemes.Add("UserScheme");
+                    policy.RequireRole("User");
+                });
+
+
+                options.AddPolicy("Host", policy =>
+                {
+                    policy.AuthenticationSchemes.Add("HostScheme");
+                    policy.RequireRole("Host");
+
+                });
 
 
 
-            var app = builder.Build();
+            });
+
+         var app = builder.Build();
 
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
@@ -64,12 +97,12 @@ namespace BookingWebApp
             app.UseStaticFiles();
 
             app.UseRouting();
-
+            app.UseAuthentication();
             app.UseAuthorization();
             app.UseSession();
 
             app.MapControllerRoute(
-                name: "default",
+                name: "default",    
                 pattern: "{controller=Home}/{action=Index}/{id?}");
 
             app.Run();

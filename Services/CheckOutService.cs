@@ -20,7 +20,7 @@ namespace Services
         {
             Booking booking = _bookingService.GetBookingWithApartment(bookingId);
             
-            if (booking.CheckOutDate.Date == DateTime.Today.AddDays(2)) // for test, will be remove
+            if (booking.CheckOutDate.Date == DateTime.Today) 
             {
                 booking.SetStatus(BookingStatus.CheckedOut);
                 _bookingService.Update(booking);

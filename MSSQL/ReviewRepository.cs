@@ -115,5 +115,19 @@ namespace MSSQL
 
             return reviews;
         }
+
+
+        public Task<PaginatedList<Review>> GetReviewsAsync(int apartmentId, int pageIndex, int pageSize)
+        {
+            var reviews = GetReviewsApartment(apartmentId);
+            var reviewShown = reviews.Skip(2).ToList();
+            if (reviews == null)
+            {
+                return Task.FromResult(new PaginatedList<Review>(new List<Review>(), 0, pageIndex, pageSize));
+            }
+
+            var paginatedReviews = reviewShown.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
+            return Task.FromResult(new PaginatedList<Review>(paginatedReviews, reviewShown.Count, pageIndex, pageSize));
+        }
     }
 }

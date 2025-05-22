@@ -48,9 +48,8 @@ namespace BookingWebApp.Helpers
 
         public static string CreateString(BookingViewModel bookingViewModel)
         {
-            return $"{bookingViewModel.ApartmentId}${bookingViewModel.CheckInDate}${bookingViewModel.CheckOutDate}${bookingViewModel.TotalPrice}${bookingViewModel.ExtraServiceViewModels.Pool}${bookingViewModel.ExtraServiceViewModels.Laundry}${bookingViewModel.ExtraServiceViewModels.CarRental}";
+            return $"{bookingViewModel.ApartmentId}${bookingViewModel.CheckInDate}${bookingViewModel.CheckOutDate}${bookingViewModel.TotalPrice}${bookingViewModel.ExtraServiceViewModels.Pool}${bookingViewModel.ExtraServiceViewModels.Laundry}${bookingViewModel.ExtraServiceViewModels.CarRental}${bookingViewModel.NumberOfGuests}";
         }
-
 
         public static string CreateString(Booking booking)
         {
@@ -89,7 +88,8 @@ namespace BookingWebApp.Helpers
                 CheckInDate = DateTime.Parse(bookingInfo[1]),
                 CheckOutDate = DateTime.Parse(bookingInfo[2]),
                 TotalPrice = decimal.Parse(bookingInfo[3]),
-                ExtraServiceViewModels = extras
+                ExtraServiceViewModels = extras,
+                NumberOfGuests = int.Parse(bookingInfo[7])
             };
         }
     }

@@ -8,6 +8,8 @@ namespace BookingWebApp.ViewModels
         public int TotalUsers { get; set; }
         public decimal TotalRevenue { get; set; }
         public int UpcomingBookings { get; set; }
+        public List<ActivityViewModel> Activities { get; set; }
+
 
         public static DashboardIndexViewModel ConvertToViewModel(DashboardAnalytics dashboardAnalytics)
         {
@@ -16,8 +18,12 @@ namespace BookingWebApp.ViewModels
                 TotalBookings = dashboardAnalytics.TotalBookings,
                 TotalUsers = dashboardAnalytics.TotalUsers,
                 TotalRevenue = dashboardAnalytics.TotalRevenue,
-                UpcomingBookings = dashboardAnalytics.UpcomingBookings
+                UpcomingBookings = dashboardAnalytics.UpcomingBookings,
             };
         }
+
+
+
+
     }
 }

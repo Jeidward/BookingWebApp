@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Models.Entities;
 using Services;
 using BookingWebApp.Helpers;
+using Interfaces.IServices;
 
 namespace BookingWebApp.Controllers
 {
@@ -12,11 +13,11 @@ namespace BookingWebApp.Controllers
         private readonly CheckOutService _checkoutService;
         private readonly UserService _userService;
         private readonly ApartmentService _apartmentService;
-        private readonly ReviewService _reviewService;
+        private readonly IReviewService _reviewService;
         private readonly AccountHolderService _accountHolderService;
 
 
-        public CheckOutController(CheckOutService checkOutService, UserService userService,ApartmentService apartmentService, ReviewService reviewService,AccountHolderService accountHolderService)
+        public CheckOutController(CheckOutService checkOutService, UserService userService,ApartmentService apartmentService, IReviewService reviewService,AccountHolderService accountHolderService)
         {
             _checkoutService = checkOutService;
             _userService = userService;

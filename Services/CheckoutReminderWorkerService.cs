@@ -34,10 +34,7 @@ public class CheckoutReminderWorkerService(ILogger<CheckoutReminderWorkerService
         {
             try
             {
-                await emailSender.SendEmail(
-                    email,
-                    "Checkout Reminder",
-                    $"Hey {name},\nJust a reminder that today is your checkout day for {booking.Apartment.Name}. We hope you had a great stay! Please make sure to vacate the premises by the designated checkout time.\nSafe travels, and we hope to see you again soon!\nBest regards,\nThe Booking Team");
+                await emailSender.SendEmailForCheckout(email,booking,name);
 
                 bookingRepo.MarkCheckoutReminderSent(booking.Id);
                 logger.LogInformation("Reminder sent for booking {Id}", booking.Id);

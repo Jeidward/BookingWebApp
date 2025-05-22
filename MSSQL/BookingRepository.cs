@@ -27,9 +27,9 @@ namespace MSSQL
                 {
                     string insertBookingSql = @"
                      INSERT INTO Bookings
-                     (ApartmentId, AccountHolderId, CheckInDate, CheckOutDate, TotalPrice, Status)
+                     (ApartmentId, AccountHolderId, CheckInDate, CheckOutDate, TotalPrice, Status, IsArchived, CheckoutReminderSent,BookingCreated)
                      OUTPUT INSERTED.BookingId
-                    VALUES (@ApartmentId, @AccountHolderId, @CheckInDate, @CheckOutDate, @TotalPrice, @Status)";
+                    VALUES (@ApartmentId, @AccountHolderId, @CheckInDate, @CheckOutDate, @TotalPrice, @Status,@IsArchived,@CheckoutReminderSent,@BookingCreated)";
 
                     using (SqlCommand bookingCmd = new SqlCommand(insertBookingSql, conn))
                     {
@@ -39,8 +39,9 @@ namespace MSSQL
                         bookingCmd.Parameters.AddWithValue("@CheckOutDate", booking.CheckOutDate);
                         bookingCmd.Parameters.AddWithValue("@TotalPrice", booking.TotalPrice);
                         bookingCmd.Parameters.AddWithValue("@Status", booking.Status.ToString());
-
-
+                        bookingCmd.Parameters.AddWithValue("@IsArchived", false);
+                        bookingCmd.Parameters.AddWithValue("@CheckoutReminderSent", false);
+                        bookingCmd.Parameters.AddWithValue("@BookingCreated", DateTime.Now);
 
                         int newBookingId = (int)bookingCmd.ExecuteScalar();
                         return newBookingId;
@@ -320,8 +321,9 @@ namespace MSSQL
                 string sql = @"SELECT COUNT(*) FROM Bookings b
                                 INNER JOIN Apartments a ON b.ApartmentId = a.ApartmentId
                                 WHERE b.ApartmentId = @ApartmentId
-                                AND b.CheckInDate < @CheckOutDate
-                                AND b.CheckOutDate > @CheckInDate;";
+                                AND b.Status = 'Confirmed'  
+                                AND b.CheckInDate <= @CheckOutDate
+                                AND b.CheckOutDate >= @CheckInDate;";
                 using (SqlCommand cmd = new SqlCommand(sql, conn))
                 {
                     cmd.Parameters.AddWithValue("@ApartmentId", apartmentId);
@@ -457,6 +459,46 @@ namespace MSSQL
 
             conn.Open();
             cmd.ExecuteNonQuery();
+        }
+
+        public List<ActivityDashboard> GetAllActivitiesObjects()
+        {
+            var activities = new List<ActivityDashboard>();
+            using SqlConnection conn = new SqlConnection(_connectionString);
+            conn.Open();
+            string sql = @"SELECT  b.[BookingId]
+	                               ,a.UserId
+	                               ,u.Name
+	                               ,b.BookingCreated
+                                   ,b.Status
+                                    FROM [BookingDataApartment].[dbo].[Bookings] as b
+                                    INNER JOIN AccountHolders	as a on a.AccountHolderId = b.AccountHolderId
+                                    INNER JOIN [Users] as u on u.UserId = a.UserId 
+                                    ORDER BY b.BookingCreated Desc";
+            
+            using SqlCommand cmd = new SqlCommand(sql, conn);
+            using SqlDataReader reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                var bookingId = Convert.ToInt32(reader["BookingId"]);
+                var userId = Convert.ToInt32(reader["UserId"]);
+                var name = reader["Name"].ToString()!;
+                var bookingCreated = Convert.ToDateTime(reader["BookingCreated"]);
+                var status = (BookingStatus)Enum.Parse(
+                    typeof(BookingStatus),
+                    reader["Status"].ToString()!
+                );
+
+                activities.Add(new ActivityDashboard(
+                    bookingId,
+                    userId,
+                    name,
+                    bookingCreated,
+                    status
+                ));
+
+            }
+            return activities;
         }
     }
 }

@@ -56,6 +56,8 @@ namespace Services
             return _paymentRepository.GetTotalRevenue();
         }
 
+        public List<ActivityDashboard> GetAllActivities() => _bookingRepository.GetAllActivitiesObjects();
+
         public DashboardAnalytics GetDashboardAnalytics()
         {
             var totalBookings = GetTotalBookings();
@@ -69,7 +71,7 @@ namespace Services
         //manage apartments section//
         
         public List<Booking> GetOccupiedApartmentFromBookings() =>
-            _bookingRepository.GetAllBookingsWithObject().Where(b => DateTime.Today >= b.CheckInDate.Date && DateTime.Today <= b.CheckOutDate.Date).ToList();
+            _bookingRepository.GetAllBookingsWithObject().Where(b => DateTime.Today >= b.CheckInDate.Date && DateTime.Today <= b.CheckOutDate.Date && b.Status == BookingStatus.Confirmed).ToList();
 
         public List<string> AddImage(IFormFile[] gallery,string webRootPath)
         {
@@ -92,21 +94,5 @@ namespace Services
             }
             return savedNames;
         }
-
-        public List<Apartment> GetAvailableApartments(DateTime checkIn, DateTime checkOut)
-        {
-            var apartments = _apartmentRepository.GetApartments();  
-            var free = new List<Apartment>();
-
-            foreach (var apartment in apartments)
-            {
-                if (!_bookingRepository.IsOverlappingBookingExist(apartment.Id, checkIn, checkOut))
-                    free.Add(apartment);
-            }
-
-            return free;  
-        }
-
-
     }
 }

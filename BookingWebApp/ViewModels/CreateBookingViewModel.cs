@@ -7,6 +7,7 @@ namespace BookingWebApp.ViewModels
 {
     public class CreateBookingViewModel
     {
+        public bool AddMyself { get; set; }
         public int NumberOfGuests { get; set; }
 
         [DataType(DataType.Date)]

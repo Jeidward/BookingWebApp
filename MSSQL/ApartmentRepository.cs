@@ -19,7 +19,7 @@ namespace MSSQL
                 conn.Open();
                 string query =
                     @"INSERT INTO Apartments (Name, Description, PricePerNight, Adress, Bedrooms, Bathrooms,IsArchived) 
-                                 VALUES (@Name, @Description, @FirstImage, @PricePerNight, @Adress, @Bedrooms, @Bathrooms, @IsArchived)";
+                                 VALUES (@Name, @Description, @PricePerNight, @Adress, @Bedrooms, @Bathrooms, @IsArchived)";
 
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
@@ -201,6 +201,37 @@ namespace MSSQL
             {
                 AddApartmentImages(id, imgPath);
             }
+        }
+
+        public async Task<PaginatedList<Apartment>> GetApartmentsAsync(int pageIndex, int pageSize)
+        {
+            await using SqlConnection conn = new SqlConnection(_connectionString);
+            await conn.OpenAsync();
+            var total = (int)(await new SqlCommand(
+                "SELECT COUNT(*) FROM dbo.Apartments WHERE IsArchived = 0", conn).ExecuteScalarAsync())!;
+
+            string query = $@"
+                    SELECT ApartmentId, Name, Description, PricePerNight, Adress, Bedrooms, Bathrooms 
+                    FROM Apartments WHERE IsArchived = 0
+                    ORDER BY ApartmentId OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY";
+            await using SqlCommand cmd = new SqlCommand(query, conn);
+            cmd.Parameters.AddWithValue("@Offset", (pageIndex - 1) * pageSize);
+            cmd.Parameters.AddWithValue("@PageSize", pageSize);
+            await using SqlDataReader reader = await cmd.ExecuteReaderAsync();
+            var apartments = new List<Apartment>();
+            while (await reader.ReadAsync())
+            {
+                apartments.Add(new Apartment(
+                    Convert.ToInt32(reader["ApartmentId"]),
+                    Convert.ToString(reader["Name"])!,
+                    Convert.ToString(reader["Description"])!,
+                    Convert.ToDecimal(reader["PricePerNight"]),
+                    Convert.ToString(reader["Adress"])!,
+                    Convert.ToInt32(reader["Bedrooms"]),
+                    Convert.ToInt32(reader["Bathrooms"])
+                ));
+            }
+            return PaginatedList<Apartment>.Create(apartments,total, pageIndex, pageSize);
         }
     }
 }

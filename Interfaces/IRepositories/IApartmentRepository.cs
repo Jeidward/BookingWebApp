@@ -25,6 +25,8 @@ namespace Interfaces.IRepositories
 
         public void UpdateGallery(int id, List<string> gallery);
 
+        public Task<PaginatedList<Apartment>> GetApartmentsAsync(int pageIndex, int pageSize);
+
     }
 }
     

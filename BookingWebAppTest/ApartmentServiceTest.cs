@@ -10,7 +10,7 @@ namespace BookingWebAppTest;
 public class ApartmentServiceTest
 {
 
-    private Mock<IApartmentRepository> _mockApartmentRepository;
+    private Mock<IApartmentRepository> _mockApartmentRepository;  
     private ApartmentService _apartmentService;
     private Mock<IReviewService> _mockReviews; // the reall use of Interfaces
     private Mock<IAmenitiesRepository> _mockAmenitiesRepository;
@@ -47,19 +47,19 @@ public class ApartmentServiceTest
         Assert.ThrowsException<ArgumentNullException>(() => _apartmentService.UpdateApartment(apartment));
     }
 
-    //[TestMethod]    
-    //public void AddApartment_ShouldExecuteCreateApartmentFromTheRepo_WhenAValidApartmentExist() // good flow
-    //{
-    //    var gallery = new List<string> { "IMG/Test1", "IMG/Test2" };
-    //    var amenities = new List<Amenities> { new Amenities(1, "test", "test") };
-    //    var apartment = new Apartment("test", "test", "IMG/Test", gallery, 23, "papaya12", 2, 2,amenities);
-    //    _mockApartmentRepository.Setup(repo => repo.CreateApartment(apartment));
-    //    _mockApartmentRepository.Setup(repo => repo.GetApartments()).Returns(new List<Apartment> { apartment });
+    [TestMethod]
+    public void AddApartment_ShouldExecuteCreateApartmentFromTheRepo_WhenAValidApartmentExist() // good flow
+    {
+        var gallery = new List<string> { "IMG/Test1", "IMG/Test2" };
+        var amenities = new List<Amenities> { new Amenities(1, "test", "test") };
+        var apartment = new Apartment(1, "test", "test", "IMG/Test", amenities, gallery,23,"papaya12", 2, 2);
+        _mockApartmentRepository.Setup(repo => repo.CreateApartment(apartment));
+        _mockApartmentRepository.Setup(repo => repo.GetApartments()).Returns(new List<Apartment> { apartment });
 
-    //    _apartmentService.AddApartment(apartment);
+        _apartmentService.AddApartment(apartment);
 
-    //    _mockApartmentRepository.Verify(repo => repo.CreateApartment(apartment), Times.Once);
-    //}
+        _mockApartmentRepository.Verify(repo => repo.CreateApartment(apartment), Times.Once);
+    }
 
     [TestMethod]
     public void AddApartment_ShouldThrowArgumentNullException_WhenApartmentIsNull() // bad flow
@@ -68,12 +68,20 @@ public class ApartmentServiceTest
         Assert.ThrowsException<ArgumentNullException>(() => _apartmentService.AddApartment(apartment));
     }
 
+   
+
     [TestMethod]
-    public void AddApartment_ShouldThrowArgumentException_WhenApartmentIsInvalid() // bad flow
+    public void AddApartment_ShouldThrowArgumentNullException_WhenNameIsMissing()
     {
-        var apartment = new Apartment(0, "", "", "", null, 0, "", 0, 0);
-        Assert.ThrowsException<ArgumentException>(() => _apartmentService.AddApartment(apartment));
+        var apartment = new Apartment(0, "", "desc", "address",
+            new List<string> { "img" }, 100, "host", 1, 1);
+
+        var ex = Assert.ThrowsException<ArgumentNullException>(
+            () => _apartmentService.AddApartment(apartment));
+
+        Assert.AreEqual("Name", ex.ParamName);        
     }
+
 
     [TestMethod]
     public void DeleteApartment_ShouldExecuteDeleteFromTheRepo_WhenApartmentIdIsGreaterThanZero() // good flow
@@ -95,13 +103,17 @@ public class ApartmentServiceTest
     [TestMethod]
     public void GetAllApartments_ShouldReturnListOfApartments_WhenApartmentsExist() // good flow
     {
+        var reviews = new List<Review> { new Review(new AccountHolder(1), 2, "amazing stay", 2, 2, 2, 2, 3, DateTime.Today) };
         var apartments = new List<Apartment>
         {
             new Apartment(1, "test", "test", "IMG/Test", null, 23, "papaya12", 2, 2),
             new Apartment(2, "test2", "test2", "IMG/Test2", null, 23, "papaya12", 2, 2)
         };
         _mockApartmentRepository.Setup(repo => repo.GetApartments()).Returns(apartments);
-        _mockReviews.Setup(repo => repo.GetReviewsForApartment(It.IsAny<int>())).Returns(new List<Review>());
+        _mockApartmentRepository.Setup(repo => repo.GetGallery(It.IsAny<int>())).Returns(["IMG/Test1", "IMG/Test2"]);
+        _mockAmenitiesRepository.Setup(repo => repo.GetAmenities(It.IsAny<int>())).Returns([new Amenities(1, "test", "test")
+        ]);
+        _mockReviews.Setup(repo => repo.GetReviewsForApartment(It.IsAny<int>())).Returns(reviews);
         var result = _apartmentService.GetAllApartments();
         Assert.AreEqual(apartments.Count, result.Count);
     }
@@ -123,9 +135,13 @@ public class ApartmentServiceTest
         var apartment = new Apartment(1, "test", "test", "IMG/Test", gallery, 23, "papaya12", 2, 2);
 
 
+        _mockApartmentRepository.Setup(repo => repo.GetGallery(apartmentId)).Returns(gallery);
         _mockApartmentRepository.Setup(repo => repo.GetApartment(apartmentId)).Returns(apartment);
-        _mockReviews.Setup(repo => repo.GetReviewsForApartment(apartmentId)).Returns(new List<Review>(){new Review(new AccountHolder(1),2,"amazing stay",2,2,2,2,3,DateTime.Today)});
-        _mockAmenitiesRepository.Setup(repo => repo.GetAmenities(apartmentId)).Returns(new List<Amenities>(){new Amenities(1,"josh","imgPath")});
+        _mockReviews.Setup(repo => repo.GetReviewsForApartment(apartmentId)).Returns([new(new AccountHolder(1), 2, "amazing stay", 2, 2, 2, 2, 3, DateTime.Today)
+        ]);
+        _mockAmenitiesRepository.Setup(repo => repo.GetAmenities(apartmentId)).Returns([
+            new Amenities(1, "josh", "imgPath")
+        ]);
 
         var result = _apartmentService.GetApartment(apartmentId);
 

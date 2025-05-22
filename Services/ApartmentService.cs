@@ -15,17 +15,21 @@ namespace Services
         private readonly IApartmentRepository _apartmentRepository;
         private readonly IAmenitiesRepository _amenitiesRepository;
         private readonly IReviewService _reviewService;
+        private readonly IReviewRepository _reviewRepository;
 
-        public ApartmentService(IApartmentRepository apartmentRepository, IReviewService reviewService, IAmenitiesRepository amenitiesRepository)
+        public ApartmentService(IApartmentRepository apartmentRepository, IReviewService reviewService, IAmenitiesRepository amenitiesRepository, IReviewRepository reviewRepository)
         {
             _apartmentRepository = apartmentRepository;
             _reviewService = reviewService;
             _amenitiesRepository = amenitiesRepository;
+            _reviewRepository = reviewRepository;
         }
 
-        public ApartmentService(IApartmentRepository apartmentRepository)// for Unit test
+        public ApartmentService(IApartmentRepository apartmentRepository,IReviewService reviewService,IAmenitiesRepository amenitiesRepository)// for Unit test
         {
             _apartmentRepository = apartmentRepository;
+            _reviewService = reviewService;
+            _amenitiesRepository = amenitiesRepository;
         }
 
         public Apartment GetApartment(int id)
@@ -49,6 +53,7 @@ namespace Services
             selectedApartment.SetAmenities(_amenitiesRepository.GetAmenities(id));
             return selectedApartment;
         }
+
 
         public List<Apartment> GetAllApartments()
         {
@@ -78,8 +83,8 @@ namespace Services
         }
 
         public void AddApartment(Apartment apartment)
-        {
-            this.ValidateApartmentObject(apartment);
+       {
+            ValidateApartmentObject(apartment);
             _apartmentRepository.CreateApartment(apartment);
             var lastApartment = _apartmentRepository.GetApartments().LastOrDefault(); // redundant, but it works
             if (lastApartment == null)
@@ -90,7 +95,7 @@ namespace Services
 
             foreach (var amenities in apartment.Amenities)
                 _amenitiesRepository.AddAmenities(lastApartment.Id,amenities.Id);
-        }
+       }
 
         public void UpdateApartment(Apartment apartment)
         {
@@ -108,6 +113,32 @@ namespace Services
 
         public List<Amenities> GetAmenitiesForApartment(int id) => _amenitiesRepository.GetSelectedAmenities(id);
 
+        public async Task<PaginatedList<Apartment>> GetApartmentsAsync(int pageIndex, int pageSize)
+        {
+            var apartments = await _apartmentRepository.GetApartmentsAsync(pageIndex, pageSize);
+            foreach (var apartment in apartments.Items)
+            {
+                var reviews = _reviewService.GetReviewsForApartment(apartment.Id);
+                if (reviews == null)
+                {
+                    reviews = new List<Review>();
+                }
+                apartment.SetReviews(reviews);
+                apartment.SetAvgRating(_reviewService.GetAverageRating(apartment.Id));
+                apartment.SetReviewsCount(reviews.Count);
+                apartment.SetFirstImage(_apartmentRepository.GetGallery(apartment.Id).First());
+                apartment.SetGallery(_apartmentRepository.GetGallery(apartment.Id));
+                apartment.SetAmenities(_amenitiesRepository.GetAmenities(apartment.Id));
+            }
+            return apartments;
+        }
+
+        public async Task<PaginatedList<Review>> GetReviewsAsync(int apartmentId, int pageIndex, int pageSize)
+        {
+            if (apartmentId <= 0)
+                throw new ArgumentException("Apartment ID must be greater than zero.");
+            return await _reviewRepository.GetReviewsAsync(apartmentId, pageIndex, pageSize);
+        }
 
         private void ValidateApartmentObject(Apartment apartment) // this method is used to validate the apartment object before adding or updating it
         {
