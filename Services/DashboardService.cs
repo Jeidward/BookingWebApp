@@ -28,13 +28,9 @@ namespace Services
             _apartmentRepository = apartmentRepository;
         }
 
-        public int GetTotalBookings()
-        {
-            return _bookingRepository.GetAllBookings();
-        }
-
+        public int GetTotalBookings(int selectedMonth,int year) => _bookingRepository.GetAllBookings(selectedMonth,year);
         public int UpcomingBookings()
-        {
+        { 
             var bookings = _bookingRepository.GetAllBookingsWithObject();
             var upcomingBooking = new List<Booking>();
 
@@ -51,19 +47,18 @@ namespace Services
             return _accountHolderRepository.GetTotalAccountHolder();
         }
 
-        public decimal GetTotalRevenue()
-        {
-            return _paymentRepository.GetTotalRevenue();
-        }
+        public decimal GetTotalRevenue(int selectedMonth,int year)=> _paymentRepository.GetTotalRevenue(selectedMonth, year);
 
-        public List<ActivityDashboard> GetAllActivities() => _bookingRepository.GetAllActivitiesObjects();
+        public List<ActivityDashboard> GetAllActivities() => _bookingRepository.GetAllActivitiesObjects(); // this can probably be removed
+        public async Task<PaginatedList<ActivityDashboard>> GetAllActivitiesAsync(int pageIndex, int pageSize) =>
+            await _bookingRepository.GetAllActivitiesObjectAsync(pageIndex, pageSize);
 
-        public DashboardAnalytics GetDashboardAnalytics()
+        public DashboardAnalytics GetDashboardAnalytics(int selectedMonth, int year)
         {
-            var totalBookings = GetTotalBookings();
+            var totalBookings = GetTotalBookings(selectedMonth, year);
             var upcomingBookings = UpcomingBookings();
             var totalAccountHolders = GetTotalActiveAccountHolders();
-            var totalRevenue = GetTotalRevenue();
+            var totalRevenue = GetTotalRevenue(selectedMonth, year);
 
             return new DashboardAnalytics(totalBookings, totalAccountHolders, totalRevenue, upcomingBookings);
         }
@@ -94,5 +89,6 @@ namespace Services
             }
             return savedNames;
         }
+
     }
 }

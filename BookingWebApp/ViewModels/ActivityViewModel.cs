@@ -1,4 +1,5 @@
 ﻿using System.Runtime.CompilerServices;
+using Enums;
 using Models.Entities;
 using static System.Net.Mime.MediaTypeNames;
 
@@ -13,6 +14,7 @@ namespace BookingWebApp.ViewModels
         public string CustomerName { get; set; }
         public string TimeAgo { get; set; } // e.g. "Just now"
         public string BookingDate { get; set; } // e.g. "2023-10-01 12:00:00"
+
 
         public static ActivityViewModel ConvertToViewModelForNewBooking(ActivityDashboard activityDashboard)
         {
@@ -39,6 +41,24 @@ namespace BookingWebApp.ViewModels
                 TimeAgo = "Just now",
                 BookingDate = activityDashboard.BookingDate.ToString("yyyy-MM-dd HH:mm:ss")
             };
+        }
+
+
+        public static List<ActivityViewModel> ConvertToViewModelList(List<ActivityDashboard> activities)
+        {
+            List<ActivityViewModel> activityViewModels = new List<ActivityViewModel>();
+            foreach (var activity in activities)
+            {
+                if (activity.Status == BookingStatus.Confirmed)
+                {
+                    activityViewModels.Add(ConvertToViewModelForNewBooking(activity));
+                }
+                else if (activity.Status == BookingStatus.Cancelled)
+                {
+                    activityViewModels.Add(ConvertToViewModelForBookingCancellation(activity));
+                }
+            }
+            return activityViewModels;
         }
     }
 }

@@ -5,7 +5,6 @@
     public int PageIndex { get; }
     public int PageSize { get; }
     public int TotalPages => (int)Math.Ceiling(TotalItems / (double)PageSize);
-
     public bool HasPreviousPage => PageIndex > 1;
     public bool HasNextPage => PageIndex < TotalPages;
 

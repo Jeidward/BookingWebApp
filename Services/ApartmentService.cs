@@ -77,8 +77,7 @@ namespace Services
 
         public void DeleteApartment(int apartmentId)
         {
-            if(apartmentId <= 0)
-                throw new ArgumentException("Invalid apartment ID.");
+            if(apartmentId <= 0) throw new ArgumentException("Invalid apartment ID.");
             _apartmentRepository.Delete(apartmentId);
         }
 

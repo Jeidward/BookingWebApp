@@ -21,11 +21,14 @@ namespace Interfaces.IRepositories
         public List<(Booking, string, string)> GetBookingsDue(DateTime date);
         public void MarkCheckoutReminderSent(int bookingId);
 
-        public int GetAllBookings();
+        public int GetAllBookings(int selectMonth,int year);
         public List<Booking> GetAllBookingsWithObject();
 
         public List<ActivityDashboard> GetAllActivitiesObjects();
 
+        public Task<PaginatedList<ActivityDashboard>> GetAllActivitiesObjectAsync(int pageIndex, int pageSize);
+
+        //public Task<PaginatedList<Apartment>> GetApartmentsAsync(int pageIndex, int pageSize);
 
 
 

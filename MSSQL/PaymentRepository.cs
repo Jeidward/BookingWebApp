@@ -42,7 +42,7 @@ namespace MSSQL
             return payment;
         }
 
-        public decimal GetTotalRevenue()
+        public decimal GetTotalRevenue(int selectedMonth,int year)
         {
             decimal totalRevenue = 0;
             using (SqlConnection conn = new SqlConnection(_connectionString))
@@ -50,10 +50,14 @@ namespace MSSQL
                 conn.Open();
                 try
                 {
-                    string query = "SELECT SUM(Amount) FROM Payments WHERE Status = @Status";
+                    string query = "SELECT SUM(p.[Amount]) FROM Payments AS p " +
+                                   "INNER JOIN Bookings AS b ON b.BookingId = p.BookingId " +
+                                   "WHERE p.Status = @Status AND MONTH(b.BookingCreated) = @BookingCreated AND YEAR(b.BookingCreated) = @Year";
                     using (SqlCommand cmd = new SqlCommand(query, conn))
                     {
                         cmd.Parameters.AddWithValue("@Status", PaymentStatus.SUCCESS.ToString());
+                        cmd.Parameters.AddWithValue("@BookingCreated", selectedMonth);
+                        cmd.Parameters.AddWithValue("@Year", year);
                         object result = cmd.ExecuteScalar();
                         if (result != DBNull.Value)
                         {

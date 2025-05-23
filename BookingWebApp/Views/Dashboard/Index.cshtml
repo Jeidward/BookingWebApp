@@ -3,19 +3,33 @@
 	Layout = "_HostLayout";
 }
 
-<!-- Statistics Cards -->
+<div class="d-flex justify-content-end align-items-center gap-3">
+	<div class="d-flex" style="width:-webkit-fill-available">
+		<h2 class="mb-0" style="margin-right:30px">
+			Analytics for
+		</h2>
+
+		<h1 class="display-6 fw-bold text-primary text-uppercase mb-0 "style="margin-top:-5px">
+			@Model.CurrentDate.ToString("MMMM yyyy")
+		</h1>
+	</div>
+	<form asp-controller="Dashboard" asp-action="Index" method="post" id="dateForm">
+		<input type="month" name="month" class="form-control" max="@DateTime.Now.ToString("yyyy-MM")" onchange="document.getElementById('dateForm').submit()" style="width: 150px;" />
+	</form>
+</div>
+
+
+
+
 <div class="row g-4">
 	<!-- total booking Card -->
 	<div class="col-12 col-md-6 col-lg-3">
-		<div class="card stat-card border-0 shadow-sm">
+		<div class="card stat-card border-0 shadow-sm"> 
 			<div class="card-body">
 				<div class="d-flex align-items-center mb-3">
 					<div class="stat-icon bg-primary bg-opacity-10 text-primary">
 						<i class="bi bi-house-fill"></i>
 					</div>
-					<span class="badge bg-success trend-badge">
-						<i class="fas fa-arrow-up me-1"></i>12.5%
-					</span>
 				</div>
 				<h6 class="text-muted mb-2">Total bookings</h6>
 				<h4 class="mb-3">@Model.TotalBookings</h4>
@@ -31,33 +45,30 @@
 					<div class="stat-icon bg-success bg-opacity-10 text-success">
 						<i class="fas fa-users"></i>
 					</div>
-					<span class="badge bg-danger trend-badge">
-						<i class="fas fa-arrow-down me-1"></i>5.2%
-					</span>
 				</div>
 				<h6 class="text-muted mb-2">Active Users</h6>
 				<h4 class="mb-3">@Model.TotalUsers</h4>
 			</div>
 		</div>
 	</div>
-
-	<!-- upcoming booking -->
-	<div class="col-12 col-md-6 col-lg-3">
-		<div class="card stat-card border-0 shadow-sm">
-			<div class="card-body">
-				<div class="d-flex align-items-center mb-3">
-					<div class="stat-icon bg-warning bg-opacity-10 text-warning">
-						<i class="bi-calendar-event"></i>
+	
+	@if (Model.IsPreviousMonth != true)
+	{
+		<!-- upcoming booking -->
+		<div class="col-12 col-md-6 col-lg-3">
+			<div class="card stat-card border-0 shadow-sm">
+				<div class="card-body">
+					<div class="d-flex align-items-center mb-3">
+						<div class="stat-icon bg-warning bg-opacity-10 text-warning">
+							<i class="bi-calendar-event"></i>
+						</div>
 					</div>
-					<span class="badge bg-success trend-badge">
-						<i class="fas fa-arrow-up me-1"></i>8.4%
-					</span>
+					<h6 class="text-muted mb-2">Upcoming booking</h6>
+					<h4 class="mb-3">@Model.UpcomingBookings</h4>
 				</div>
-				<h6 class="text-muted mb-2">Upcoming booking</h6>
-				<h4 class="mb-3">@Model.UpcomingBookings</h4>
 			</div>
 		</div>
-	</div>
+	}
 
 	<!-- Revenue Card -->
 	<div class="col-12 col-md-6 col-lg-3">
@@ -67,9 +78,6 @@
 					<div class="stat-icon bg-info bg-opacity-10 text-info">
 						<i class="fas fa-dollar-sign"></i>
 					</div>
-					<span class="badge bg-success trend-badge">
-						<i class="fas fa-arrow-up me-1"></i>15.7%
-					</span>
 				</div>
 				<h6 class="text-muted mb-2">Revenue</h6>
 				<h4 class="mb-3">@Model.TotalRevenue</h4>
@@ -78,33 +86,77 @@
 	</div>
 </div>
 
-
 <div class="row mt-4">
-<div class="col-12">
-	<div class="card border-0 shadow-sm">
-		<div class="card-body">
-			<div class="d-flex justify-content-between align-items-center mb-4">
-				<h5 class="card-title mb-0">Recent Activity</h5>
-				<button class="btn btn-light btn-sm">
-					<i class="fas fa-ellipsis-h"></i>
-				</button>
-			</div>
-			<div class="list-group list-group-flush">
-				@foreach(var act in Model.Activities) {
-					<div class="list-group-item border-0 d-flex align-items-center px-0">
-						<div class="avatar-sm @act.IconBgClass rounded-circle p-2 me-3">
-							<i class="@act.IconClass"></i>
-						</div>
-						<div class="flex-grow-1">
-							<h6 class="mb-1">@act.Title</h6>
-							<p class="text-muted small mb-0">@act.Description</p>
-						</div>
-						<small class="text-muted">@act.BookingDate</small>
-					</div>
-				}
-			</div>
-		</div>
-	</div>
+    <div class="col-12">
+	    <div class="card border-0 shadow-sm">
+		    <div class="card-body">
+			    <div class="d-flex justify-content-between align-items-center mb-4">
+				    <h5 class="card-title mb-0">Recent Activity</h5>
+				    <button class="btn btn-light btn-sm">
+					    <i class="fas fa-ellipsis-h"></i>
+				    </button>
+			    </div>
+			    <div class="list-group list-group-flush">
+				    @foreach (var act in Model.Activities.Items)
+				    {
+					    <div class="list-group-item border-0 d-flex align-items-center px-0">
+						    <div class="avatar-sm @act.IconBgClass rounded-circle p-2 me-3">
+							    <i class="@act.IconClass"></i>
+						    </div>
+						    <div class="flex-grow-1">
+							    <h6 class="mb-1">@act.Title</h6>
+							    <p class="text-muted small mb-0">@act.Description</p>
+						    </div>
+						    <small class="text-muted">@act.BookingDate</small>
+					    </div>
+				    }
+			    </div>
+		    </div>
+	    </div>
+	    @if (Model.Activities.TotalPages > 1)
+	    {
+		    <nav aria-label="Review pages" class="mt-4">
+			    <ul class="pagination justify-content-center">
+
+				    <li class="page-item @(Model.Activities.HasPreviousPage?"":"disabled")">
+					    <a class="page-link"
+					       asp-action="Index"
+					       asp-route-pageIndex="1"
+					       asp-route-pageSize="@Model.Activities.PageSize">
+						    First
+					    </a>
+				    </li>
+
+				    <li class="page-item @(Model.Activities.HasPreviousPage?"":"disabled")">
+					    <a class="page-link"
+					       asp-action="Index"
+					       asp-route-pageIndex="@(Model.Activities.PageIndex-1)"
+					       asp-route-pageSize="@Model.Activities.PageSize">
+						    Prev
+					    </a>
+				    </li>
+
+				    <li class="page-item @(Model.Activities.HasNextPage?"":"disabled")">
+					    <a class="page-link"
+					       asp-action="Index"
+					       asp-route-pageIndex="@(Model.Activities.PageIndex+1)"
+					       asp-route-pageSize="@Model.Activities.PageSize">
+						    Next
+					    </a>
+				    </li>
+
+				    <li class="page-item @(Model.Activities.HasNextPage?"":"disabled")">
+					    <a class="page-link"
+					       asp-action="Index"
+					       asp-route-pageIndex="@Model.Activities.TotalPages"
+					       asp-route-pageSize="@Model.Activities.PageSize">
+						    Last
+					    </a>
+				    </li>
+			    </ul>
+		    </nav>
+	    }
+
+    </div>
 </div>
-</div>
-		
+

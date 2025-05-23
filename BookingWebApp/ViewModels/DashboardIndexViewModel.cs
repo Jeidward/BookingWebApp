@@ -7,8 +7,10 @@ namespace BookingWebApp.ViewModels
         public int TotalBookings { get; set; }
         public int TotalUsers { get; set; }
         public decimal TotalRevenue { get; set; }
+        public bool IsPreviousMonth { get; set; }
+        public DateTime CurrentDate { get; set; }
         public int UpcomingBookings { get; set; }
-        public List<ActivityViewModel> Activities { get; set; }
+        public PaginatedList<ActivityViewModel> Activities { get; set; }
 
 
         public static DashboardIndexViewModel ConvertToViewModel(DashboardAnalytics dashboardAnalytics)

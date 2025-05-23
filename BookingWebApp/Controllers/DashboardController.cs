@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 
 
 namespace BookingWebApp.Controllers
@@ -32,20 +33,26 @@ namespace BookingWebApp.Controllers
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public IActionResult Index()
+        public async  Task<IActionResult> Index(DateTime month, int pageIndex = 1, int pageSize = 5)
         {
-            var activities = _dashboardService.GetAllActivities();
+            bool isTrue = false;
+            if (month == DateTime.MinValue) month = DateTime.Today;
 
-            var activityViewModels = new List<ActivityViewModel>();
-            foreach (var activity in activities)
-            {
-                if (activity.Status == BookingStatus.Confirmed)
-                    activityViewModels.Add(ActivityViewModel.ConvertToViewModelForNewBooking(activity));
-                else if (activity.Status == BookingStatus.Cancelled)
-                    activityViewModels.Add(ActivityViewModel.ConvertToViewModelForBookingCancellation(activity));
-            }
+            var year  = month.Year;
+            var selectedMonth = (int)month.Month;
 
-            var analytics = _dashboardService.GetDashboardAnalytics();
+            if (selectedMonth < DateTime.Today.Month || year < DateTime.Today.Year) isTrue = true;
+            
+            var pageActivities = await _dashboardService.GetAllActivitiesAsync(pageIndex,pageSize);
+
+            var activityViewModels = pageActivities.Items
+                .Select(act => act.Status == BookingStatus.Confirmed ? ActivityViewModel.ConvertToViewModelForNewBooking(act)
+                    : ActivityViewModel.ConvertToViewModelForBookingCancellation(act))
+                .ToList();
+
+            var analytics = _dashboardService.GetDashboardAnalytics(selectedMonth, year);
+
+            var vmPage = PaginatedList<ActivityViewModel>.Create(activityViewModels, pageActivities.TotalItems, pageActivities.PageIndex, pageActivities.PageSize);
 
             var dashboardViewModel = new DashboardIndexViewModel
             {
@@ -53,7 +60,10 @@ namespace BookingWebApp.Controllers
                 TotalUsers = analytics.TotalUsers,
                 TotalRevenue = analytics.TotalRevenue,
                 UpcomingBookings = analytics.UpcomingBookings,
-                Activities = activityViewModels
+                Activities = vmPage,
+                IsPreviousMonth = isTrue,
+                CurrentDate = month
+
             };
             return View(dashboardViewModel);
         }

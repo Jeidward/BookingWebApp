@@ -384,16 +384,18 @@ namespace MSSQL
             return results;                             
         }
 
-        public int GetAllBookings()
+        public int GetAllBookings(int selectedMonth, int year)
         {
             List<Booking> bookings = new List<Booking>();
             using (SqlConnection conn = new SqlConnection(_connectionString))
             {
                 conn.Open();
-                string sql = @"SELECT BookingId, ApartmentId, AccountHolderId, CheckInDate, CheckOutDate, TotalPrice, Status
-                            FROM Bookings WHERE Status = 'Confirmed'";
+                string sql = @"SELECT BookingId, ApartmentId, AccountHolderId, CheckInDate, CheckOutDate, TotalPrice, Status, BookingCreated
+                            FROM Bookings WHERE Status = 'Confirmed' AND MONTH(BookingCreated) = @BookingCreated  AND YEAR(BookingCreated) = @Year";
                 using (SqlCommand cmd = new SqlCommand(sql, conn))
                 {
+                    cmd.Parameters.AddWithValue("@BookingCreated", selectedMonth);
+                    cmd.Parameters.AddWithValue("@Year", year);
                     using (SqlDataReader reader = cmd.ExecuteReader())
                     {
                         while (reader.Read())
@@ -471,7 +473,7 @@ namespace MSSQL
 	                               ,u.Name
 	                               ,b.BookingCreated
                                    ,b.Status
-                                    FROM [BookingDataApartment].[dbo].[Bookings] as b
+                                    FROM [dbo].[Bookings] as b
                                     INNER JOIN AccountHolders	as a on a.AccountHolderId = b.AccountHolderId
                                     INNER JOIN [Users] as u on u.UserId = a.UserId 
                                     ORDER BY b.BookingCreated Desc";
@@ -499,6 +501,47 @@ namespace MSSQL
 
             }
             return activities;
+        }
+
+        public async Task<PaginatedList<ActivityDashboard>> GetAllActivitiesObjectAsync(int pageIndex,int pageSize)
+        {
+            await using SqlConnection conn = new SqlConnection(_connectionString);
+            await conn.OpenAsync();
+            string query = $@"SELECT b.[BookingId]
+	                               ,a.UserId
+	                               ,u.Name
+	                               ,b.BookingCreated
+                                   ,b.Status
+                                    FROM [dbo].[Bookings] as b
+                                    INNER JOIN AccountHolders	as a on a.AccountHolderId = b.AccountHolderId
+                                    INNER JOIN [Users] as u on u.UserId = a.UserId 
+                                    ORDER BY b.BookingCreated Desc, b.BookingId OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY";
+
+            var total = (int)(await new SqlCommand("SELECT COUNT(*) FROM [dbo].[Bookings]",conn).ExecuteScalarAsync());
+            await using SqlCommand cmd = new SqlCommand(query, conn);
+            cmd.Parameters.AddWithValue("@Offset", (pageIndex - 1) * pageSize);
+            cmd.Parameters.AddWithValue("@PageSize", pageSize);
+            await using SqlDataReader reader = await cmd.ExecuteReaderAsync();
+            var activities = new List<ActivityDashboard>();
+            while (await reader.ReadAsync())
+            {
+                var bookingId = Convert.ToInt32(reader["BookingId"]);
+                var userId = Convert.ToInt32(reader["UserId"]);
+                var name = reader["Name"].ToString()!;
+                var bookingCreated = Convert.ToDateTime(reader["BookingCreated"]);
+                var status = (BookingStatus)Enum.Parse(
+                    typeof(BookingStatus),
+                    reader["Status"].ToString()!
+                );
+                activities.Add(new ActivityDashboard(
+                    bookingId,
+                    userId,
+                    name,
+                    bookingCreated,
+                    status
+                ));
+            }
+            return PaginatedList<ActivityDashboard>.Create(activities,total,pageIndex, pageSize);
         }
     }
 }

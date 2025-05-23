@@ -11,8 +11,7 @@ namespace Interfaces.IRepositories
     {
         public Payment SavePayment(Payment payment);
 
-        public decimal GetTotalRevenue();
-
+        public decimal GetTotalRevenue(int selectedMonth, int year);
 
     }
         
