@@ -270,6 +270,7 @@ namespace MSSQL
                             Booking booking = new(
 
                                Convert.ToInt32(reader["BookingId"]),
+                                 Convert.ToInt32(reader["ApartmentId"]),
                                Convert.ToDateTime(reader["CheckInDate"]),
                                Convert.ToDateTime(reader["CheckOutDate"]),
                                Convert.ToDecimal(reader["TotalPrice"]),
@@ -347,7 +348,7 @@ namespace MSSQL
                     b.Status,
                     b.CheckoutReminderSent,
                     u.Email,
-                    u.Name
+                    u.FirstName
             FROM    Bookings AS b
             JOIN    AccountHolders ah ON ah.AccountHolderId = b.AccountHolderId
             JOIN    Users          u  ON u.UserId          = ah.UserId
@@ -377,7 +378,7 @@ namespace MSSQL
                 booking.SetCheckoutReminderSent(Convert.ToBoolean(reader["CheckoutReminderSent"]));
                 booking.SetApartment(_apartmentRepository.GetApartment(Convert.ToInt32(reader["ApartmentId"])));
                 string email = Convert.ToString(reader["Email"])!;
-                var name = Convert.ToString(reader["Name"])!;
+                var name = Convert.ToString(reader["FirstName"])!;
 
                 results.Add((booking, email,name));         
             }
@@ -470,7 +471,7 @@ namespace MSSQL
             conn.Open();
             string sql = @"SELECT  b.[BookingId]
 	                               ,a.UserId
-	                               ,u.Name
+	                               ,u.FirstName
 	                               ,b.BookingCreated
                                    ,b.Status
                                     FROM [dbo].[Bookings] as b
@@ -484,7 +485,7 @@ namespace MSSQL
             {
                 var bookingId = Convert.ToInt32(reader["BookingId"]);
                 var userId = Convert.ToInt32(reader["UserId"]);
-                var name = reader["Name"].ToString()!;
+                var name = reader["FirstName"].ToString()!;
                 var bookingCreated = Convert.ToDateTime(reader["BookingCreated"]);
                 var status = (BookingStatus)Enum.Parse(
                     typeof(BookingStatus),
@@ -509,7 +510,7 @@ namespace MSSQL
             await conn.OpenAsync();
             string query = $@"SELECT b.[BookingId]
 	                               ,a.UserId
-	                               ,u.Name
+	                               ,u.FirstName
 	                               ,b.BookingCreated
                                    ,b.Status
                                     FROM [dbo].[Bookings] as b
@@ -527,7 +528,7 @@ namespace MSSQL
             {
                 var bookingId = Convert.ToInt32(reader["BookingId"]);
                 var userId = Convert.ToInt32(reader["UserId"]);
-                var name = reader["Name"].ToString()!;
+                var name = reader["FirstName"].ToString()!;
                 var bookingCreated = Convert.ToDateTime(reader["BookingCreated"]);
                 var status = (BookingStatus)Enum.Parse(
                     typeof(BookingStatus),

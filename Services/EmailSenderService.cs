@@ -28,7 +28,7 @@ namespace Services
             var client = CreateSmtpClient();
 
             var subject = "Booking Confirmation";
-            var message = $"Dear {user.Name},\n\nYour booking has been confirmed!\n\nBooking ID: {booking.Id}\nCheck-in Date: {booking.CheckInDate:MMMM dd, yyyy}\nCheck-out Date: {booking.CheckOutDate:MMMM dd, yyyy}\nTotal Payment: {booking.TotalPrice:C}\n\nThank you for choosing us!\n\nBest regards,\nThe Booking Team";
+            var message = $"Dear {user.FirstName},\n\nYour booking has been confirmed!\n\nBooking ID: {booking.Id}\nCheck-in Date: {booking.CheckInDate:MMMM dd, yyyy}\nCheck-out Date: {booking.CheckOutDate:MMMM dd, yyyy}\nTotal Payment: {booking.TotalPrice:C}\n\nThank you for choosing us!\n\nBest regards,\nThe Booking Team";
             return client.SendMailAsync(new MailMessage(
                 from: _mail,
                 to: receiver,

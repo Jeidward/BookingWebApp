@@ -5,6 +5,7 @@ using Models.Entities;
 using Services;
 using System.Diagnostics;
 using System.Security.Claims;
+using BookingWebApp.Helpers;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -32,6 +33,7 @@ namespace BookingWebApp.Controllers
             _env = env;
             _httpContextAccessor = httpContextAccessor;
         }
+
 
         public async  Task<IActionResult> Index(DateTime month, int pageIndex = 1, int pageSize = 5)
         {
@@ -68,11 +70,15 @@ namespace BookingWebApp.Controllers
             return View(dashboardViewModel);
         }
 
-        public IActionResult ManageApartment()
+        public IActionResult ManageApartment(int pageIndex = 1, int pageSize = 5)
         {
-            var apartments = _apartmentService.GetAllApartments();
-            var viewModels = ApartmentViewModel.ConvertToViewModel(apartments);
-            var viewModelEdit = AddApartmentViewModel.ConvertToViewModel(apartments);
+            var apartmentsNormal = _apartmentService.GetAllApartments();
+            var viewModels = ApartmentViewModel.ConvertToViewModel(apartmentsNormal);
+
+            var apartments = _apartmentService.GetApartmentsAsync(pageIndex, pageSize);
+            var vmItems = apartments.Result.Items.Select(ApartmentViewModel.ConvertToViewModel).ToList();
+
+            var viewModelEdit = apartments.Result.Items.Select(AddApartmentViewModel.ConvertToViewModel).ToList();
             var occupiedBookings = _dashboardService.GetOccupiedApartmentFromBookings();
             var occupiedIds = occupiedBookings.Select(b => b.ApartmentId).ToList();
             var allAmenities = AmenitiesViewModel.ConverToViewModel(_apartmentService.GetAmenitiesList());
@@ -80,17 +86,18 @@ namespace BookingWebApp.Controllers
             foreach (var vm in viewModelEdit)
                 vm.Amenities = allAmenities;
 
-            foreach (var occupiedApartment in viewModels)
+            foreach (var occupiedApartment in vmItems)
             {
                 if (occupiedIds.Contains(occupiedApartment.Id))
                     occupiedApartment.IsOccupied = true;
             }
 
             var availableToday = viewModels.Where(a => a.IsOccupied == false).ToList();
+            var pagVmItems = PaginatedList<ApartmentViewModel>.Create(vmItems, apartments.Result.TotalItems, apartments.Result.PageIndex, apartments.Result.PageSize);
 
             var dashboard = new DashboardApartmentManagementViewModel
             {
-                ApartmentViewModels = viewModels,
+                ApartmentViewModels = pagVmItems,
                 ApartmentTotal = viewModels.Count,
                 ApartmentCurrentlyOccupied = occupiedIds.Count,
                 ApartmentAvailable = availableToday.Count,
@@ -121,6 +128,14 @@ namespace BookingWebApp.Controllers
         {
             _apartmentService.DeleteApartment(id);
             return RedirectToAction("ManageApartment", "Dashboard");
+        }
+
+        public IActionResult UpcomingBookings()
+        {
+            var bookings = _dashboardService.UpcomingBookings();
+            var bookingViewModels = bookings.Select(BookingViewModelHelper.ConvertToViewModel).ToList();
+
+            return View(bookingViewModels);
         }
 
       

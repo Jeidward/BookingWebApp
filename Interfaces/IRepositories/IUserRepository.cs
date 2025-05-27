@@ -9,7 +9,7 @@ namespace Interfaces.IRepositories
 {
     public interface IUserRepository
     {
-        public bool RegisterUser(string email, string password,string name, string salt);
+        public bool RegisterUser(User user);
 
         public bool DoesUserExist(string email);
 

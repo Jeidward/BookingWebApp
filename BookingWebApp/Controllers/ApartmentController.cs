@@ -36,9 +36,12 @@ namespace BookingWebApp.Controllers
             var vm = ApartmentViewModel.ConvertToViewModel(apt);
 
            var reviews = vm.ReviewViewModel.Take(2).ToList();
-           vm.ReviewViewModel = reviews;
-           vm.ReviewsCount = vm.ReviewsCount - reviews.Count;
 
+           vm.ReviewViewModel = reviews;
+
+            if (reviews.Count == 1) vm.ReviewsCount = vm.ReviewsCount;
+            else vm.ReviewsCount -= reviews.Count;
+            
             return View(vm);
         }
 

@@ -8,6 +8,8 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+
 </head>
 <body>
     <header>
@@ -27,40 +29,51 @@
                         bool hasBooking = HttpContextAccessor.HttpContext?.Session.GetInt32("HasBooking") == 1;
                     }
                     <ul class=" navbar-nav flex-grow-1 justify-content-end gap-3">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark px-3" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark px-3" asp-controller="Apartment" asp-action="ShowApartmentList">Apartments</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark px-3" asp-controller="Home" asp-action="Contact">Contact</a>
-                        </li>
+						
+                        @if (ViewBag.HostTool == true)
+                        {
+	                        <li class="nav-item">
+		                        <a class="nav-link text-dark px-3" asp-controller="Dashboard" asp-action="Index">
+			                        <i class="bi bi-house-gear-fill" style="font-size: 1.5rem"></i>
+		                        </a>
+	                        </li>
 
-                        @if (userId.HasValue && userId.Value > 0)
-                        {
-	                        if (hasBooking)
-                            {
-                                <li class="nav-item">
-                                    <a class="nav-link text-dark px-3" asp-controller="Booking" asp-action="MyBookings">My Bookings</a>
-                                </li>
-                            }
-                            <li class="nav-item">
-                                <a class="btn btn-outline-dark" asp-controller="Account" asp-action="Profile">Profile</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="btn btn-dark" asp-controller="Authentication" asp-action="LogOut">Log out</a>
-                            </li>
                         }
-                        else
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark btn btn-light" asp-controller="Authentication" asp-action="Register">Sign up</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-white btn btn-dark" asp-controller="Authentication" asp-action="LogIn">Log in</a>
-                            </li>
-                        }
+	                    <li class="nav-item">
+		                    <a class="nav-link text-dark px-3" asp-controller="Home" asp-action="Index">Home</a>
+	                    </li>
+	                    <li class="nav-item">
+		                    <a class="nav-link text-dark px-3" asp-controller="Apartment" asp-action="ShowApartmentList">Apartments</a>
+	                    </li>
+	                    <li class="nav-item">
+		                    <a class="nav-link text-dark px-3" asp-controller="Home" asp-action="Contact">Contact</a>
+	                    </li>
+
+	                    @if (userId.HasValue && userId.Value > 0)
+	                    {
+		                    if (hasBooking)
+		                    {
+			                    <li class="nav-item">
+				                    <a class="nav-link text-dark px-3" asp-controller="Booking" asp-action="MyBookings">My Bookings</a>
+			                    </li>
+		                    }
+
+		                    <li class="nav-item">
+			                    <a class="btn btn-outline-dark" asp-controller="Account" asp-action="Profile">Profile</a>
+		                    </li>
+		                    <li class="nav-item">
+			                    <a class="btn btn-dark" asp-controller="Authentication" asp-action="LogOut">Log out</a>
+		                    </li>
+	                    }
+	                    else
+	                    {
+		                    <li class="nav-item">
+			                    <a class="nav-link text-dark btn btn-light" asp-controller="Authentication" asp-action="Register">Sign up</a>
+		                    </li>
+		                    <li class="nav-item">
+			                    <a class="nav-link text-white btn btn-dark" asp-controller="Authentication" asp-action="LogIn">Log in</a>
+		                    </li>
+	                    }
                     </ul>
                 </div>
             </div>

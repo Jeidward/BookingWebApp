@@ -3,6 +3,7 @@ using MSSQL;
 using Services;
 using Interfaces.IServices;
 using Interfaces.IRepositories;
+using System.Security.Claims;
 
 namespace BookingWebApp
 {
@@ -58,10 +59,11 @@ namespace BookingWebApp
                 .AddCookie("HostScheme", opts =>
                 {
                     opts.Cookie.Name = "HostLoginCookie";
-                    opts.LoginPath = "/Authentication/ShowLogin";
-                    opts.AccessDeniedPath = "/Host/AccessDenied";
+                    opts.LoginPath = "/Authentication/LogIn";
+                    opts.AccessDeniedPath = "/Authentication/AccessDenied";
                     opts.ExpireTimeSpan = TimeSpan.FromMinutes(30);
                 });
+
 
             builder.Services.AddAuthorization(options =>
             {
@@ -78,8 +80,6 @@ namespace BookingWebApp
                     policy.RequireRole("Host");
 
                 });
-
-
 
             });
 

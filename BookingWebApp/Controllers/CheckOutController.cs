@@ -51,9 +51,15 @@ namespace BookingWebApp.Controllers
             Apartment apartment = _apartmentService.GetApartment(bookingViewModel.ApartmentId);
             bookingViewModel.ApartmentViewModel = ApartmentViewModel.ConvertToViewModel(apartment);
 
+            var checkInDay = bookingViewModel.CheckInDate.Day;
+            var checkOutDay = bookingViewModel.CheckOutDate.Day;
+
+            var totalNight = checkOutDay - checkInDay;
+
             CheckOutViewModel viewModel = new CheckOutViewModel
             {
-                BookingViewModel = bookingViewModel
+                BookingViewModel = bookingViewModel,
+                TotalNights = totalNight,
             };
 
             return View(viewModel);

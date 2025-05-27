@@ -43,16 +43,20 @@ namespace BookingWebApp.Controllers
                 return View(user);
             }
             User userName = _userService.GetUser(userId.Value);
+            
 
-            bool hasCheckOuToday = this.CheckForTodayCheckOut(userId.Value);
+            bool hasCheckOuToday = CheckForTodayCheckOut(userId.Value);
 
             var userBooking = _bookingService.GetAllBookingsForUser(userId.Value);
         
-            if (hasCheckOuToday == true)
+            if (hasCheckOuToday)
             {
                 HttpContext.Session.SetInt32("HasCheckOutToday", hasCheckOuToday ? 1 : 0);
                 ViewBag.HasCheckOutToday = hasCheckOuToday;
             }
+
+            if (userName.RoleId == 2)
+                ViewBag.HostTool = true;
             
             IndexViewModel viewModel = new IndexViewModel
             {

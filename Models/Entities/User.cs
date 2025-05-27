@@ -5,39 +5,55 @@ namespace Models.Entities
     public class User
     {
         public int Id { get; private set; }
-        public string Name { get; }
-        public string Email { get; private set; } // can remove this latter as set is use for testing.
+        public string FirstName { get; }
+        public string LastName { get;} 
+        public int Age { get; }
+        public string PhoneNumber { get; }
+        public string Country { get; }
+        public string Address { get; }
+        public string Email { get; private set; }
         public string Password { get; private set; }
         public string Salt { get; private set; }
         public int RoleId { get; private set; }
 
-        public User(string email, string password,string name)
+        public User(string firstName,string lastName,int age,string phoneNumber,string country,string address,string email, string password)
         {
+            FirstName = firstName;
+            LastName = lastName;
+            Age = age;
+            PhoneNumber = phoneNumber;
+            Country = country;
+            Address = address;
             Email = email;
             Password = password;
-            Name = name;
+            FirstName = firstName;
         }
-        public User(int id)
+        public User(int id)// for test
         {
             Id = id;
         }
 
-        public User(int id,string email, string password, string name, string salt, int roleId)
+        public User(int id,string email, string password, string firstName, string salt, int roleId)// for test
         {
             Id = id;
             Email = email;
             Password = password;
-            Name = name;
+            FirstName = firstName;
             Salt = salt;
             RoleId = roleId;
         }
 
-        public User(int id, string email, string password, string name)
+        public User(int id,int roleId ,string firstName, string lastName, int age, string phoneNumber, string country, string address, string email) // for repo
         {
             Id = id;
+            RoleId = roleId;
+            FirstName = firstName;
+            LastName = lastName;
+            Age = age;
+            PhoneNumber = phoneNumber;
+            Country = country;
+            Address = address;
             Email = email;
-            Password = password;
-            Name = name;
         }
 
         public void SetPassword(string password)

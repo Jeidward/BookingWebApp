@@ -26,7 +26,6 @@
                         <form id="checkoutForm" asp-controller="CheckOut" asp-action="CheckOut" method="post">
                             <input type="hidden" name="bookingId" value="@Model.BookingViewModel.Id" />
 
-                            <!-- Pre-Checkout Checklist -->
                             <div class="card mb-4 border">
                                 <div class="card-header">
                                     <h5 class="mb-0">Pre-Checkout Checklist</h5>
@@ -123,7 +122,7 @@
                                         <div class="col-md-6">
                                             <p><strong>Check-in Date:</strong> @Model.BookingViewModel.CheckInDate.ToString("MMM dd, yyyy")</p>
                                             <p><strong>Check-out Date:</strong> @Model.BookingViewModel.CheckOutDate.ToString("MMM dd, yyyy")</p>
-                                            <p><strong>Total Nights:</strong> @((Model.BookingViewModel.CheckOutDate - Model.BookingViewModel.CheckInDate).Days)</p>
+                                            <p><strong>Total Nights:</strong> @Model.TotalNights</p>
                                         </div>
                                         <div class="col-md-6">
                                             <p><strong>Apartment:</strong> @Model.BookingViewModel.ApartmentViewModel.Name</p>

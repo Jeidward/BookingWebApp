@@ -1,17 +1,11 @@
-﻿using System.Linq.Expressions;
-using Azure.Core;
-using Models.Entities;
+﻿using Models.Entities;
 using Enums;
 using Microsoft.AspNetCore.Mvc;
 using Services;
 using BookingWebApp.ViewModels;
 using BookingWebApp.Helpers;
 using BookingWebApp.CompositeViewModels;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Components.Forms;
-using Microsoft.AspNetCore.SignalR;
 using Models.Enums;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace BookingWebApp.Controllers
 {
@@ -64,16 +58,13 @@ namespace BookingWebApp.Controllers
 
             if(viewModel.AddMyself)
             {
+                if (userId == null) return RedirectToAction("Login", "Authentication");
                 var user = _userService.GetUser((int)userId);
-                var guest = new GuestProfileViewModel()
-                {
-                    AccountId = user.Id,
-                    FirstName = user.Name,
-                    Email = user.Email,
-                };
-
+               
+                var guest = GuestProfileViewModel.ConvertToGuestFromUser(user);
+                
                 var index = HttpContext.Session.GetInt32("CurrentGuestIndex") ?? 1;
-                HttpContext.Session.SetString($"GuestProfile_{index}", GuestProfileViewModelHelper.CreateGuestProfileString((guest)));
+                HttpContext.Session.SetString($"GuestProfile_{index}", GuestProfileViewModelHelper.CreateGuestProfileString(guest));
                 return RedirectToAction("GuestDetails");
             }
 
@@ -234,6 +225,7 @@ namespace BookingWebApp.Controllers
         public IActionResult MyBookings()
         {
             int? userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null) return RedirectToAction("Login", "Authentication");
 
             if (!User.Identity.IsAuthenticated) return RedirectToAction("Login", "Authentication");
 

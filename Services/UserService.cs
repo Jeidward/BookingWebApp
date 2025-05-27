@@ -24,29 +24,32 @@ namespace Services
         }
 
             
-        public DomainValidationResult Register(string email, string password, string name) // this could just to test if it run it one time
+        public DomainValidationResult Register(User user) // this could just to test if it run it one time
         {
-            var result = UserValidator.ValidUser(email, password, name);
+            var result = UserValidator.ValidUser(user.Email, user.Password, user.FirstName);
             if (result.IsValid)
             {
-                User newUser = new(email, password, name);
-                var hashedPassword = _passwordSecurityService.HashPassword(password, out byte[] salt);
-                newUser.SetPassword(hashedPassword);
-                newUser.SetSalt(Convert.ToBase64String(salt));
+                var hashedPassword = _passwordSecurityService.HashPassword(user.Password, out byte[] salt);
+                user.SetPassword(hashedPassword);
+                user.SetSalt(Convert.ToBase64String(salt));
 
-                 _userRepository.RegisterUser(newUser.Email, newUser.Password, newUser.Name, newUser.Salt);
+                 _userRepository.RegisterUser(user);
             }
 
             return result;
         }
 
-        public List<Claim> CreateClaims(int userId, string email,string role)
+        public List<Claim> CreateClaims(int userId, string email)
         {
+            var user =  GetUserWithEmail(email);
+
+            var role = user.RoleId == 2 ? "Host" : "User";
+
             var claims = new List<Claim>
             {
-                new Claim("Id", userId.ToString()),
-                new Claim(ClaimTypes.Email, email),
-                new Claim(ClaimTypes.Role, role)
+                new("Id", userId.ToString()),
+                new(ClaimTypes.Email, email),
+                new(ClaimTypes.Role, role)
             };
             return claims;
         }

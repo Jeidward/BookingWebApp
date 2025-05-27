@@ -29,17 +29,21 @@ namespace Services
         }
 
         public int GetTotalBookings(int selectedMonth,int year) => _bookingRepository.GetAllBookings(selectedMonth,year);
-        public int UpcomingBookings()
+        public List<Booking> UpcomingBookings()
         { 
             var bookings = _bookingRepository.GetAllBookingsWithObject();
             var upcomingBooking = new List<Booking>();
 
             foreach (var booking in bookings)
             {
+                booking.SetGuestProfile(_bookingRepository.GetBookingGuests(booking.Id));
+                booking.SetApartment(_apartmentRepository.GetApartment(booking.ApartmentId));
+
                 if (booking.CheckInDate > DateTime.Today)
                     upcomingBooking.Add(booking);
             }
-            return upcomingBooking.Count;
+
+            return bookings;
         }
 
         public int GetTotalActiveAccountHolders()
@@ -60,7 +64,7 @@ namespace Services
             var totalAccountHolders = GetTotalActiveAccountHolders();
             var totalRevenue = GetTotalRevenue(selectedMonth, year);
 
-            return new DashboardAnalytics(totalBookings, totalAccountHolders, totalRevenue, upcomingBookings);
+            return new DashboardAnalytics(totalBookings, totalAccountHolders, totalRevenue, upcomingBookings.Count);
         }
 
         //manage apartments section//

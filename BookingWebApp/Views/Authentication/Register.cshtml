@@ -16,12 +16,46 @@
                     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
                     <div class="mb-3">
-                        @Html.LabelFor(m => m.Name)
-                        @Html.TextBoxFor(m => m.Name, new { @class = "form-control" })
-                        @Html.ValidationMessageFor(m => m.Name, "", new { @class = "text-danger" })
+	                    @Html.LabelFor(m => m.FirstName)
+	                    @Html.TextBoxFor(m => m.FirstName, new { @class = "form-control" })
+	                    @Html.ValidationMessageFor(m => m.FirstName, "", new { @class = "text-danger" })
                     </div>
 
                     <div class="mb-3">
+	                    @Html.LabelFor(m => m.LastName)
+	                    @Html.TextBoxFor(m => m.LastName, new { @class = "form-control" })
+	                    @Html.ValidationMessageFor(m => m.LastName, "", new { @class = "text-danger" })
+                    </div>
+
+                    <div class="mb-3">
+	                    @Html.LabelFor(m => m.Age)
+	                    @Html.TextBoxFor(m => m.Age, new { @class = "form-control" })
+	                    @Html.ValidationMessageFor(m => m.Age, "", new { @class = "text-danger" })
+                    </div>
+
+
+                    <div class="mb-3">
+	                    @Html.LabelFor(m => m.PhoneNumber)
+	                    @Html.TextBoxFor(m => m.PhoneNumber, new { @class = "form-control" })
+	                    @Html.ValidationMessageFor(m => m.PhoneNumber, "", new { @class = "text-danger" })
+                    </div>
+
+                    <div class="mb-3">
+	                    @Html.LabelFor(m => m.Address)
+	                    @Html.TextBoxFor(m => m.Address, new { @class = "form-control" })
+	                    @Html.ValidationMessageFor(m => m.Address, "", new { @class = "text-danger" })
+                    </div>
+
+                    <div class="mb-3">
+	                    <label asp-for="Country" class="form-label"></label>
+	                    <select asp-for="Country" class="form-control" id="countrySelect">
+		                    <!-- Country options will be populated by your JS -->
+	                    </select>
+                    </div>
+
+
+
+						<div class="mb-3">
                         @Html.LabelFor(m => m.Email)
                         @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
                         @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })

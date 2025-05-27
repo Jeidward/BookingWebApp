@@ -79,7 +79,7 @@ public class ApartmentServiceTest
         var ex = Assert.ThrowsException<ArgumentNullException>(
             () => _apartmentService.AddApartment(apartment));
 
-        Assert.AreEqual("Name", ex.ParamName);        
+        Assert.AreEqual("FirstName", ex.ParamName);        
     }
 
 

@@ -95,7 +95,7 @@ namespace MSSQL
                     Convert.ToInt32(reader["Id"]),
                     reader["Name"].ToString()!,
                     reader["ImgIcon"].ToString()!
-                );
+                );  
                 amenities.Add(amenitiesList);
             }
             return amenities;

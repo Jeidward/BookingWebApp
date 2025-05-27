@@ -111,7 +111,7 @@ namespace Services
 
             foreach (Booking booking in userBooking)
             {
-                booking.SetApartment(_apartmentRepository.GetApartment(_bookingRepository.GetApartment(booking.Id)));
+                booking.SetApartment(_apartmentRepository.GetApartment(_bookingRepository.GetApartment(booking.ApartmentId)));
                 booking.SetGuestProfile( _bookingRepository.GetBookingGuests(booking.Id));
             }
 

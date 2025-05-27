@@ -10,25 +10,31 @@ namespace MSSQL
     {
         public UserRepository(IConfiguration configuration) : base(configuration) { }
 
-
-        public bool RegisterUser(string email, string password, string name, string salt)
+        public bool RegisterUser(User user)
         {
             using (SqlConnection conn = new SqlConnection(_connectionString))
             {
                 conn.Open();
 
                 string query = @"
-                    INSERT INTO Users (Email, [Password],[isArchived],Name, Salt, RoleId)
+                    INSERT INTO Users (RoleId, FirstName, LastName, Age, PhoneNumber, Country, Address, Email, Password, IsArchived, Salt)
                     OUTPUT INSERTED.UserId
-                    VALUES (@Email, @Password, 0,@Name, @Salt,@RoleId)";
+                    VALUES (@RoleId, @FirstName, @LastName, @Age, @PhoneNumber, @Country, @Address, @Email, @Password, @IsArchived, @Salt)";
                 int newUserId;
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
-                    cmd.Parameters.AddWithValue("@Email", email);
-                    cmd.Parameters.AddWithValue("@Password", password);
-                    cmd.Parameters.AddWithValue("@Name", name);
-                    cmd.Parameters.AddWithValue("@Salt", salt);
-                    cmd.Parameters.AddWithValue("@RoleId", 1); // 1 for regular users
+                    cmd.Parameters.AddWithValue("@RoleId", 1);
+                    cmd.Parameters.AddWithValue("@FirstName", user.FirstName);
+                    cmd.Parameters.AddWithValue("@LastName", user.LastName);
+                    cmd.Parameters.AddWithValue("@Age", user.Age);
+                    cmd.Parameters.AddWithValue("@PhoneNumber", user.PhoneNumber);
+                    cmd.Parameters.AddWithValue("@Country", user.Country);
+                    cmd.Parameters.AddWithValue("@Address", user.Address);
+                    cmd.Parameters.AddWithValue("@Email", user.Email);
+                    cmd.Parameters.AddWithValue("@Password", user.Password);
+                    cmd.Parameters.AddWithValue("@IsArchived", 0);
+                    cmd.Parameters.AddWithValue("@Salt", user.Salt);
+
                     newUserId = (int)cmd.ExecuteScalar();
                 }
 
@@ -68,7 +74,7 @@ namespace MSSQL
             {
                 conn.Open();
                 //here i check if the password is the same
-                string query = @" SELECT UserId, Name FROM Users WHERE Email = @Email AND [Password] = @Password;";
+                string query = @" SELECT UserId, FirstName FROM Users WHERE Email = @Email AND [Password] = @Password;";
 
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
@@ -94,7 +100,7 @@ namespace MSSQL
             using (SqlConnection conn = new SqlConnection(_connectionString))
             {
                 conn.Open();
-                string query = @"SELECT [UserId],[Email],[Password],[IsArchived],[Name],[Salt],[RoleId] FROM Users WHERE Email = @Email";
+                string query = @"SELECT [UserId],[Email],[Password],[IsArchived],[FirstName],[Salt],[RoleId] FROM Users WHERE Email = @Email";
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
                     cmd.Parameters.AddWithValue("@Email", email);
@@ -106,7 +112,7 @@ namespace MSSQL
                                 Convert.ToInt32(reader["UserId"]),
                                 Convert.ToString(reader["Email"])!,
                                 Convert.ToString(reader["Password"])!,
-                                Convert.ToString(reader["Name"])!,
+                                Convert.ToString(reader["FirstName"])!,
                                 Convert.ToString(reader["Salt"])!,
                                 Convert.ToInt32(reader["RoleId"])
                             );
@@ -122,7 +128,7 @@ namespace MSSQL
             using(SqlConnection conn = new SqlConnection(_connectionString))
             {
                 conn.Open();
-                string query = @"SELECT [UserId],[Email],[Password],[IsArchived],[Name] FROM Users WHERE UserId = @UserId";
+                string query = @"SELECT [UserId],RoleId,FirstName, LastName, Age, PhoneNumber, Country, Address, Email FROM Users WHERE UserId = @UserId";
 
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
@@ -135,16 +141,23 @@ namespace MSSQL
                             User user = new(
 
                                 Convert.ToInt32(reader["UserId"]),
-                                Convert.ToString(reader["Email"])!,
-                                Convert.ToString(reader["Password"])!,
-                                Convert.ToString(reader["Name"])!
+                                Convert.ToInt32(reader["RoleId"]),
+                                Convert.ToString(reader["FirstName"])!,
+                                Convert.ToString(reader["LastName"]),
+                                Convert.ToInt32(reader["Age"]),
+                                Convert.ToString(reader["PhoneNumber"]),
+                                Convert.ToString(reader["Country"]),
+                                Convert.ToString(reader["Address"]),
+                                Convert.ToString(reader["Email"])!
+
                             );
 
                             return user;    
                         }
                     }
                 }
-                return new("","","") ;
+
+                return new User(-1);
             }
         }
     }

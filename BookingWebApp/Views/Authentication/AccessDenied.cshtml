@@ -1,0 +1,35 @@
+﻿@{
+	ViewBag.Title = "Unauthorized";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container">
+	<div class="row justify-content-center">
+		<div class="col-md-6 text-center">
+			<div class="error-container mt-5">
+				<h1 class="display-1 text-danger">403</h1>
+				<h2 class="mb-4">Access Denied</h2>
+				<p class="lead mb-4">You are not authorized to access this section.</p>
+				<a href="@Url.Action("Index", "Home")" class="btn btn-primary">Return to Home</a>
+			</div>
+		</div>
+	</div>
+</div>
+
+<style>
+    .error-container {
+        padding: 2rem;
+        border-radius: 8px;
+        background-color: #f8f9fa;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    
+    .display-1 {
+        font-size: 6rem;
+        font-weight: bold;
+    }
+    
+    .text-danger {
+        color: #dc3545 !important;
+    }
+</style>

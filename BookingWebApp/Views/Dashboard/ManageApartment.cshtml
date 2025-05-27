@@ -58,7 +58,7 @@
 					<thead class="table-light">
 					<tr>
 						<th><a href="#">Apt #</a></th>
-						<th><a href="#">Name</a></th>
+						<th><a href="#">FirstFirstName</a></th>
 						<th><a href="#">Bedrooms</a></th>
 						<th><a href="#">Bathrooms</a></th>
 						<th><a href="#">Price per night</a></th>
@@ -67,7 +67,7 @@
 						<th>Actions</th>
 					</tr>
 					</thead>
-					@foreach (var apartment in Model.ApartmentViewModels)
+					@foreach (var apartment in Model.ApartmentViewModels.Items)
 					{
 						<tbody>
 						<tr>
@@ -123,29 +123,48 @@
 
 					}
 				</table>
+				@if (Model.ApartmentViewModels.TotalPages > 1)
+				{
+					<nav aria-label="Apartment list pagination">
+						<ul class="pagination justify-content-center">
+
+							<li class="page-item @(Model.ApartmentViewModels.HasPreviousPage ? "" : "disabled")">
+								<a class="page-link text-black"
+								   asp-action="ManageApartment"
+								   asp-route-pageIndex="1"
+								   asp-route-pageSize="@Model.ApartmentViewModels.PageSize">First</a>
+							</li>
+
+							<li class="page-item @(Model.ApartmentViewModels.HasPreviousPage ? "" : "disabled")">
+								<a class="page-link text-black"
+								   asp-action="ManageApartment"
+								   asp-route-pageIndex="@(Model.ApartmentViewModels.PageIndex - 1)"
+								   asp-route-pageSize="@Model.ApartmentViewModels.PageSize">Previous</a>
+							</li>
+
+							<li class="page-item @(Model.ApartmentViewModels.HasNextPage ? "" : "disabled")">
+								<a class="page-link text-black"
+								   asp-action="ManageApartment"
+								   asp-route-pageIndex="@(Model.ApartmentViewModels.PageIndex + 1)"
+								   asp-route-pageSize="@Model.ApartmentViewModels.PageSize">Next</a>
+							</li>
+
+							<li class="page-item @(Model.ApartmentViewModels.HasNextPage ? "" : "disabled")">
+								<a class="page-link text-black"
+								   asp-action="ManageApartment"
+								   asp-route-pageIndex="@Model.ApartmentViewModels.TotalPages"
+								   asp-route-pageSize="@Model.ApartmentViewModels.PageSize">Last</a>
+							</li>
+						</ul>
+					</nav>
+				}
+
 			</div>
 		</div>
 	</div>
-        
-	<div class="card-footer bg-white">
-		<nav>
-			<ul class="pagination justify-content-center mb-0">
-				<li class="page-item disabled">
-					<span class="page-link">Previous</span>
-				</li>
-				<li class="page-item active">
-					<a class="page-link" href="#">1</a>
-				</li>
-				<li class="page-item"><a class="page-link" href="#">2</a></li>
-				<li class="page-item"><a class="page-link" href="#">3</a></li>
-				<li class="page-item"><a class="page-link" href="#">Next</a></li>
-			</ul>
-		</nav>
-	</div>
+	
 
-</div> 
-
-<!-- Add Apartment Modal -->
+	<!-- Add Apartment Modal -->
 <div class="modal fade" id="addApartmentModal" tabindex="-1" aria-labelledby="addApartmentModalLabel" aria-hidden="true">
 	<div class="modal-dialog modal-lg">
 		<form method="post" asp-controller="Dashboard" asp-action="AddApartment" enctype="multipart/form-data">
@@ -158,8 +177,8 @@
 					<div class="row mb-3">
 						<div class="col-md-6">
 							<div class="form-floating mb-3">
-								<input type="text" class="form-control" id="Name" name="Name" placeholder="Name" required />
-								<label for="Name">Name</label>
+								<input type="text" class="form-control" id="Name" name="FirstFirstName" placeholder="FirstFirstName" required />
+								<label for="Name">FirstFirstName</label>
 							</div>
 						</div>
 					</div>

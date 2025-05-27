@@ -2,7 +2,7 @@
 {
     public class DashboardApartmentManagementViewModel
     {
-        public List<ApartmentViewModel> ApartmentViewModels;
+        public PaginatedList<ApartmentViewModel> ApartmentViewModels;
 
         public List<AddApartmentViewModel> EditApartmentViewModels;
         public int ApartmentCurrentlyOccupied { get; set; }

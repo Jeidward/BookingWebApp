@@ -1,0 +1,132 @@
+﻿@model List<BookingViewModel>
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="mb-0">Upcoming Bookings</h2>
+                <span class="badge bg-primary fs-6">@Model.Count  Total</span>
+            </div>
+
+            @if (Model.Any())
+            {
+                <div class="card shadow-sm">
+                    <div class="card-body p-0">
+                        <div class="list-group list-group-flush">
+                            @foreach (var booking in Model) 
+                              { 
+                                <div class="list-group-item list-group-item-action p-4">
+                                    <div class="row align-items-center">
+                                        <div class="col-md-2">
+                                            <div class="booking-id">
+                                                <small class="text-muted">Booking ID</small>
+                                                <div class="fw-bold">@booking.Id</div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-3">
+                                            <div class="guest-info">
+	                                            <small class="text-muted">Guest</small>
+                                                @foreach (var guest in booking.GuestProfiles)
+	                                            {
+		                                            <div class="fw-semibold"></div>
+		                                            <small class="text-muted">@guest.FirstName</small>
+	                                            }
+	                                           
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-3">
+                                            <div class="apartment-info">
+                                                <small class="text-muted">Apartment</small>
+                                                <div class="fw-semibold">@booking.ApartmentViewModel.Name</div>
+                                                <small class="text-muted">test</small>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-2">
+                                            <div class="booking-dates">
+                                                <small class="text-muted">Check-in</small>
+                                                <div class="fw-semibold">@booking.CheckInDate.ToString("MMM dd")</div>
+                                                <small class="text-muted">@booking.CheckInDate.ToString("yyyy")</small>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-2 text-end">
+                                            <div class="booking-status mb-2">
+                                                <span class="badge bg-success">Confirmed</span>
+                                            </div>
+                                            <div class="dropdown">
+                                                <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                                    Actions
+                                                </button>
+                                                <ul class="dropdown-menu">
+                                                    <li><a class="dropdown-item" href="/Bookings/Details/.Id">View Details</a></li>
+                                                    <li><hr class="dropdown-divider"></li>
+                                                    <li><a class="dropdown-item text-danger" href="#" onclick="cancelBooking(.Id)">Cancel Booking</a></li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mt-2">
+                                        <div class="col-12">
+                                            <small class="text-muted">
+                                                Duration: @booking.CheckInDate.ToString("MMM dd") - @booking.CheckOutDate.ToString("MMM dd, yyyy")
+                                                (@((booking.CheckOutDate - booking.CheckInDate).Days) nights) |
+                                                Total: <span class="fw-semibold">$ @booking.TotalPrice</span>
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="text-center py-5">
+                    <div class="mb-3">
+                        <i class="fas fa-calendar-times fa-3x text-muted"></i>
+                    </div>
+                    <h4 class="text-muted">No Upcoming Bookings</h4>
+                    <p class="text-muted">You don't have any upcoming bookings at the moment.</p>
+                    <a href="/Dashboard" class="btn btn-primary">Back to Dashboard</a>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Minimal additional styles */
+    .list-group-item {
+        border-left: none;
+        border-right: none;
+        transition: background-color 0.2s ease;
+    }
+
+        .list-group-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .list-group-item:first-child {
+            border-top: none;
+        }
+
+        .list-group-item:last-child {
+            border-bottom: none;
+        }
+
+    .booking-id, .guest-info, .apartment-info, .booking-dates {
+        line-height: 1.4;
+    }
+
+    .col-md-2.text-end {
+        text-align: left !important;
+    }
+
+    }
+</style>
+

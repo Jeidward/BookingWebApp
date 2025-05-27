@@ -1,6 +1,9 @@
-﻿using System.Security.Claims;
+﻿using System;
+using System.Security.Claims;
 using BookingWebApp.ViewModels;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Models.Entities;
 using Services;
@@ -36,7 +39,10 @@ namespace BookingWebApp.Controllers
                 return View(userViewModel);
             }
 
-            var result =  _userService.Register(userViewModel.Email, userViewModel.Password, userViewModel.Name); 
+            var user = UserViewModel.ConvertToEntity(userViewModel);
+
+            var result =  _userService.Register(user); 
+
             if(!result.IsValid)
                 foreach (var error in result.Errors)
                 {
@@ -44,21 +50,15 @@ namespace BookingWebApp.Controllers
                     return View(userViewModel);
                 }
 
-
             int userId = _userService.GetExistedLogIn(userViewModel.Email, userViewModel.Password);
 
-            var claims = _userService.CreateClaims(userId, userViewModel.Email, "User");
+            var claims = _userService.CreateClaims(userId, userViewModel.Email);
 
             var claimsIdentity = new ClaimsIdentity(claims, "User");
 
             HttpContext.Session.SetInt32("UserId", userId);
             bool hasAnyBooking = _accountHolderService.HasAccountHolderAnyBooking(userId);
             HttpContext.Session.SetInt32("HasBooking", hasAnyBooking ? 1 : 0);
-
-            AccountHolder accountHolder = _accountHolderService.GetAccountHolderByUserId(userId); 
-
-            if (accountHolder.Id != -1)
-                HttpContext.Session.SetInt32("UserId", accountHolder.Id);
 
             if (_httpContextAccessor.HttpContext != null)
                 _httpContextAccessor.HttpContext.SignInAsync("UserScheme", new ClaimsPrincipal(claimsIdentity),
@@ -81,82 +81,52 @@ namespace BookingWebApp.Controllers
             }
 
             int userId = _userService.GetExistedLogIn(userViewModel.Email, userViewModel.Password);
+
             if (userId == 0)
             {
                 ModelState.AddModelError("Password", "Invalid password.");
                 return View(userViewModel);
             }
 
-            var claims = _userService.CreateClaims(userId, userViewModel.Email, "User");
-
-            var claimsIdentity = new ClaimsIdentity(claims, "User");
-
             HttpContext.Session.SetInt32("UserId", userId);
             bool hasAnyBooking = _accountHolderService.HasAccountHolderAnyBooking(userId);
             HttpContext.Session.SetInt32("HasBooking", hasAnyBooking ? 1 : 0);
 
-            AccountHolder accountHolder = _accountHolderService.GetAccountHolderByUserId(userId);
+            var claims = _userService.CreateClaims(userId, userViewModel.Email);
+
+            var roleClaim = claims.FirstOrDefault(c => c.Type == ClaimTypes.Role);
             
-            await _httpContextAccessor.HttpContext.SignInAsync("UserScheme", new ClaimsPrincipal(claimsIdentity),
-                                                                                    new AuthenticationProperties());
-            HttpContext.Session.SetInt32("UserId", accountHolder.Id);
+            var claimsIdentityHost = new ClaimsIdentity(claims,roleClaim!.Value );
+
+            if (_httpContextAccessor.HttpContext != null)
+                await _httpContextAccessor.HttpContext.SignInAsync($"{roleClaim.Value}Scheme", new ClaimsPrincipal(claimsIdentityHost), new AuthenticationProperties());
+
 
             return RedirectToAction("Index", "Home");
         }
 
         public ActionResult LogOut()
         {
+          
+            var userId = HttpContext.Session.GetInt32("UserId");
+            var user = _userService.GetUser(userId.Value);
+
             HttpContext.Session.Clear();
+            if (user.RoleId == 2)
+            {
+                 _httpContextAccessor.HttpContext?.SignOutAsync("HostScheme");
+                 return RedirectToAction("Index", "Home");
+            }
+            
             if (_httpContextAccessor.HttpContext != null)
                 _httpContextAccessor.HttpContext.SignOutAsync("UserScheme");
+
             return RedirectToAction("Index", "Home");
         }
 
-
-
-
-        //............................Host login section............................//
-        public IActionResult ShowLogin()
-        { 
-            return View("~/Views/Dashboard/Login.cshtml");
-        }
-
-
-        public async Task<IActionResult> LoginHost(NonDetailUserViewModel userViewModel)
+        public IActionResult AccessDenied() // will not currently hit.
         {
-            
-            if (!ModelState.IsValid) return View("~/Views/Dashboard/Login.cshtml", userViewModel);
-            
-            int userId = _userService.GetExistedLogIn(userViewModel.Email, userViewModel.Password);
-            var user = _userService.GetUserWithEmail(userViewModel.Email); 
-
-            if (userId == 0)
-            {
-                ModelState.AddModelError("Password", "Invalid email or password");
-                return View("~/Views/Dashboard/Login.cshtml", userViewModel);
-            }
-
-            if (user.RoleId == 1) // meaning 1 is guest
-            {
-                ModelState.AddModelError("Email",
-                    "It looks like this email belongs to a guest account, so you’re not authorized to access this page.");
-                return View("~/Views/Dashboard/Login.cshtml", userViewModel);
-            }
-
-            var claims = _userService.CreateClaims(userId, userViewModel.Email,"Host");
-
-            var claimsIdentity = new ClaimsIdentity(claims, "Host");
-            if (_httpContextAccessor.HttpContext != null)
-                await _httpContextAccessor.HttpContext.SignInAsync("HostScheme", new ClaimsPrincipal(claimsIdentity), new AuthenticationProperties());
-
-            return RedirectToAction("Index", "Dashboard");
-        }
-
-        public IActionResult LogoutHost()
-        {
-            if (_httpContextAccessor.HttpContext != null)
-                _httpContextAccessor.HttpContext.SignOutAsync("HostScheme");
-            return RedirectToAction("ShowLogin","Authentication");
+            return View();
         }
 
     }
