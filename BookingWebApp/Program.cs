@@ -7,6 +7,8 @@ using System.Security.Claims;
 using BookingWebApp.Hub;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
+using Serilog;
+using Serilog.Exceptions;
 
 namespace BookingWebApp
 {
@@ -14,6 +16,14 @@ namespace BookingWebApp
     {
         public static void Main(string[] args)
         {
+
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Debug()
+                .Enrich.FromLogContext()
+                .Enrich.WithExceptionDetails()
+                .WriteTo.Seq("http://localhost:5341")
+                .CreateLogger();
+
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
@@ -55,6 +65,7 @@ namespace BookingWebApp
             builder.Services.AddScoped<ChatService>();
 
 
+            builder.Host.UseSerilog();
             builder.Services.AddSignalR(); // we are able to set up signal r hub, which we can use to connect to .
 
             builder.Services.AddAuthentication("UserScheme")         

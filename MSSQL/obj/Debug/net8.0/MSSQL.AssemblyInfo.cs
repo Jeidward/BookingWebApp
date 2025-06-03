@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MSSQL")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c5fcbd3ff43a620019a5cc33c2b6053aca070daf")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+86903d82abb16860e59b6a8a9f4ec4ddf13478cf")]
 [assembly: System.Reflection.AssemblyProductAttribute("MSSQL")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MSSQL")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
