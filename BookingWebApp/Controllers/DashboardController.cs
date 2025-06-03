@@ -17,21 +17,19 @@ namespace BookingWebApp.Controllers
     public class DashboardController : Controller
     {
         private readonly UserService _userService;
-        private readonly AccountHolderService _accountHolderService;
         private readonly DashboardService _dashboardService;
         private readonly ApartmentService _apartmentService;
+        private readonly ChatService _chatService;
         private readonly IWebHostEnvironment _env;
-        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public DashboardController(UserService userService, AccountHolderService accountHolderService,
-            DashboardService dashboardService, ApartmentService apartmentService,IWebHostEnvironment env,IHttpContextAccessor httpContextAccessor)
+        public DashboardController(UserService userService,
+            DashboardService dashboardService, ApartmentService apartmentService,IWebHostEnvironment env, ChatService chatService)
         {
             _userService = userService;
-            _accountHolderService = accountHolderService;
             _dashboardService = dashboardService;
             _apartmentService = apartmentService;
             _env = env;
-            _httpContextAccessor = httpContextAccessor;
+            _chatService = chatService;
         }
 
 
@@ -56,17 +54,9 @@ namespace BookingWebApp.Controllers
 
             var vmPage = PaginatedList<ActivityViewModel>.Create(activityViewModels, pageActivities.TotalItems, pageActivities.PageIndex, pageActivities.PageSize);
 
-            var dashboardViewModel = new DashboardIndexViewModel
-            {
-                TotalBookings = analytics.TotalBookings,
-                TotalUsers = analytics.TotalUsers,
-                TotalRevenue = analytics.TotalRevenue,
-                UpcomingBookings = analytics.UpcomingBookings,
-                Activities = vmPage,
-                IsPreviousMonth = isTrue,
-                CurrentDate = month
 
-            };
+            var dashboardViewModel = DashboardIndexViewModel.ConvertToViewModel(analytics, vmPage,month,isTrue);
+            
             return View(dashboardViewModel);
         }
 
@@ -86,24 +76,22 @@ namespace BookingWebApp.Controllers
             foreach (var vm in viewModelEdit)
                 vm.Amenities = allAmenities;
 
-            foreach (var occupiedApartment in vmItems)
+            foreach (var occupiedApartment in vmItems)// for the badge not available
             {
                 if (occupiedIds.Contains(occupiedApartment.Id))
                     occupiedApartment.IsOccupied = true;
             }
 
+            foreach (var occupied in viewModels)// for the available apartments today
+            {
+                if(occupiedIds.Contains(occupied.Id))
+                    occupied.IsOccupied = true;
+            }
+
             var availableToday = viewModels.Where(a => a.IsOccupied == false).ToList();
             var pagVmItems = PaginatedList<ApartmentViewModel>.Create(vmItems, apartments.Result.TotalItems, apartments.Result.PageIndex, apartments.Result.PageSize);
 
-            var dashboard = new DashboardApartmentManagementViewModel
-            {
-                ApartmentViewModels = pagVmItems,
-                ApartmentTotal = viewModels.Count,
-                ApartmentCurrentlyOccupied = occupiedIds.Count,
-                ApartmentAvailable = availableToday.Count,
-                EditApartmentViewModels = viewModelEdit,
-                Amenities = allAmenities
-            };
+            var dashboard = DashboardApartmentManagementViewModel.ConvertToViewModel(pagVmItems, viewModels.Count, occupiedIds.Count, availableToday.Count, viewModelEdit, allAmenities);
 
             return View(dashboard);
         }
@@ -157,6 +145,25 @@ namespace BookingWebApp.Controllers
             _apartmentService.UpdateApartment(apartment);
 
             return RedirectToAction("ManageApartment");
+        }
+
+
+        public IActionResult Chat(int contactId)
+        {
+            var users = _userService.GetAllUsers().FindAll(u=>u.Id != 2);
+            var currentStaying = _dashboardService.CurrentStaying(users);
+
+            var contacts = ContactViewModel.ConvertToViewModel(users, currentStaying);
+
+            var selectedContactId = contactId;
+
+            if (selectedContactId == 0 && contacts.Any()) selectedContactId =contacts.First().Id;
+
+            var chatMessages =  ChatMessageViewModel.ConvertToViewModel(_chatService.GetAllMessages(selectedContactId));
+
+            var chatPageViewModel = ChatPageViewModel.ConvertToViewModel(contacts, chatMessages, selectedContactId);
+            
+            return View(chatPageViewModel);
         }
 
     }

@@ -8,7 +8,9 @@ namespace MSSQL
 {
     public class UserRepository : Repository, IUserRepository
     {
-        public UserRepository(IConfiguration configuration) : base(configuration) { }
+        public UserRepository(IConfiguration configuration) : base(configuration)
+        {
+        }
 
         public bool RegisterUser(User user)
         {
@@ -100,7 +102,8 @@ namespace MSSQL
             using (SqlConnection conn = new SqlConnection(_connectionString))
             {
                 conn.Open();
-                string query = @"SELECT [UserId],[Email],[Password],[IsArchived],[FirstName],[Salt],[RoleId] FROM Users WHERE Email = @Email";
+                string query =
+                    @"SELECT [UserId],[Email],[Password],[IsArchived],[FirstName],[Salt],[RoleId] FROM Users WHERE Email = @Email";
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
                     cmd.Parameters.AddWithValue("@Email", email);
@@ -120,15 +123,18 @@ namespace MSSQL
                         }
                     }
                 }
-                return new( -1);
+
+                return new(-1);
             }
         }
-        public User GetUser(int Id) 
+
+        public User GetUser(int Id)
         {
-            using(SqlConnection conn = new SqlConnection(_connectionString))
+            using (SqlConnection conn = new SqlConnection(_connectionString))
             {
                 conn.Open();
-                string query = @"SELECT [UserId],RoleId,FirstName, LastName, Age, PhoneNumber, Country, Address, Email FROM Users WHERE UserId = @UserId";
+                string query =
+                    @"SELECT [UserId],RoleId,FirstName, LastName, Age, PhoneNumber, Country, Address, Email FROM Users WHERE UserId = @UserId";
 
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
@@ -143,16 +149,16 @@ namespace MSSQL
                                 Convert.ToInt32(reader["UserId"]),
                                 Convert.ToInt32(reader["RoleId"]),
                                 Convert.ToString(reader["FirstName"])!,
-                                Convert.ToString(reader["LastName"]),
+                                Convert.ToString(reader["LastName"])!,
                                 Convert.ToInt32(reader["Age"]),
-                                Convert.ToString(reader["PhoneNumber"]),
-                                Convert.ToString(reader["Country"]),
-                                Convert.ToString(reader["Address"]),
+                                Convert.ToString(reader["PhoneNumber"])!,
+                                Convert.ToString(reader["Country"])!,
+                                Convert.ToString(reader["Address"])!,
                                 Convert.ToString(reader["Email"])!
 
                             );
 
-                            return user;    
+                            return user;
                         }
                     }
                 }
@@ -160,7 +166,42 @@ namespace MSSQL
                 return new User(-1);
             }
         }
+
+        public List<User> GetAllUsers()
+        {
+            List<User> users = new List<User>();
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                conn.Open();
+                string query =
+                    @"SELECT DISTINCT  u.[UserId],u.RoleId,u.FirstName, u.LastName, u.Age, u.PhoneNumber, u.Country, u.Address, u.Email FROM Users as u
+                       INNER JOIN ChatMessage as c on c.SenderId = u.UserId
+					   WHERE C.HasAlreadySend = 1";
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                {
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            User user = new(
+                                Convert.ToInt32(reader["UserId"]),
+                                Convert.ToInt32(reader["RoleId"]),
+                                Convert.ToString(reader["FirstName"])!,
+                                Convert.ToString(reader["LastName"])!,
+                                Convert.ToInt32(reader["Age"]),
+                                Convert.ToString(reader["PhoneNumber"])!,
+                                Convert.ToString(reader["Country"])!,
+                                Convert.ToString(reader["Address"])!,
+                                Convert.ToString(reader["Email"])!
+                            );
+                            users.Add(user);
+                        }
+                    }
+                }
+            }
+
+            return users;
+        }
+
     }
-
-
 }

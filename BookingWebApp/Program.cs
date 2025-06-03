@@ -4,6 +4,9 @@ using Services;
 using Interfaces.IServices;
 using Interfaces.IRepositories;
 using System.Security.Claims;
+using BookingWebApp.Hub;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.SignalR;
 
 namespace BookingWebApp
 {
@@ -35,8 +38,10 @@ namespace BookingWebApp
             builder.Services.AddScoped<IApartmentRepository, ApartmentRepository>();
             builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
             builder.Services.AddScoped<IAmenitiesRepository, AmenitiesRepository>();
+            builder.Services.AddSingleton<IUserIdProvider, CustomUserIdProvider>();
+            builder.Services.AddScoped<IChatMessageRepository, ChatMessageRepository>();
 
-         
+
             builder.Services.AddScoped<BookingService>();
             builder.Services.AddScoped<PaymentService>();
             builder.Services.AddScoped<AccountHolderService>();
@@ -47,6 +52,10 @@ namespace BookingWebApp
             builder.Services.AddScoped<IPasswordSecurityService,PasswordSecurityService>();
             builder.Services.AddScoped<EmailSenderService>();
             builder.Services.AddScoped<DashboardService>();
+            builder.Services.AddScoped<ChatService>();
+
+
+            builder.Services.AddSignalR(); // we are able to set up signal r hub, which we can use to connect to .
 
             builder.Services.AddAuthentication("UserScheme")         
                 .AddCookie("UserScheme", opts =>
@@ -67,6 +76,7 @@ namespace BookingWebApp
 
             builder.Services.AddAuthorization(options =>
             {
+
                 options.AddPolicy("User", policy =>
                 {
                     policy.AuthenticationSchemes.Add("UserScheme");
@@ -100,6 +110,11 @@ namespace BookingWebApp
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseSession();
+
+
+            app.MapHub<ChatHub>("/chatHub");
+
+
 
             app.MapControllerRoute(
                 name: "default",    

@@ -110,8 +110,6 @@ namespace Services
 
         public List<Amenities> GetAmenitiesList() => _amenitiesRepository.GetAmenitiesList();
 
-        public List<Amenities> GetAmenitiesForApartment(int id) => _amenitiesRepository.GetSelectedAmenities(id);
-
         public async Task<PaginatedList<Apartment>> GetApartmentsAsync(int pageIndex, int pageSize)
         {
             var apartments = await _apartmentRepository.GetApartmentsAsync(pageIndex, pageSize);

@@ -19,5 +19,7 @@ namespace Interfaces.IRepositories
 
         public User GetUser(string email);
 
+        public List<User> GetAllUsers();
+
     }
 }

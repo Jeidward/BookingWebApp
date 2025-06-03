@@ -5,7 +5,7 @@ namespace Models.Entities
     public class User
     {
         public int Id { get; private set; }
-        public string FirstName { get; }
+        public string FirstName { get; private set; }
         public string LastName { get;} 
         public int Age { get; }
         public string PhoneNumber { get; }
@@ -56,6 +56,10 @@ namespace Models.Entities
             Email = email;
         }
 
+        public void SetFirstName(string firstName)
+        {
+            this.FirstName = firstName;
+        }
         public void SetPassword(string password)
         {
             this.Password = password;

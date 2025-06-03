@@ -117,7 +117,7 @@ namespace Services
 
             return userBooking;
         }
-
+        
         public List<Booking> GetAllBookingsForUserCheckout(int userId)
         {
             var bookings =  GetAllBookingsForUser(userId).FindAll(booking => booking.Status == BookingStatus.CheckedOut);

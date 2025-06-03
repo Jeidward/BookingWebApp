@@ -1,0 +1,97 @@
+﻿@model ChatPageViewModel
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">Chat App</a>
+    </div>
+</nav>
+<style>
+    .chat-container {
+        height: calc(100vh - 70px);
+    }
+
+    .chat-messages {
+        overflow-y: auto;
+        max-height: calc(100vh - 200px);
+    }
+
+    #messageInput {
+        height: 50px;
+    }
+</style>
+<div class="container-fluid chat-container mt-2">
+    <div class="row h-100">
+        <div class="col-md-3 col-12 border-end p-0">
+            <div class="contacts-list p-3">
+                <div class="mb-3">
+                    <input type="text" class="form-control" placeholder="Search contacts...">
+                </div>
+                @foreach (var contact in Model.Contacts)
+                {
+                    <div class="list-group">
+                        <a asp-route-contactId="@contact.Id" class="list-group-item list-group-item-action" data-customer-id="@contact.Id">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h5 class="mb-1">@contact.FirstName</h5>
+                                @if (contact.ApartmentId == 0)
+                                {
+                                    <small>No active stay</small>
+                                }
+                                else
+                                {
+                                    <small>Staying at aptId: @contact.ApartmentId</small>
+                                }
+                            </div>
+                            <p class="mb-1">@contact.LastMessage</p>
+                        </a>
+                    </div>
+                }
+            </div>
+        </div>
+        <div class="col-md-9 col-12 p-0 d-flex flex-column">
+            <div class="chat-messages px-3 pt-3 pb-2 flex-grow-1" id="messagesList">
+                @foreach (var msg in Model.ChatMessage)
+                {
+                    <div class="message mb-3">
+                        <div class="rounded p-2">
+                            @msg.Message
+                        </div>
+                        <small class="text-muted">@msg.TimeSent.Day</small>
+                    </div>
+                }
+            </div>
+            <div class="px-3 mb-4">
+                <input type="hidden" id="targetCustomerId" value="@Model.SelectedContactId" class="form-control mb-2" />
+                <div class="input-group">
+                    <input type="text" id="messageInput" class="form-control" placeholder="Type a message..." />
+                    <button class="btn btn-primary" type="button" id="sendButton">
+                        <i class="bi bi-send"></i> Send
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="~/js/signalr/dist/browser/signalr.js"></script>
+<script src="~/js/chat.js"></script>
+<script>
+    function scrollToBottom() {
+        const messagesList = document.getElementById('messagesList');
+        messagesList.scrollTop = messagesList.scrollHeight;
+    }
+
+
+    document.addEventListener('DOMContentLoaded', function() {
+        scrollToBottom();
+    });
+
+    
+    document.getElementById('sendButton').addEventListener('click', function() {
+        setTimeout(scrollToBottom, 100); 
+    });
+
+    document.getElementById('messageInput').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            setTimeout(scrollToBottom, 100);
+        }
+    });
+</script>

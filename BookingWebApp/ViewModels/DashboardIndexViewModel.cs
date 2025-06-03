@@ -13,7 +13,8 @@ namespace BookingWebApp.ViewModels
         public PaginatedList<ActivityViewModel> Activities { get; set; }
 
 
-        public static DashboardIndexViewModel ConvertToViewModel(DashboardAnalytics dashboardAnalytics)
+
+        public static DashboardIndexViewModel ConvertToViewModel(DashboardAnalytics dashboardAnalytics, PaginatedList<ActivityViewModel> activities, DateTime currentDate, bool isPreviousMonth)
         {
             return new DashboardIndexViewModel
             {
@@ -21,8 +22,13 @@ namespace BookingWebApp.ViewModels
                 TotalUsers = dashboardAnalytics.TotalUsers,
                 TotalRevenue = dashboardAnalytics.TotalRevenue,
                 UpcomingBookings = dashboardAnalytics.UpcomingBookings,
+                Activities = activities,
+                IsPreviousMonth = isPreviousMonth,
+                CurrentDate = currentDate
             };
         }
+
+      
 
 
 

@@ -1,12 +1,15 @@
 using System.Diagnostics;
+using System.Security.Claims;
 using Models.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Services;
 using BookingWebApp.ViewModels;
 using BookingWebApp.Helpers;
+using BookingWebApp.Hub;
 using Enums;
 using Interfaces.IServices;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.SignalR;
 
 namespace BookingWebApp.Controllers
 {
@@ -17,12 +20,17 @@ namespace BookingWebApp.Controllers
         private readonly BookingService _bookingService;
         private readonly UserService _userService;
         private readonly IReviewService _reviewService;
-        public HomeController(ILogger<HomeController> logger,BookingService bookingService, UserService userService, IReviewService reviewService)
+        private readonly ChatService _chatService;
+        private readonly IHubContext<ChatHub> _hubContext;
+
+        public HomeController(ILogger<HomeController> logger,BookingService bookingService, UserService userService, IReviewService reviewService, ChatService chatService,IHubContext<ChatHub>hubContext)
         {
             _logger = logger;
             _bookingService = bookingService;
             _userService = userService;
             _reviewService = reviewService;
+            _chatService = chatService;
+            _hubContext = hubContext;
         }
 
       
@@ -83,6 +91,28 @@ namespace BookingWebApp.Controllers
                 }
             }
             return false;
+        }
+
+        public IActionResult Chat()
+        {
+            var userId = User.Claims.FirstOrDefault(c => c.Type == "Id");
+            int id = userId != null ? int.Parse(userId.Value) : 0;
+            
+            if (id == 0) return RedirectToAction("ContactUs", "Home");
+
+            var chatMessages = _chatService.GetAllMessages(id).Select(m => new ChatMessageViewModel
+            {
+                Message = m.Content,
+                TimeSent = m.TimeSent,
+            }).ToList();
+
+
+            return View(chatMessages);
+        }
+
+        public IActionResult ContactUs()
+        {
+            return View();
         }
 
         public IActionResult Privacy()

@@ -6,9 +6,11 @@ using BookingWebApp.ViewModels;
 using BookingWebApp.Helpers;
 using BookingWebApp.CompositeViewModels;
 using Models.Enums;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BookingWebApp.Controllers
 {
+    [Authorize(AuthenticationSchemes = "UserScheme,HostScheme")] // allow the host to also booked. otherwise it will use the default scheme which is UserScheme
     public class BookingController : Controller
     {
         private readonly BookingService _bookingService;

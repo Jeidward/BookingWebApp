@@ -19,13 +19,15 @@ namespace Services
         private readonly IAccountHolderRepository _accountHolderRepository;
         private readonly IPaymentRepository _paymentRepository;
         private readonly IApartmentRepository _apartmentRepository;
+        private readonly BookingService _bookingService;
 
-        public DashboardService(IBookingRepository bookingRepository, IAccountHolderRepository accountHolderRepository, IPaymentRepository paymentRepository, IApartmentRepository apartmentRepository)
+        public DashboardService(IBookingRepository bookingRepository, IAccountHolderRepository accountHolderRepository, IPaymentRepository paymentRepository, IApartmentRepository apartmentRepository, BookingService bookingService)
         {
             _bookingRepository = bookingRepository;
             _accountHolderRepository = accountHolderRepository;
             _paymentRepository = paymentRepository;
             _apartmentRepository = apartmentRepository;
+            _bookingService = bookingService;
         }
 
         public int GetTotalBookings(int selectedMonth,int year) => _bookingRepository.GetAllBookings(selectedMonth,year);
@@ -43,12 +45,27 @@ namespace Services
                     upcomingBooking.Add(booking);
             }
 
-            return bookings;
+            return upcomingBooking;
         }
 
         public int GetTotalActiveAccountHolders()
         {
             return _accountHolderRepository.GetTotalAccountHolder();
+        }
+
+
+        public List<Booking> CurrentStaying(List<User> users)
+        {
+            var currentStaying = new List<Booking>();
+
+            foreach (var user in users)
+            {
+                var bookings = _bookingService.GetAllBookingsForUser(user.Id);
+                currentStaying.AddRange(bookings.Where(b => DateTime.Today >= b.CheckInDate.Date && DateTime.Today <= b.CheckOutDate.Date && b.Status == BookingStatus.Confirmed));
+
+            }
+
+            return currentStaying;
         }
 
         public decimal GetTotalRevenue(int selectedMonth,int year)=> _paymentRepository.GetTotalRevenue(selectedMonth, year);

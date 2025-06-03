@@ -6,8 +6,9 @@ namespace Models.Entities
 {
     public class Booking
     {
-        public int Id { get; private set; } 
+        public int Id { get; private set; }
 
+        public int AccountHolderId { get; private set; } // this is the person who booked the apartment
         public int ApartmentId { get; private set; } // hmmm not sure if i need to let booking know about the apartment
         public Apartment Apartment { get; private set; }
         public List<GuestProfile> GuestProfiles { get; private set; }
@@ -33,7 +34,18 @@ namespace Models.Entities
             Status = status;
         }
 
-        public Booking(int id,int apartmentId ,DateTime checkInDate, DateTime checkOutDate, decimal totalPrice, BookingStatus status)
+        public Booking(int id,int accountHolderId,int apartmentId ,DateTime checkInDate, DateTime checkOutDate, decimal totalPrice, BookingStatus status)
+        {
+            Id = id;
+            AccountHolderId = accountHolderId;
+            ApartmentId = apartmentId;
+            CheckInDate = checkInDate;
+            CheckOutDate = checkOutDate;
+            TotalPrice = totalPrice;
+            Status = status;
+        }
+
+        public Booking(int id, int apartmentId, DateTime checkInDate, DateTime checkOutDate, decimal totalPrice, BookingStatus status)
         {
             Id = id;
             ApartmentId = apartmentId;

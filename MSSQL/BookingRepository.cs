@@ -270,6 +270,7 @@ namespace MSSQL
                             Booking booking = new(
 
                                Convert.ToInt32(reader["BookingId"]),
+                               Convert.ToInt32(reader["AccountHolderId"]),
                                  Convert.ToInt32(reader["ApartmentId"]),
                                Convert.ToDateTime(reader["CheckInDate"]),
                                Convert.ToDateTime(reader["CheckOutDate"]),

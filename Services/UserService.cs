@@ -16,14 +16,14 @@ namespace Services
     {
         private readonly IUserRepository _userRepository;
         private readonly IPasswordSecurityService _passwordSecurityService;
-        
+
         public UserService(IUserRepository userRepository, IPasswordSecurityService passwordSecurityService)
         {
             _userRepository = userRepository;
             _passwordSecurityService = passwordSecurityService;
         }
 
-            
+
         public DomainValidationResult Register(User user) // this could just to test if it run it one time
         {
             var result = UserValidator.ValidUser(user.Email, user.Password, user.FirstName);
@@ -33,7 +33,7 @@ namespace Services
                 user.SetPassword(hashedPassword);
                 user.SetSalt(Convert.ToBase64String(salt));
 
-                 _userRepository.RegisterUser(user);
+                _userRepository.RegisterUser(user);
             }
 
             return result;
@@ -41,13 +41,14 @@ namespace Services
 
         public List<Claim> CreateClaims(int userId, string email)
         {
-            var user =  GetUserWithEmail(email);
+            var user = GetUserWithEmail(email);
 
             var role = user.RoleId == 2 ? "Host" : "User";
 
             var claims = new List<Claim>
             {
                 new("Id", userId.ToString()),
+                new(ClaimTypes.Name, user.FirstName),
                 new(ClaimTypes.Email, email),
                 new(ClaimTypes.Role, role)
             };
@@ -70,7 +71,7 @@ namespace Services
 
         public User GetUser(int userId)
         {
-            return _userRepository.GetUser(userId);    
+            return _userRepository.GetUser(userId);
         }
 
         public User GetUserWithEmail(string email)
@@ -83,5 +84,6 @@ namespace Services
             return _userRepository.DoesUserExist(email);
         }
 
+        public List<User> GetAllUsers() => _userRepository.GetAllUsers();
     }
 }

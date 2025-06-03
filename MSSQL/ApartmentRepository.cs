@@ -6,12 +6,8 @@ using Interfaces.IRepositories;
 
 namespace MSSQL
 {
-    public class ApartmentRepository : Repository, IApartmentRepository
+    public class ApartmentRepository(IConfiguration configuration) : Repository(configuration), IApartmentRepository
     {
-        public ApartmentRepository(IConfiguration configuration) : base(configuration)
-        {
-        }
-
         public void CreateApartment(Apartment apartment)
         {
             using (SqlConnection conn = new SqlConnection(_connectionString))
@@ -153,7 +149,6 @@ namespace MSSQL
                         while (reader.Read())
                         {
                             apartmentsImages.Add(reader["ImgPath"].ToString()!);
-                            //can you this way instead of get ordinal but dont forget to parse it.
                         }
                     }
                 }

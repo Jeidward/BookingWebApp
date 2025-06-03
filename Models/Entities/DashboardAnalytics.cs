@@ -15,7 +15,7 @@ namespace Models.Entities
         public decimal TotalRevenue { get; }
 
         public int UpcomingBookings { get; }
-
+        
         public DashboardAnalytics(int totalBookings, int totalUsers, decimal totalRevenue, int upcomingBookings)
         {
             TotalBookings = totalBookings;
@@ -23,5 +23,7 @@ namespace Models.Entities
             TotalRevenue = totalRevenue;
             UpcomingBookings = upcomingBookings;
         }
+
+
     }
 }

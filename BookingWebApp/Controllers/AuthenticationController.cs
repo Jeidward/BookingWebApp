@@ -2,6 +2,7 @@
 using System.Security.Claims;
 using BookingWebApp.ViewModels;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
@@ -73,6 +74,7 @@ namespace BookingWebApp.Controllers
         }
 
         [HttpPost]
+        [AllowAnonymous]
         public async Task<IActionResult> LogIn(NonDetailUserViewModel userViewModel)
         {
             if (!ModelState.IsValid)
